@@ -1,15 +1,7 @@
 package com.vastausf.wesolient
 
 import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
-class Wesolient: Application() {
-    companion object {
-        lateinit var instance: Wesolient
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-
-        instance = this
-    }
-}
+@HiltAndroidApp
+class Wesolient : Application()

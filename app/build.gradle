@@ -1,6 +1,9 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'dagger.hilt.android.plugin'
+apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 30
@@ -39,7 +42,7 @@ android {
 
     composeOptions {
         kotlinCompilerVersion kotlin_version
-        kotlinCompilerExtensionVersion jetpack_compose
+        kotlinCompilerExtensionVersion jetpack_compose_version
     }
 }
 
@@ -50,17 +53,26 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
 
     //Jetpack compose
-    implementation "androidx.compose.ui:ui:$jetpack_compose"
-    implementation "androidx.ui:ui-tooling:$jetpack_compose"
-    implementation "androidx.compose.foundation:foundation:$jetpack_compose"
-    implementation "androidx.compose.material:material:$jetpack_compose"
-    implementation "androidx.compose.material:material-icons-core:$jetpack_compose"
-    implementation "androidx.compose.material:material-icons-extended:$jetpack_compose"
-    implementation "androidx.compose.runtime:runtime-livedata:$jetpack_compose"
-    implementation "androidx.compose.runtime:runtime-rxjava2:$jetpack_compose"
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation "androidx.compose.ui:ui:$jetpack_compose_version"
+    implementation "androidx.ui:ui-tooling:$jetpack_compose_version"
+    implementation "androidx.compose.foundation:foundation:$jetpack_compose_version"
+    implementation "androidx.compose.material:material:$jetpack_compose_version"
+    implementation "androidx.compose.material:material-icons-core:$jetpack_compose_version"
+    implementation "androidx.compose.material:material-icons-extended:$jetpack_compose_version"
+    implementation "androidx.compose.runtime:runtime-livedata:$jetpack_compose_version"
+    implementation "androidx.compose.runtime:runtime-rxjava2:$jetpack_compose_version"
 
-    androidTestImplementation "androidx.ui:ui-test:$jetpack_compose"
+    //Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+
+    //Hilt
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+
+    //Scarlet
+    implementation "com.tinder.scarlet:scarlet:$scarlet_version"
+
+    androidTestImplementation "androidx.ui:ui-test:$jetpack_compose_version"
 
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
