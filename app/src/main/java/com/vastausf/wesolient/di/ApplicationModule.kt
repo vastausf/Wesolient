@@ -2,6 +2,7 @@ package com.vastausf.wesolient.di
 
 import com.vastausf.wesolient.model.DesktopDataStore
 import com.vastausf.wesolient.model.RealmDesktopDataStore
+import com.vastausf.wesolient.model.ScopeWorker
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,5 +23,11 @@ object ApplicationModule {
     @Singleton
     fun providesRealm(): Realm {
         return Realm.getDefaultInstance()
+    }
+
+    @Provides
+    @Singleton
+    fun providesScopeWorker(): ScopeWorker {
+        return ScopeWorker()
     }
 }

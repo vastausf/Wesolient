@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Wesolient</string>
+    <string name="app_head_name">@string/app_name</string>
+
+    <!--    CHOOSE SCOPE LIST   -->
+    <string name="scope_list_placeholder">Scope list is empty.\nMaybe you should to add one?</string>
+    <string name="create_new_scope">create new</string>
+
+    <!--    CREATE SCOPE DIALOG    -->
+    <string name="scope_title">type title here…</string>
+    <string name="create">create</string>
 </resources>

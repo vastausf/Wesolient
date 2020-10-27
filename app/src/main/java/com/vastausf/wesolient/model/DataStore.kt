@@ -1,7 +1,7 @@
 package com.vastausf.wesolient.model
 
-import com.vastausf.wesolient.model.data.DesktopData
+import com.vastausf.wesolient.model.data.ScopeData
 
 interface DesktopDataStore {
-    fun create(title: String, url: String): DesktopData
+    fun create(title: String, url: String): ScopeData
 }
