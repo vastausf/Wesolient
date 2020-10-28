@@ -9,4 +9,5 @@
     <!--    CREATE SCOPE DIALOG    -->
     <string name="scope_title">type title here…</string>
     <string name="create">create</string>
+    <string name="title_conflict">you already have a scope with a similar title</string>
 </resources>

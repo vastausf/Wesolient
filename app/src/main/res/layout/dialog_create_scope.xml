@@ -9,28 +9,32 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/dialog_background"
         android:orientation="vertical"
-        android:padding="8dp"
-        android:background="@drawable/dialog_background">
+        android:padding="16dp">
 
         <EditText
-            style="@style/EditText"
             android:id="@+id/newScopeTitleET"
-            android:hint="@string/scope_title"
-            android:textSize="14sp"
+            style="@style/EditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:hint="@string/scope_title"
+            android:maxLines="1"
+            android:inputType="text"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp" />
     </LinearLayout>
 
     <Button
         android:id="@+id/createB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/accent_button_background"
-        android:text="@string/create"
-        android:textColor="@color/colorBackground"
         android:layout_gravity="end"
+        android:layout_margin="16dp"
+        android:background="@drawable/accent_button_background"
+        android:enabled="false"
         android:foreground="?android:selectableItemBackground"
-        android:layout_margin="16dp"/>
+        android:text="@string/create"
+        android:textColor="@color/colorBackground" />
 
 </LinearLayout>

@@ -9,4 +9,7 @@ interface ScopeSelectView: MvpView {
 
     @AddToEndSingle
     fun showCreateDialog()
+
+    @AddToEndSingle
+    fun updateLoadState(newState: Boolean)
 }

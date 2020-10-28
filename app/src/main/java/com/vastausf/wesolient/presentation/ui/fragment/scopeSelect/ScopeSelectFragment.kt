@@ -3,6 +3,7 @@ package com.vastausf.wesolient.presentation.ui.fragment.scopeSelect
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.vastausf.wesolient.R
 import com.vastausf.wesolient.presentation.ui.adapter.ScopeListAdapterRV
 import com.vastausf.wesolient.presentation.ui.dialog.createScope.CreateScopeDialog
@@ -20,13 +21,22 @@ class ScopeSelectFragment: MvpAppCompatFragment(R.layout.fragment_select_scope),
 
     private val presenter by moxyPresenter { presenterProvider.get() }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        scopeListRV.adapter = ScopeListAdapterRV {
-            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-        }
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
-        createScopeB.setOnClickListener {
-            presenter.onClickCreateNew()
+        if (savedInstanceState == null) {
+            scopeListRV.layoutManager = LinearLayoutManager(requireContext())
+            scopeListRV.adapter = ScopeListAdapterRV {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            }
+
+            createScopeB.setOnClickListener {
+                presenter.onClickCreateNew()
+            }
+
+            scopeListSRL.setOnRefreshListener {
+                presenter.onRefresh()
+            }
         }
     }
 
@@ -46,5 +56,9 @@ class ScopeSelectFragment: MvpAppCompatFragment(R.layout.fragment_select_scope),
         CreateScopeDialog().apply {
             show(this@ScopeSelectFragment.childFragmentManager, "CreateScopeDialog")
         }
+    }
+
+    override fun updateLoadState(newState: Boolean) {
+        scopeListSRL.isRefreshing = newState
     }
 }

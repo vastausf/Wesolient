@@ -1,5 +1,6 @@
 package com.vastausf.wesolient.presentation.ui.dialog.createScope
 
+import com.vastausf.wesolient.model.ScopeStore
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import javax.inject.Inject
@@ -8,7 +9,15 @@ import javax.inject.Inject
 class CreateScopeDialogPresenter
 @Inject
 constructor(
-
+    private val scopeStore: ScopeStore
 ) : MvpPresenter<CreateScopeDialogView>() {
-
+    fun onNewScopeCreate(
+        title: String
+    ) {
+        if (scopeStore.getAll().map { it.title }.contains(title)) {
+            viewState.showConflictDialog()
+        } else {
+            scopeStore.create(title)
+        }
+    }
 }
