@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/app_navigation"
+    app:startDestination="@id/scopeSelectFragment">
+
+    <fragment
+        android:id="@+id/scopeSelectFragment"
+        android:name="com.vastausf.wesolient.presentation.ui.fragment.scopeSelect.ScopeSelectFragment"
+        android:label="ScopeSelectFragment">
+        <action
+            android:id="@+id/action_scopeSelectFragment_to_createScopeDialog"
+            app:destination="@id/createScopeDialog" />
+        <action
+            android:id="@+id/action_scopeSelectFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/createScopeDialog"
+        android:name="com.vastausf.wesolient.presentation.ui.dialog.createScope.CreateScopeDialog"
+        android:label="CreateScopeDialog" />
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.vastausf.wesolient.presentation.ui.fragment.chat.ChatFragment"
+        android:label="ChatFragment">
+        <argument
+            android:name="scope_title"
+            app:argType="string" />
+    </fragment>
+</navigation>

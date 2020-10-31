@@ -2,11 +2,10 @@ package com.vastausf.wesolient.presentation.ui.fragment.scopeSelect
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vastausf.wesolient.R
 import com.vastausf.wesolient.presentation.ui.adapter.ScopeListAdapterRV
-import com.vastausf.wesolient.presentation.ui.dialog.createScope.CreateScopeDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_select_scope.*
 import moxy.MvpAppCompatFragment
@@ -15,7 +14,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 @AndroidEntryPoint
-class ScopeSelectFragment: MvpAppCompatFragment(R.layout.fragment_select_scope), ScopeSelectView {
+class ScopeSelectFragment : MvpAppCompatFragment(R.layout.fragment_select_scope), ScopeSelectView {
     @Inject
     lateinit var presenterProvider: Provider<ScopeSelectPresenter>
 
@@ -27,7 +26,7 @@ class ScopeSelectFragment: MvpAppCompatFragment(R.layout.fragment_select_scope),
         if (savedInstanceState == null) {
             scopeListRV.layoutManager = LinearLayoutManager(requireContext())
             scopeListRV.adapter = ScopeListAdapterRV {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                launchScope(it)
             }
 
             createScopeB.setOnClickListener {
@@ -53,12 +52,18 @@ class ScopeSelectFragment: MvpAppCompatFragment(R.layout.fragment_select_scope),
     }
 
     override fun showCreateDialog() {
-        CreateScopeDialog().apply {
-            show(this@ScopeSelectFragment.childFragmentManager, "CreateScopeDialog")
-        }
+        findNavController().navigate(
+            ScopeSelectFragmentDirections.actionScopeSelectFragmentToCreateScopeDialog()
+        )
     }
 
     override fun updateLoadState(newState: Boolean) {
         scopeListSRL.isRefreshing = newState
+    }
+
+    private fun launchScope(scopeTitle: String) {
+        findNavController().navigate(
+            ScopeSelectFragmentDirections.actionScopeSelectFragmentToChatFragment(scopeTitle)
+        )
     }
 }

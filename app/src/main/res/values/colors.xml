@@ -5,6 +5,8 @@
     <color name="colorAccent">#F44336</color>
 
     <color name="colorBackground">#FFFFFF</color>
+    <color name="colorServerMessageBackground">#E4E4E4</color>
+    <color name="colorClientMessageBackground">#FFCFCF</color>
 
     <color name="colorText">#202020</color>
     <color name="colorTextHint">#B3B3B3</color>

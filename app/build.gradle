@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: 'realm-android'
+apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
     compileSdkVersion 30
@@ -62,12 +63,20 @@ dependencies {
 
     //Scarlet
     implementation "com.tinder.scarlet:scarlet:$scarlet_version"
+    implementation "com.tinder.scarlet:websocket-okhttp:$scarlet_version"
+//    implementation "com.tinder.scarlet:stream-adapter-coroutines:$scarlet_version"
+//    implementation "com.tinder.scarlet:message-adapter-jackson:$scarlet_version"
+
+    implementation "com.tinder.scarlet:stream-adapter-rxjava2:$scarlet_version"
+
 
     //Jackson
     implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.11.3"
 
-    //Cicerone
-    implementation "com.github.terrakok:cicerone:6.1"
+    //Navigation
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
+    implementation "androidx.navigation:navigation-dynamic-features-fragment:$navigation_version"
 
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

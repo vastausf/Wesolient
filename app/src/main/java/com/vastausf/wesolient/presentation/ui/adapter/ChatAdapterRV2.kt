@@ -7,16 +7,16 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.vastausf.wesolient.R
-import kotlinx.android.synthetic.main.item_scope_list.view.*
+import com.vastausf.wesolient.data.Message
 
-class ScopeListAdapterRV(
-    private val onClick: ((String) -> Unit)? = null
-) : ListAdapter<String, ScopeListAdapterRV.ViewHolder>(ScopeDiff) {
-    companion object ScopeDiff : DiffUtil.ItemCallback<String>() {
-        override fun areItemsTheSame(oldItem: String, newItem: String) =
+class ChatAdapterRV2(
+    private val onClick: ((Message) -> Unit)? = null
+) : ListAdapter<Message, ChatAdapterRV2.ViewHolder>(ScopeDiff) {
+    companion object ScopeDiff : DiffUtil.ItemCallback<Message>() {
+        override fun areItemsTheSame(oldItem: Message, newItem: Message) =
             oldItem == newItem
 
-        override fun areContentsTheSame(oldItem: String, newItem: String) =
+        override fun areContentsTheSame(oldItem: Message, newItem: Message) =
             oldItem == newItem
     }
 
@@ -31,8 +31,7 @@ class ScopeListAdapterRV(
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(item: String, onClick: ((String) -> Unit)?) {
-            itemView.title.text = item
+        fun bind(item: Message, onClick: ((Message) -> Unit)?) {
             itemView.setOnClickListener {
                 onClick?.invoke(item)
             }

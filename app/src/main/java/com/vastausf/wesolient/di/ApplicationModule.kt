@@ -1,13 +1,13 @@
 package com.vastausf.wesolient.di
 
-import com.vastausf.wesolient.Wesolient
+import com.tinder.scarlet.Scarlet
+import com.tinder.scarlet.streamadapter.rxjava2.RxJava2StreamAdapterFactory
 import com.vastausf.wesolient.model.ScopeStore
 import com.vastausf.wesolient.model.ScopeWorker
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
-import dagger.hilt.android.qualifiers.ApplicationContext
 import io.realm.Realm
 import javax.inject.Singleton
 
@@ -31,5 +31,13 @@ object ApplicationModule {
     @Singleton
     fun providesScopeWorker(): ScopeWorker {
         return ScopeWorker()
+    }
+
+    @Provides
+    @Singleton
+    fun providesSocketService(): Scarlet.Builder {
+        return Scarlet
+            .Builder()
+            .addStreamAdapterFactory(RxJava2StreamAdapterFactory())
     }
 }

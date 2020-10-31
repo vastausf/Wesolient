@@ -5,5 +5,8 @@ import moxy.viewstate.strategy.alias.Skip
 
 interface CreateScopeDialogView : MvpView {
     @Skip
-    fun showConflictDialog()
+    fun showConflict()
+
+    @Skip
+    fun dismissDialog()
 }

@@ -4,17 +4,12 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doAfterTextChanged
 import com.vastausf.wesolient.R
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.dialog_create_scope.*
-import kotlinx.android.synthetic.main.dialog_create_scope.view.*
 import moxy.MvpAppCompatDialogFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
@@ -56,7 +51,11 @@ class CreateScopeDialog : MvpAppCompatDialogFragment(), CreateScopeDialogView {
         }
     }
 
-    override fun showConflictDialog() {
+    override fun showConflict() {
         Toast.makeText(context, R.string.title_conflict, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun dismissDialog() {
+        dialog?.dismiss()
     }
 }

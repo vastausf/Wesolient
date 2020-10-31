@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@color/colorBackground"
+    android:orientation="vertical">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chatRV"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:overScrollMode="never"
+        tools:listitem="@layout/item_server_message" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorBackground"
+        android:translationZ="16dp">
+
+        <EditText
+            android:id="@+id/messageET"
+            style="@style/EditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/message_hint"
+            android:inputType="text"
+            android:maxLines="5" />
+
+        <ImageButton
+            android:id="@+id/sendB"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:padding="16dp"
+            android:src="@drawable/ic_send"
+            android:tint="@color/colorPrimary" />
+    </LinearLayout>
+</LinearLayout>

@@ -40,6 +40,17 @@ constructor(
             }
     }
 
+    fun getByTitle(title: String): Scope? {
+        return realm
+            .where(ScopeRealm::class.java)
+            .and()
+            .equalTo("title", title)
+            .findFirst()
+            ?.let {
+                Scope.fromRealm(it)
+            }
+    }
+
     fun registerListener(listener: ChangeListener) {
         changeListeners.add(listener)
     }

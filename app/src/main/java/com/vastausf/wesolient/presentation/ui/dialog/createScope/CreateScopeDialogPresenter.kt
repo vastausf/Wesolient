@@ -15,9 +15,11 @@ constructor(
         title: String
     ) {
         if (scopeStore.getAll().map { it.title }.contains(title)) {
-            viewState.showConflictDialog()
+            viewState.showConflict()
         } else {
             scopeStore.create(title)
+
+            viewState.dismissDialog()
         }
     }
 }
