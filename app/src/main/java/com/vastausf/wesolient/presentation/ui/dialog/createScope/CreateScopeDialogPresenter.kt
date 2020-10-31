@@ -12,12 +12,13 @@ constructor(
     private val scopeStore: ScopeStore
 ) : MvpPresenter<CreateScopeDialogView>() {
     fun onNewScopeCreate(
-        title: String
+        title: String,
+        url: String
     ) {
         if (scopeStore.getAll().map { it.title }.contains(title)) {
             viewState.showConflict()
         } else {
-            scopeStore.create(title)
+            scopeStore.create(title, url)
 
             viewState.dismissDialog()
         }

@@ -4,6 +4,8 @@
     android:layout_height="wrap_content"
     android:background="@color/colorClientMessageBackground"
     android:orientation="vertical"
+    android:layout_marginVertical="4dp"
+    android:layout_marginLeft="32dp"
     android:padding="8dp">
 
     <TextView

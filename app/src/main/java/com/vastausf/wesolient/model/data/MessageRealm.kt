@@ -1,14 +1,13 @@
 package com.vastausf.wesolient.model.data
 
-import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import java.util.*
 
-open class ScopeRealm(
+open class MessageRealm(
     @PrimaryKey
     var id: String = UUID.randomUUID().toString(),
-    var title: String = "",
-    var url: String = "",
-    var history: RealmList<MessageRealm> = RealmList()
+    var source: Int = -1,
+    var content: String = "",
+    var dateTime: Long = 0
 ) : RealmObject()

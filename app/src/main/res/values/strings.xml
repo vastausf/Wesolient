@@ -7,11 +7,15 @@
     <string name="create_new_scope">create new</string>
 
     <!--    CREATE SCOPE DIALOG    -->
+    <string name="apply">apply</string>
+
+    <!--    CREATE SCOPE DIALOG    -->
     <string name="scope_title">type title here…</string>
+    <string name="scope_url">…and url here</string>
     <string name="create">create</string>
     <string name="title_conflict">you already have a scope with a similar title</string>
-    <string name="message_hint">type message here…</string>
 
     <!--    CHAT FRAGMENT   -->
     <string name="miss_scope">can\'t find this scope</string>
+    <string name="message_hint">type message here…</string>
 </resources>

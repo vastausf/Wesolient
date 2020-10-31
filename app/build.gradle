@@ -64,9 +64,7 @@ dependencies {
     //Scarlet
     implementation "com.tinder.scarlet:scarlet:$scarlet_version"
     implementation "com.tinder.scarlet:websocket-okhttp:$scarlet_version"
-//    implementation "com.tinder.scarlet:stream-adapter-coroutines:$scarlet_version"
-//    implementation "com.tinder.scarlet:message-adapter-jackson:$scarlet_version"
-
+    implementation "com.tinder.scarlet:stream-adapter-coroutines:$scarlet_version"
     implementation "com.tinder.scarlet:stream-adapter-rxjava2:$scarlet_version"
 
 

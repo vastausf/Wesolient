@@ -5,6 +5,7 @@ import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vastausf.wesolient.R
+import com.vastausf.wesolient.data.Scope
 import com.vastausf.wesolient.presentation.ui.adapter.ScopeListAdapterRV
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_select_scope.*
@@ -25,9 +26,14 @@ class ScopeSelectFragment : MvpAppCompatFragment(R.layout.fragment_select_scope)
 
         if (savedInstanceState == null) {
             scopeListRV.layoutManager = LinearLayoutManager(requireContext())
-            scopeListRV.adapter = ScopeListAdapterRV {
-                launchScope(it)
-            }
+            scopeListRV.adapter = ScopeListAdapterRV(
+                onClick = {
+                    launchScope(it.id)
+                },
+                onLongClick = {
+                    launchScopeEdit(it.id)
+                }
+            )
 
             createScopeB.setOnClickListener {
                 presenter.onClickCreateNew()
@@ -39,7 +45,7 @@ class ScopeSelectFragment : MvpAppCompatFragment(R.layout.fragment_select_scope)
         }
     }
 
-    override fun updateScopeList(scopeList: List<String>) {
+    override fun updateScopeList(scopeList: List<Scope>) {
         (scopeListRV.adapter as ScopeListAdapterRV).submitList(scopeList)
 
         if (scopeList.isNotEmpty()) {
@@ -61,9 +67,15 @@ class ScopeSelectFragment : MvpAppCompatFragment(R.layout.fragment_select_scope)
         scopeListSRL.isRefreshing = newState
     }
 
-    private fun launchScope(scopeTitle: String) {
+    private fun launchScope(id: String) {
         findNavController().navigate(
-            ScopeSelectFragmentDirections.actionScopeSelectFragmentToChatFragment(scopeTitle)
+            ScopeSelectFragmentDirections.actionScopeSelectFragmentToChatFragment(id)
+        )
+    }
+
+    private fun launchScopeEdit(id: String) {
+        findNavController().navigate(
+            ScopeSelectFragmentDirections.actionScopeSelectFragmentToEditScopeDialog(id)
         )
     }
 }

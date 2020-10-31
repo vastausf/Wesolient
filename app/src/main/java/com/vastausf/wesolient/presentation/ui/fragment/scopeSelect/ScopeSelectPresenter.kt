@@ -27,7 +27,7 @@ constructor(
         viewState.updateLoadState(true)
 
         presenterScope.launch {
-            viewState.updateScopeList(scopeStoreRealm.getAll().map { it.title })
+            viewState.updateScopeList(scopeStoreRealm.getAll())
 
             viewState.updateLoadState(false)
         }

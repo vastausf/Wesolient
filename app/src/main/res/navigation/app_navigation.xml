@@ -14,6 +14,9 @@
         <action
             android:id="@+id/action_scopeSelectFragment_to_chatFragment"
             app:destination="@id/chatFragment" />
+        <action
+            android:id="@+id/action_scopeSelectFragment_to_editScopeDialog"
+            app:destination="@id/editScopeDialog" />
     </fragment>
     <dialog
         android:id="@+id/createScopeDialog"
@@ -27,4 +30,12 @@
             android:name="scope_title"
             app:argType="string" />
     </fragment>
+    <dialog
+        android:id="@+id/editScopeDialog"
+        android:name="com.vastausf.wesolient.presentation.ui.dialog.editScope.EditScopeDialog"
+        android:label="EditScopeDialog">
+        <argument
+            android:name="scope_id"
+            app:argType="string" />
+    </dialog>
 </navigation>

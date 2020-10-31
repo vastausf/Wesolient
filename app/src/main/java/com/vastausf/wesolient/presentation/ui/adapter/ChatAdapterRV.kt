@@ -23,17 +23,7 @@ class ChatAdapterRV(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (getItem(position).source) {
-            Message.Source.Server -> {
-                Message.Source.Server.type
-            }
-            Message.Source.Client -> {
-                Message.Source.Client.type
-            }
-            Message.Source.System -> {
-                Message.Source.System.type
-            }
-        }
+        return getItem(position).source
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -42,19 +32,19 @@ class ChatAdapterRV(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return when (viewType) {
-            Message.Source.Server.type -> {
+            Message.SERVER_SOURCE -> {
                 ServerMessageViewHolder(
                     LayoutInflater.from(parent.context)
                         .inflate(R.layout.item_server_message, parent, false)
                 )
             }
-            Message.Source.Client.type -> {
+            Message.CLIENT_SOURCE -> {
                 ClientMessageViewHolder(
                     LayoutInflater.from(parent.context)
                         .inflate(R.layout.item_client_message, parent, false)
                 )
             }
-            Message.Source.System.type -> {
+            Message.SYSTEM_SOURCE -> {
                 SystemMessageViewHolder(
                     LayoutInflater.from(parent.context)
                         .inflate(R.layout.item_system_message, parent, false)
@@ -70,11 +60,12 @@ class ChatAdapterRV(
             onClick: ((Message) -> Unit)?,
             onLongClick: ((Message) -> Unit)?
         ) {
-            itemView.messageTV.text = item.message
+            itemView.messageTV.text = item.content
 
             itemView.setOnClickListener {
                 onClick?.invoke(item)
             }
+
             itemView.setOnLongClickListener {
                 onLongClick?.invoke(item)
 

@@ -1,7 +1,7 @@
 package com.vastausf.wesolient.di
 
 import com.tinder.scarlet.Scarlet
-import com.tinder.scarlet.streamadapter.rxjava2.RxJava2StreamAdapterFactory
+import com.tinder.streamadapter.coroutines.CoroutinesStreamAdapterFactory
 import com.vastausf.wesolient.model.ScopeStore
 import com.vastausf.wesolient.model.ScopeWorker
 import dagger.Module
@@ -38,6 +38,6 @@ object ApplicationModule {
     fun providesSocketService(): Scarlet.Builder {
         return Scarlet
             .Builder()
-            .addStreamAdapterFactory(RxJava2StreamAdapterFactory())
+            .addStreamAdapterFactory(CoroutinesStreamAdapterFactory())
     }
 }

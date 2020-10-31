@@ -52,4 +52,8 @@ class ChatFragment : MvpAppCompatFragment(R.layout.fragment_chat), ChatView {
     override fun showMessageMissScope() {
         Toast.makeText(context, R.string.miss_scope, Toast.LENGTH_SHORT).show()
     }
+
+    override fun onSend() {
+        messageET.text.clear()
+    }
 }

@@ -38,10 +38,12 @@ class CreateScopeDialog : MvpAppCompatDialogFragment(), CreateScopeDialogView {
 
         requireDialog().apply {
             createB.setOnClickListener {
-                val title = newScopeTitleET.text.toString()
+                val title = newScopeTitleET.text.toString().trim()
+                val url = newScopeUrlET.text.toString().trim()
 
                 presenter.onNewScopeCreate(
-                    title.trim()
+                    title,
+                    url
                 )
             }
 

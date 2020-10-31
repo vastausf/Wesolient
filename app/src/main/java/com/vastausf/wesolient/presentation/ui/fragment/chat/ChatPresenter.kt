@@ -1,15 +1,16 @@
 package com.vastausf.wesolient.presentation.ui.fragment.chat
 
-import android.util.Log
 import com.tinder.scarlet.Scarlet
 import com.tinder.scarlet.websocket.okhttp.newWebSocketFactory
 import com.vastausf.wesolient.data.Message
+import com.vastausf.wesolient.data.Scope
 import com.vastausf.wesolient.model.ScopeStore
 import com.vastausf.wesolient.model.SocketService
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import moxy.MvpPresenter
+import moxy.presenterScope
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
@@ -20,41 +21,53 @@ constructor(
     private val scopeStoreRealm: ScopeStore,
     private val scarletBuilder: Scarlet.Builder
 ) : MvpPresenter<ChatView>() {
+    private lateinit var scope: Scope
     private lateinit var service: SocketService
 
-    private val messageList: MutableList<Message> = mutableListOf()
+    private var messageList: MutableList<Message> = mutableListOf()
 
     fun provideScopeTitle(title: String) {
-        val scope = scopeStoreRealm
-            .getByTitle(title)
+        scopeStoreRealm
+            .getById(title)
+            ?.let {
+                scope = it
 
-        if (scope != null) {
-            createService(title)
-        } else {
-            viewState.showMessageMissScope()
-        }
+                messageList = scope.history.toMutableList()
+                updateMessageList()
+
+                createService()
+            } ?: viewState.showMessageMissScope()
     }
 
     fun onMessageSend(message: String) {
         if (message.isNotEmpty()) {
-            sendMessage(message)
+            clientMessage(message)
+
+            viewState.onSend()
         }
     }
 
-    private fun sendMessage(message: String) {
+    private fun updateMessageList() {
+        viewState.updateChatHistory(messageList.toList())
+    }
+
+    private fun clientMessage(message: String) {
         service.sendMessage(message)
-        addNewMessage(message, Message.Source.Client)
+        addNewMessage(message, Message.CLIENT_SOURCE)
     }
 
     private fun systemMessage(message: String) {
-        addNewMessage(message, Message.Source.Client)
+        addNewMessage(message, Message.SYSTEM_SOURCE)
     }
 
-    private fun createService(title: String) {
+    private fun serverMessage(message: String) {
+        addNewMessage(message, Message.SERVER_SOURCE)
+    }
+
+    private fun createService() {
         service = scarletBuilder
             .webSocketFactory(
-//                OkHttpClient.Builder().build().newWebSocketFactory(title)
-                OkHttpClient.Builder().build().newWebSocketFactory("wss://echo.websocket.org")
+                OkHttpClient.Builder().build().newWebSocketFactory(scope.url)
             )
             .build()
             .create()
@@ -62,26 +75,27 @@ constructor(
         subscribeOnService()
     }
 
-    private fun addNewMessage(message: String, source: Message.Source) {
-        messageList.add(
-            Message(
-                messageList.lastOrNull()?.id?.inc() ?: 0,
-                source,
-                message,
-                0
-            )
+    private fun addNewMessage(content: String, source: Int) {
+        val message = Message(
+            source = source,
+            content = content,
+            dateTime = 0
         )
-        viewState.updateChatHistory(messageList.toList())
+
+        messageList.add(message)
+
+        scopeStoreRealm.addMessageInScopeHistory(scope.id, message)
+
+        updateMessageList()
     }
 
     private fun subscribeOnService() {
-        service
-            .observeMessage()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                addNewMessage(it, Message.Source.Server)
-                Log.d("ss", it)
-            }
+        presenterScope.launch {
+            service
+                .observeMessage()
+                .consumeEach {
+                    serverMessage(it)
+                }
+        }
     }
 }

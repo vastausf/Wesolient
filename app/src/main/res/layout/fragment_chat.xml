@@ -13,6 +13,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:overScrollMode="never"
+        android:animateLayoutChanges="false"
         tools:listitem="@layout/item_server_message" />
 
     <LinearLayout

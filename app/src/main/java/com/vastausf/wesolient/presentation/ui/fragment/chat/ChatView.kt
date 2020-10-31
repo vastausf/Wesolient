@@ -11,4 +11,7 @@ interface ChatView : MvpView {
 
     @Skip
     fun showMessageMissScope()
+
+    @AddToEndSingle
+    fun onSend()
 }

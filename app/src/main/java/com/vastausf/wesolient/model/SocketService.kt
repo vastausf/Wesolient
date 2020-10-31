@@ -2,7 +2,7 @@ package com.vastausf.wesolient.model
 
 import com.tinder.scarlet.ws.Receive
 import com.tinder.scarlet.ws.Send
-import io.reactivex.Flowable
+import kotlinx.coroutines.channels.ReceiveChannel
 
 
 interface SocketService {
@@ -10,5 +10,5 @@ interface SocketService {
     fun sendMessage(message: String)
 
     @Receive
-    fun observeMessage(): Flowable<String>
+    fun observeMessage(): ReceiveChannel<String>
 }

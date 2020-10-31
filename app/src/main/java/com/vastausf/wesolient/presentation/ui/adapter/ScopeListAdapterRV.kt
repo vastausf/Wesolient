@@ -7,21 +7,23 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.vastausf.wesolient.R
+import com.vastausf.wesolient.data.Scope
 import kotlinx.android.synthetic.main.item_scope_list.view.*
 
 class ScopeListAdapterRV(
-    private val onClick: ((String) -> Unit)? = null
-) : ListAdapter<String, ScopeListAdapterRV.ViewHolder>(ScopeDiff) {
-    companion object ScopeDiff : DiffUtil.ItemCallback<String>() {
-        override fun areItemsTheSame(oldItem: String, newItem: String) =
+    private val onClick: ((Scope) -> Unit)? = null,
+    private val onLongClick: ((Scope) -> Unit)? = null
+) : ListAdapter<Scope, ScopeListAdapterRV.ViewHolder>(ScopeDiff) {
+    companion object ScopeDiff : DiffUtil.ItemCallback<Scope>() {
+        override fun areItemsTheSame(oldItem: Scope, newItem: Scope) =
             oldItem == newItem
 
-        override fun areContentsTheSame(oldItem: String, newItem: String) =
+        override fun areContentsTheSame(oldItem: Scope, newItem: Scope) =
             oldItem == newItem
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position), onClick)
+        holder.bind(getItem(position), onClick, onLongClick)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -31,10 +33,17 @@ class ScopeListAdapterRV(
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(item: String, onClick: ((String) -> Unit)?) {
-            itemView.title.text = item
+        fun bind(item: Scope, onClick: ((Scope) -> Unit)?, onLongClick: ((Scope) -> Unit)?) {
+            itemView.title.text = item.title
+
             itemView.setOnClickListener {
                 onClick?.invoke(item)
+            }
+
+            itemView.setOnLongClickListener {
+                onLongClick?.invoke(item)
+
+                true
             }
         }
     }
