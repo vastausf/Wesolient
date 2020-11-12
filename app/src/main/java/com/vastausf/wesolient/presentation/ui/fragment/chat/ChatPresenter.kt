@@ -2,10 +2,10 @@ package com.vastausf.wesolient.presentation.ui.fragment.chat
 
 import com.tinder.scarlet.Scarlet
 import com.tinder.scarlet.websocket.okhttp.newWebSocketFactory
-import com.vastausf.wesolient.data.Message
-import com.vastausf.wesolient.data.Scope
 import com.vastausf.wesolient.model.ScopeStore
 import com.vastausf.wesolient.model.SocketService
+import com.vastausf.wesolient.model.data.Message
+import com.vastausf.wesolient.model.data.Scope
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
@@ -32,7 +32,7 @@ constructor(
             ?.let {
                 scope = it
 
-                messageList = scope.history.toMutableList()
+                messageList = scope.history
                 updateMessageList()
 
                 createService()
@@ -53,15 +53,15 @@ constructor(
 
     private fun clientMessage(message: String) {
         service.sendMessage(message)
-        addNewMessage(message, Message.CLIENT_SOURCE)
+        addNewMessage(message, Message.Source.CLIENT_SOURCE)
     }
 
     private fun systemMessage(message: String) {
-        addNewMessage(message, Message.SYSTEM_SOURCE)
+        addNewMessage(message, Message.Source.SYSTEM_SOURCE)
     }
 
     private fun serverMessage(message: String) {
-        addNewMessage(message, Message.SERVER_SOURCE)
+        addNewMessage(message, Message.Source.SERVER_SOURCE)
     }
 
     private fun createService() {
@@ -75,7 +75,7 @@ constructor(
         subscribeOnService()
     }
 
-    private fun addNewMessage(content: String, source: Int) {
+    private fun addNewMessage(content: String, source: Message.Source) {
         val message = Message(
             source = source,
             content = content,
@@ -84,7 +84,7 @@ constructor(
 
         messageList.add(message)
 
-        scopeStoreRealm.addMessageInScopeHistory(scope.id, message)
+        scopeStoreRealm.addMessageInScopeHistory(scope.uid, message)
 
         updateMessageList()
     }

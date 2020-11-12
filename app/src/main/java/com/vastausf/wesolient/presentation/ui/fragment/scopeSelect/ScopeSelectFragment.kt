@@ -5,7 +5,7 @@ import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vastausf.wesolient.R
-import com.vastausf.wesolient.data.Scope
+import com.vastausf.wesolient.model.data.Scope
 import com.vastausf.wesolient.presentation.ui.adapter.ScopeListAdapterRV
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_select_scope.*
@@ -28,10 +28,10 @@ class ScopeSelectFragment : MvpAppCompatFragment(R.layout.fragment_select_scope)
             scopeListRV.layoutManager = LinearLayoutManager(requireContext())
             scopeListRV.adapter = ScopeListAdapterRV(
                 onClick = {
-                    launchScope(it.id)
+                    launchScope(it.uid)
                 },
                 onLongClick = {
-                    launchScopeEdit(it.id)
+                    launchScopeEdit(it.uid)
                 }
             )
 

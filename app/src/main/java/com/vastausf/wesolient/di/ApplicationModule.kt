@@ -1,5 +1,12 @@
 package com.vastausf.wesolient.di
 
+import android.content.Context
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.tinder.scarlet.Scarlet
 import com.tinder.streamadapter.coroutines.CoroutinesStreamAdapterFactory
 import com.vastausf.wesolient.model.ScopeStore
@@ -8,7 +15,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
-import io.realm.Realm
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Singleton
 
 @Module
@@ -16,15 +23,29 @@ import javax.inject.Singleton
 object ApplicationModule {
     @Provides
     @Singleton
-    fun providesScopeStore(realm: Realm): ScopeStore {
-        return ScopeStore(realm)
+    fun providesFirebaseUser(): FirebaseUser {
+        return Firebase.auth.currentUser!!
     }
 
     @Provides
     @Singleton
-    fun providesRealm(): Realm {
-        return Realm
-            .getDefaultInstance()
+    fun providesFirebaseDatabase(): FirebaseDatabase {
+        return Firebase.database
+    }
+
+    @Provides
+    @Singleton
+    fun providesFirebaseAnalytics(@ApplicationContext context: Context): FirebaseAnalytics {
+        return FirebaseAnalytics.getInstance(context)
+    }
+
+    @Provides
+    @Singleton
+    fun providesScopeStore(
+        databaseReference: FirebaseDatabase,
+        firebaseUser: FirebaseUser
+    ): ScopeStore {
+        return ScopeStore(databaseReference, firebaseUser)
     }
 
     @Provides

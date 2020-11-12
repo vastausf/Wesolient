@@ -1,6 +1,6 @@
 package com.vastausf.wesolient.presentation.ui.fragment.chat
 
-import com.vastausf.wesolient.data.Message
+import com.vastausf.wesolient.model.data.Message
 import moxy.MvpView
 import moxy.viewstate.strategy.alias.AddToEndSingle
 import moxy.viewstate.strategy.alias.Skip

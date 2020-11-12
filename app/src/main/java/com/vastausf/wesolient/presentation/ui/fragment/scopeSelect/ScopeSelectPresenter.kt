@@ -1,5 +1,6 @@
 package com.vastausf.wesolient.presentation.ui.fragment.scopeSelect
 
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.vastausf.wesolient.model.ScopeStore
 import com.vastausf.wesolient.model.listener.ChangeListener
 import kotlinx.coroutines.launch
@@ -12,7 +13,8 @@ import javax.inject.Inject
 class ScopeSelectPresenter
 @Inject
 constructor(
-    private val scopeStoreRealm: ScopeStore
+    private val scopeStoreRealm: ScopeStore,
+    private val firebaseAnalytics: FirebaseAnalytics
 ) : MvpPresenter<ScopeSelectView>() {
     private val scopeChangeListener = ChangeListener {
         updateScopeList()
@@ -25,6 +27,8 @@ constructor(
 
     private fun updateScopeList() {
         viewState.updateLoadState(true)
+
+        firebaseAnalytics.logEvent("scope_opening", null)
 
         presenterScope.launch {
             viewState.updateScopeList(scopeStoreRealm.getAll())

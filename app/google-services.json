@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "754183102343",
+    "firebase_url": "https://wesolient.firebaseio.com",
+    "project_id": "wesolient",
+    "storage_bucket": "wesolient.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:754183102343:android:f6f0b042064e8b4d7ffd22",
+        "android_client_info": {
+          "package_name": "com.vastausf.wesolient"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "754183102343-3t5qvmj5302ij4agd5lep355pcrnf2v2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2B8xGDTfUEHHgalT1Sphd5Ss556ikSBY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "754183102343-3t5qvmj5302ij4agd5lep355pcrnf2v2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

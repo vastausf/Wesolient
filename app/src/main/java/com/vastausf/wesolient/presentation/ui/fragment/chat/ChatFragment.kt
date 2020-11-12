@@ -5,7 +5,7 @@ import android.widget.Toast
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vastausf.wesolient.R
-import com.vastausf.wesolient.data.Message
+import com.vastausf.wesolient.model.data.Message
 import com.vastausf.wesolient.presentation.ui.adapter.ChatAdapterRV
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_chat.*

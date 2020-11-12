@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.vastausf.wesolient.R
-import com.vastausf.wesolient.data.Scope
+import com.vastausf.wesolient.model.data.Scope
 import kotlinx.android.synthetic.main.item_scope_list.view.*
 
 class ScopeListAdapterRV(

@@ -1,96 +1,55 @@
 package com.vastausf.wesolient.model
 
-import com.vastausf.wesolient.data.Message
-import com.vastausf.wesolient.data.Scope
-import com.vastausf.wesolient.model.data.MessageRealm
-import com.vastausf.wesolient.model.data.ScopeRealm
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.FirebaseDatabase
+import com.vastausf.wesolient.model.data.Message
+import com.vastausf.wesolient.model.data.Scope
 import com.vastausf.wesolient.model.listener.ChangeListener
-import io.realm.Realm
 import javax.inject.Inject
 
 class ScopeStore
 @Inject
 constructor(
-    private val realm: Realm
+    private val firebaseDatabase: FirebaseDatabase,
+    private val firebaseUser: FirebaseUser
 ) {
     private val changeListeners: MutableList<ChangeListener> = mutableListOf()
 
-    init {
-        realm.addChangeListener {
-            changeListeners.forEach { it.onChange() }
-        }
-    }
+    private val usersTable = "USERS"
 
     fun create(title: String, url: String): Scope {
-        val newScope = ScopeRealm(
+        val newScope = Scope(
             title = title,
             url = url
         )
 
-        realm.executeTransaction {
-            realm.copyToRealm(newScope)
-        }
+        firebaseDatabase
+            .reference
+            .child(usersTable)
+            .child(firebaseUser.uid)
+            .child(newScope.uid)
+            .setValue(newScope)
 
-        return Scope.fromRealm(newScope)
+        return newScope
     }
 
     fun edit(id: String, newTitle: String, newUrl: String) {
-        val scopeRealm = realm
-            .where(ScopeRealm::class.java)
-            .equalTo("id", id)
-            .findFirst()
-
-        realm.executeTransaction {
-            scopeRealm?.apply {
-                title = newTitle
-                url = newUrl
-            }
-        }
+        firebaseDatabase
+            .reference
+            .child(usersTable)
+            .child(firebaseUser.uid)
     }
 
     fun getAll(): List<Scope> {
-        return realm
-            .where(ScopeRealm::class.java)
-            .findAll()
-            .map {
-                Scope.fromRealm(it)
-            }
+        return emptyList()
     }
 
     fun getById(id: String): Scope? {
-        return realm
-            .where(ScopeRealm::class.java)
-            .and()
-            .equalTo("id", id)
-            .findFirst()
-            ?.let {
-                Scope.fromRealm(it)
-            }
+        return null
     }
 
-    fun addMessageInScopeHistory(id: String, message: Message): Boolean {
-        val scope = realm
-            .where(ScopeRealm::class.java)
-            .and()
-            .equalTo("id", id)
-            .findFirst()
+    fun addMessageInScopeHistory(id: String, message: Message) {
 
-        return if (scope != null) {
-            realm.executeTransaction {
-                scope
-                    .history
-                    .add(message.let {
-                        MessageRealm(
-                            it.id,
-                            it.source,
-                            it.content,
-                            it.dateTime
-                        )
-                    })
-            }
-
-            true
-        } else false
     }
 
     fun registerListener(listener: ChangeListener) {

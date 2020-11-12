@@ -17,6 +17,10 @@
         <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
+    <style name="LoginTheme" parent="AppTheme">
+        <item name="android:background">@drawable/splash</item>
+    </style>
+
     <style name="DialogFragment" parent="Theme.AppCompat.Dialog">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:layout_gravity">center</item>

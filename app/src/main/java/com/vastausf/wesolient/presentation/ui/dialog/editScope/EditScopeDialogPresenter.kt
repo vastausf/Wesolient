@@ -1,7 +1,7 @@
 package com.vastausf.wesolient.presentation.ui.dialog.editScope
 
-import com.vastausf.wesolient.data.Scope
 import com.vastausf.wesolient.model.ScopeStore
+import com.vastausf.wesolient.model.data.Scope
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import javax.inject.Inject
@@ -24,7 +24,7 @@ constructor(
 
     fun onApply(newTitle: String, newUrl: String) {
         scopeStore
-            .edit(scope.id, newTitle, newUrl)
+            .edit(scope.uid, newTitle, newUrl)
 
         viewState.onApplySuccess()
     }
