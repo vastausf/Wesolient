@@ -10,6 +10,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.vastausf.wesolient.R
+import com.vastausf.wesolient.presentation.ui.dialog.deleteScope.DeleteScopeDialogArgs
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.dialog_edit_scope.*
 import moxy.MvpAppCompatDialogFragment
@@ -24,7 +25,7 @@ class EditScopeDialog : MvpAppCompatDialogFragment(), EditScopeDialogView {
 
     private val presenter by moxyPresenter { presenterProvider.get() }
 
-    private val args by navArgs<EditScopeDialogArgs>()
+    private val args by navArgs<DeleteScopeDialogArgs>()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = AlertDialog
@@ -40,7 +41,7 @@ class EditScopeDialog : MvpAppCompatDialogFragment(), EditScopeDialogView {
     override fun onStart() {
         super.onStart()
 
-        presenter.provide(args.scopeId)
+        presenter.onStart(args.uid)
 
         requireDialog().apply {
             applyB.setOnClickListener {

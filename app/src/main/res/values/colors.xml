@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#F44336</color>
     <color name="colorAccent">#F44336</color>
 
+    <color name="colorSecondary">#EAEAEA</color>
+
     <color name="colorBackground">#FFFFFF</color>
     <color name="colorServerMessageBackground">#E4E4E4</color>
     <color name="colorClientMessageBackground">#FFCFCF</color>

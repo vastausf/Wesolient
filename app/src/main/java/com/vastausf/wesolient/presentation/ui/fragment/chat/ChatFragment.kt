@@ -38,8 +38,6 @@ class ChatFragment : MvpAppCompatFragment(R.layout.fragment_chat), ChatView {
                 presenter.onMessageSend(messageET.text.toString())
             }
         }
-
-        presenter.provideScopeTitle(args.scopeTitle)
     }
 
     override fun updateChatHistory(chatHistory: List<Message>) {

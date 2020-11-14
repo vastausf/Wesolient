@@ -18,26 +18,11 @@ import javax.inject.Inject
 class ChatPresenter
 @Inject
 constructor(
-    private val scopeStoreRealm: ScopeStore,
+    private val scopeStore: ScopeStore,
     private val scarletBuilder: Scarlet.Builder
 ) : MvpPresenter<ChatView>() {
     private lateinit var scope: Scope
     private lateinit var service: SocketService
-
-    private var messageList: MutableList<Message> = mutableListOf()
-
-    fun provideScopeTitle(title: String) {
-        scopeStoreRealm
-            .getById(title)
-            ?.let {
-                scope = it
-
-                messageList = scope.history
-                updateMessageList()
-
-                createService()
-            } ?: viewState.showMessageMissScope()
-    }
 
     fun onMessageSend(message: String) {
         if (message.isNotEmpty()) {
@@ -48,7 +33,7 @@ constructor(
     }
 
     private fun updateMessageList() {
-        viewState.updateChatHistory(messageList.toList())
+
     }
 
     private fun clientMessage(message: String) {
@@ -82,11 +67,7 @@ constructor(
             dateTime = 0
         )
 
-        messageList.add(message)
-
-        scopeStoreRealm.addMessageInScopeHistory(scope.uid, message)
-
-        updateMessageList()
+        scopeStore.addMessageInScopeHistory(scope.uid, message)
     }
 
     private fun subscribeOnService() {

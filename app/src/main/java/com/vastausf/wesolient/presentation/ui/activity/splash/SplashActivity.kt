@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import com.firebase.ui.auth.AuthUI
-import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.vastausf.wesolient.R
@@ -33,7 +32,8 @@ class SplashActivity : MvpAppCompatActivity() {
                     .getInstance()
                     .createSignInIntentBuilder()
                     .setAvailableProviders(providers)
-                    .setLogo(R.drawable.ic_app)
+                    .setTheme(R.style.LoginTheme)
+                    .setIsSmartLockEnabled(false)
                     .build(),
                 rcSignIn
             )
@@ -49,10 +49,10 @@ class SplashActivity : MvpAppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == rcSignIn) {
-            val response = IdpResponse.fromResultIntent(data)
-
             if (resultCode == Activity.RESULT_OK) {
                 onAuthSuccess()
+            } else {
+                onBackPressed()
             }
         }
     }

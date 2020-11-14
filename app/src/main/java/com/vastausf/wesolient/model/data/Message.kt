@@ -1,5 +1,6 @@
 package com.vastausf.wesolient.model.data
 
+import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties
 import java.util.*
 
@@ -15,4 +16,15 @@ data class Message(
         CLIENT_SOURCE,
         SYSTEM_SOURCE
     }
+
+    @Exclude
+    fun toMap(): Map<String, Any?> {
+        return mapOf(
+            "uid" to id,
+            "source" to source,
+            "content" to content,
+            "dateTime" to dateTime
+        )
+    }
 }
+

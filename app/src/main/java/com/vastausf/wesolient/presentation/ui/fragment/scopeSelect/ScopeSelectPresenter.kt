@@ -1,8 +1,8 @@
 package com.vastausf.wesolient.presentation.ui.fragment.scopeSelect
 
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.vastausf.wesolient.model.ScopeStore
-import com.vastausf.wesolient.model.listener.ChangeListener
+import com.vastausf.wesolient.model.data.Scope
+import com.vastausf.wesolient.model.listener.UpdateListener
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import moxy.MvpPresenter
@@ -13,27 +13,24 @@ import javax.inject.Inject
 class ScopeSelectPresenter
 @Inject
 constructor(
-    private val scopeStoreRealm: ScopeStore,
-    private val firebaseAnalytics: FirebaseAnalytics
-) : MvpPresenter<ScopeSelectView>() {
-    private val scopeChangeListener = ChangeListener {
-        updateScopeList()
-    }
+    private val scopeStore: ScopeStore
+) : MvpPresenter<ScopeSelectFragmentView>() {
 
     override fun onFirstViewAttach() {
-        scopeStoreRealm.registerListener(scopeChangeListener)
         updateScopeList()
     }
 
     private fun updateScopeList() {
-        viewState.updateLoadState(true)
-
-        firebaseAnalytics.logEvent("scope_opening", null)
-
         presenterScope.launch {
-            viewState.updateScopeList(scopeStoreRealm.getAll())
+            scopeStore.onUpdate(object : UpdateListener<List<Scope>> {
+                override fun onUpdate(snapshot: List<Scope>) {
+                    viewState.updateLoadState(true)
 
-            viewState.updateLoadState(false)
+                    viewState.updateScopeList(snapshot)
+
+                    viewState.updateLoadState(false)
+                }
+            })
         }
     }
 
@@ -43,9 +40,5 @@ constructor(
 
     fun onClickCreateNew() {
         viewState.showCreateDialog()
-    }
-
-    override fun onDestroy() {
-        scopeStoreRealm.unregisterListener(scopeChangeListener)
     }
 }

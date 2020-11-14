@@ -1,6 +1,7 @@
 package com.vastausf.wesolient.presentation.ui.dialog.createScope
 
 import com.vastausf.wesolient.model.ScopeStore
+import com.vastausf.wesolient.model.listener.WriteListener
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import javax.inject.Inject
@@ -15,12 +16,14 @@ constructor(
         title: String,
         url: String
     ) {
-        if (scopeStore.getAll().map { it.title }.contains(title)) {
-            viewState.showConflict()
-        } else {
-            scopeStore.create(title, url)
+        scopeStore.createScope(title, url, object : WriteListener {
+            override fun onSuccess() {
+                viewState.dismissDialog()
+            }
 
-            viewState.dismissDialog()
-        }
+            override fun onFailure() {
+                viewState.showConflict()
+            }
+        })
     }
 }

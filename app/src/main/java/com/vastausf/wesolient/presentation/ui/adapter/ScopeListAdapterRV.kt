@@ -11,8 +11,8 @@ import com.vastausf.wesolient.model.data.Scope
 import kotlinx.android.synthetic.main.item_scope_list.view.*
 
 class ScopeListAdapterRV(
-    private val onClick: ((Scope) -> Unit)? = null,
-    private val onLongClick: ((Scope) -> Unit)? = null
+    private val onClick: ((Scope, View) -> Unit)? = null,
+    private val onLongClick: ((Scope, View) -> Unit)? = null
 ) : ListAdapter<Scope, ScopeListAdapterRV.ViewHolder>(ScopeDiff) {
     companion object ScopeDiff : DiffUtil.ItemCallback<Scope>() {
         override fun areItemsTheSame(oldItem: Scope, newItem: Scope) =
@@ -33,15 +33,19 @@ class ScopeListAdapterRV(
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(item: Scope, onClick: ((Scope) -> Unit)?, onLongClick: ((Scope) -> Unit)?) {
+        fun bind(
+            item: Scope,
+            onClick: ((Scope, View) -> Unit)?,
+            onLongClick: ((Scope, View) -> Unit)?
+        ) {
             itemView.title.text = item.title
 
             itemView.setOnClickListener {
-                onClick?.invoke(item)
+                onClick?.invoke(item, itemView)
             }
 
             itemView.setOnLongClickListener {
-                onLongClick?.invoke(item)
+                onLongClick?.invoke(item, itemView)
 
                 true
             }

@@ -2,6 +2,7 @@ package com.vastausf.wesolient.presentation.ui.dialog.editScope
 
 import com.vastausf.wesolient.model.ScopeStore
 import com.vastausf.wesolient.model.data.Scope
+import com.vastausf.wesolient.model.listener.ValueListener
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import javax.inject.Inject
@@ -14,17 +15,19 @@ constructor(
 ) : MvpPresenter<EditScopeDialogView>() {
     private lateinit var scope: Scope
 
-    fun provide(id: String) {
-        scopeStore.getById(id)?.let {
-            scope = it
+    fun onStart(uid: String) {
+        scopeStore.getScopeOnce(uid, object : ValueListener<Scope> {
+            override fun onSuccess(value: Scope) {
+                scope = value
 
-            viewState.bindField(it.title, it.url)
-        } ?: viewState.scopeNotFound()
+                viewState.bindField(value.title, value.url)
+            }
+        })
     }
 
     fun onApply(newTitle: String, newUrl: String) {
         scopeStore
-            .edit(scope.uid, newTitle, newUrl)
+            .editScope(scope.uid, newTitle, newUrl)
 
         viewState.onApplySuccess()
     }

@@ -2,8 +2,10 @@ package com.vastausf.wesolient.di
 
 import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -16,46 +18,58 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Singleton
 
 @Module
 @InstallIn(ApplicationComponent::class)
 object ApplicationModule {
     @Provides
-    @Singleton
-    fun providesFirebaseUser(): FirebaseUser {
-        return Firebase.auth.currentUser!!
+    fun providesFirebaseUser(firebaseAuth: FirebaseAuth): FirebaseUser {
+        return firebaseAuth.currentUser!!
     }
 
     @Provides
-    @Singleton
     fun providesFirebaseDatabase(): FirebaseDatabase {
-        return Firebase.database
+        return Firebase
+            .database
     }
 
     @Provides
-    @Singleton
-    fun providesFirebaseAnalytics(@ApplicationContext context: Context): FirebaseAnalytics {
+    fun providesFirebaseAuth(): FirebaseAuth {
+        return Firebase.auth
+    }
+
+    @Provides
+    fun providesFirebaseDatabaseScopes(
+        firebaseDatabase: FirebaseDatabase,
+        firebaseUser: FirebaseUser
+    ): DatabaseReference {
+        return firebaseDatabase
+            .reference
+            .child("USERS")
+            .child(firebaseUser.uid)
+            .child("SCOPES")
+    }
+
+    @Provides
+    fun providesFirebaseAnalytics(
+        @ApplicationContext context: Context
+    ): FirebaseAnalytics {
         return FirebaseAnalytics.getInstance(context)
     }
 
     @Provides
-    @Singleton
     fun providesScopeStore(
-        databaseReference: FirebaseDatabase,
-        firebaseUser: FirebaseUser
+        firebaseDatabaseScopes: DatabaseReference
     ): ScopeStore {
-        return ScopeStore(databaseReference, firebaseUser)
+        return ScopeStore(firebaseDatabaseScopes)
     }
 
     @Provides
-    @Singleton
     fun providesScopeWorker(): ScopeWorker {
         return ScopeWorker()
     }
 
     @Provides
-    @Singleton
     fun providesSocketService(): Scarlet.Builder {
         return Scarlet
             .Builder()

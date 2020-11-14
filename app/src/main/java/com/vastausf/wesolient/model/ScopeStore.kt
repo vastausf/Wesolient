@@ -1,62 +1,169 @@
 package com.vastausf.wesolient.model
 
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.getValue
 import com.vastausf.wesolient.model.data.Message
 import com.vastausf.wesolient.model.data.Scope
-import com.vastausf.wesolient.model.listener.ChangeListener
+import com.vastausf.wesolient.model.listener.DeleteListener
+import com.vastausf.wesolient.model.listener.UpdateListener
+import com.vastausf.wesolient.model.listener.ValueListener
+import com.vastausf.wesolient.model.listener.WriteListener
 import javax.inject.Inject
 
 class ScopeStore
 @Inject
 constructor(
-    private val firebaseDatabase: FirebaseDatabase,
-    private val firebaseUser: FirebaseUser
+    private val firebaseDatabaseScopes: DatabaseReference
 ) {
-    private val changeListeners: MutableList<ChangeListener> = mutableListOf()
-
-    private val usersTable = "USERS"
-
-    fun create(title: String, url: String): Scope {
+    fun createScope(title: String, url: String, writeListener: WriteListener? = null) {
         val newScope = Scope(
             title = title,
             url = url
         )
 
-        firebaseDatabase
-            .reference
-            .child(usersTable)
-            .child(firebaseUser.uid)
+        firebaseDatabaseScopes
             .child(newScope.uid)
             .setValue(newScope)
-
-        return newScope
+            .addOnSuccessListener {
+                writeListener?.onSuccess()
+            }
+            .addOnFailureListener {
+                writeListener?.onFailure()
+            }
     }
 
-    fun edit(id: String, newTitle: String, newUrl: String) {
-        firebaseDatabase
-            .reference
-            .child(usersTable)
-            .child(firebaseUser.uid)
+    fun editScope(
+        uid: String,
+        newTitle: String,
+        newUrl: String,
+        writeListener: WriteListener? = null
+    ) {
+        firebaseDatabaseScopes
+            .child(uid)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val value = snapshot.getValue<Scope>()
+
+                    if (value != null) {
+                        firebaseDatabaseScopes
+                            .child(uid)
+                            .setValue(value.apply {
+                                title = newTitle
+                                url = newUrl
+                            })
+                            .addOnSuccessListener {
+                                writeListener?.onSuccess()
+                            }
+                            .addOnFailureListener {
+                                writeListener?.onFailure()
+                            }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    writeListener?.onFailure()
+                }
+            })
     }
 
-    fun getAll(): List<Scope> {
-        return emptyList()
+    fun deleteScope(uid: String, deleteListener: DeleteListener? = null) {
+        firebaseDatabaseScopes
+            .child(uid)
+            .removeValue()
+            .addOnSuccessListener {
+                deleteListener?.onSuccess()
+            }
+            .addOnFailureListener {
+                deleteListener?.onFailure()
+            }
     }
 
-    fun getById(id: String): Scope? {
-        return null
+    fun onUpdate(updateListener: UpdateListener<List<Scope>>? = null) {
+        firebaseDatabaseScopes
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val value =
+                        snapshot.getValue<HashMap<String, Scope>>()?.values?.toList() ?: emptyList()
+
+                    updateListener?.onUpdate(value)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    updateListener?.onFailure()
+                }
+            })
     }
 
-    fun addMessageInScopeHistory(id: String, message: Message) {
+    fun getScope(id: String, updateListener: UpdateListener<Scope>? = null) {
+        firebaseDatabaseScopes
+            .child(id)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val value = snapshot.getValue<Scope>()
 
+                    if (value != null) {
+                        updateListener?.onUpdate(value)
+                    } else {
+                        updateListener?.onFailure()
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    updateListener?.onFailure()
+                }
+            })
     }
 
-    fun registerListener(listener: ChangeListener) {
-        changeListeners.add(listener)
+    fun getScopeOnce(id: String, valueListener: ValueListener<Scope>? = null) {
+        firebaseDatabaseScopes
+            .child(id)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val value = snapshot.getValue<Scope>()
+
+                    if (value != null) {
+                        valueListener?.onSuccess(value)
+                    } else {
+                        valueListener?.onNotFound()
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    valueListener?.onFailure()
+                }
+            })
     }
 
-    fun unregisterListener(listener: ChangeListener) {
-        changeListeners.remove(listener)
+    fun addMessageInScopeHistory(
+        id: String,
+        message: Message,
+        writeListener: WriteListener? = null
+    ) {
+        firebaseDatabaseScopes
+            .child(id)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val value = snapshot.getValue<Scope>()
+
+                    if (value != null) {
+                        firebaseDatabaseScopes
+                            .child(id)
+                            .setValue(value.history.apply { add(message) })
+                            .addOnSuccessListener {
+                                writeListener?.onSuccess()
+                            }
+                            .addOnFailureListener {
+                                writeListener?.onFailure()
+                            }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    writeListener?.onFailure()
+                }
+            })
     }
 }

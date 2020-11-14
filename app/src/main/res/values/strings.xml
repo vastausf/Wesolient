@@ -2,9 +2,16 @@
     <string name="app_name">Wesolient</string>
     <string name="app_head_name">@string/app_name</string>
 
-    <!--    CHOOSE SCOPE LIST   -->
+    <!--    DELETE SCOPE DIALOG   -->
+    <string name="no">no</string>
+    <string name="deleted_success">deleted</string>
+    <string name="deleted_failure">something went wrong. try later</string>
+
+    <!--    SELECT SCOPE LIST   -->
     <string name="scope_list_placeholder">Scope list is empty.\nMaybe you should to add one?</string>
     <string name="create_new_scope">create new</string>
+    <string name="edit">edit</string>
+    <string name="delete">delete</string>
 
     <!--    CREATE SCOPE DIALOG    -->
     <string name="apply">apply</string>
@@ -18,4 +25,8 @@
     <!--    CHAT FRAGMENT   -->
     <string name="miss_scope">can\'t find this scope</string>
     <string name="message_hint">type message here…</string>
+    <string name="delete_this_scope">Do you want to delete this scope?</string>
+    <string name="log_out">log out</string>
+
+
 </resources>

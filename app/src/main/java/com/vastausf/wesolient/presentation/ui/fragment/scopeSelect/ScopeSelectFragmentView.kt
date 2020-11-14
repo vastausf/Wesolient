@@ -5,7 +5,7 @@ import moxy.MvpView
 import moxy.viewstate.strategy.alias.AddToEndSingle
 import moxy.viewstate.strategy.alias.Skip
 
-interface ScopeSelectView: MvpView {
+interface ScopeSelectFragmentView : MvpView {
     @AddToEndSingle
     fun updateScopeList(scopeList: List<Scope>)
 

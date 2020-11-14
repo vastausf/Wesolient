@@ -15,27 +15,50 @@
             android:id="@+id/action_scopeSelectFragment_to_chatFragment"
             app:destination="@id/chatFragment" />
         <action
+            android:id="@+id/action_scopeSelectFragment_to_deleteScopeDialog"
+            app:destination="@id/deleteScopeDialog" />
+        <action
             android:id="@+id/action_scopeSelectFragment_to_editScopeDialog"
             app:destination="@id/editScopeDialog" />
+        <action
+            android:id="@+id/action_scopeSelectFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
+
     <dialog
         android:id="@+id/createScopeDialog"
         android:name="com.vastausf.wesolient.presentation.ui.dialog.createScope.CreateScopeDialog"
         android:label="CreateScopeDialog" />
-    <fragment
-        android:id="@+id/chatFragment"
-        android:name="com.vastausf.wesolient.presentation.ui.fragment.chat.ChatFragment"
-        android:label="ChatFragment">
+
+    <dialog
+        android:id="@+id/deleteScopeDialog"
+        android:name="com.vastausf.wesolient.presentation.ui.dialog.deleteScope.DeleteScopeDialog"
+        android:label="DeleteScopeDialog">
         <argument
-            android:name="scope_title"
+            android:name="uid"
             app:argType="string" />
-    </fragment>
+    </dialog>
+
     <dialog
         android:id="@+id/editScopeDialog"
         android:name="com.vastausf.wesolient.presentation.ui.dialog.editScope.EditScopeDialog"
         android:label="EditScopeDialog">
         <argument
-            android:name="scope_id"
+            android:name="uid"
             app:argType="string" />
     </dialog>
+
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.vastausf.wesolient.presentation.ui.fragment.chat.ChatFragment"
+        android:label="ChatFragment">
+        <argument
+            android:name="uid"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.vastausf.wesolient.presentation.ui.fragment.settings.SettingsFragment"
+        android:label="SettingsFragment" />
 </navigation>

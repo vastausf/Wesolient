@@ -44,6 +44,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
 
     //Services
     implementation platform("com.google.firebase:firebase-bom:$firebase_bom_version")
@@ -76,7 +77,6 @@ dependencies {
     implementation "com.tinder.scarlet:websocket-okhttp:$scarlet_version"
     implementation "com.tinder.scarlet:stream-adapter-coroutines:$scarlet_version"
     implementation "com.tinder.scarlet:stream-adapter-rxjava2:$scarlet_version"
-
 
     //Jackson
     implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.11.3"
