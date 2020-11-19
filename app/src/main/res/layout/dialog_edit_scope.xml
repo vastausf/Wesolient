@@ -1,54 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_background"
     android:orientation="vertical"
-    android:padding="48dp">
+    android:padding="8dp">
 
-    <LinearLayout
+    <EditText
+        android:id="@+id/etTitle"
+        style="@style/EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/dialog_background"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:hint="@string/scope_title"
+        android:inputType="text"
+        android:maxLines="1"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16sp" />
 
-        <EditText
-            android:id="@+id/editScopeTitleET"
-            style="@style/EditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/scope_title"
-            android:importantForAutofill="no"
-            android:inputType="text"
-            android:maxLines="1"
-            android:textColor="@color/colorPrimary"
-            android:textSize="16sp" />
-
-        <EditText
-            android:id="@+id/editScopeUrlET"
-            style="@style/EditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/scope_url"
-            android:inputType="text|textUri"
-            android:maxLines="1"
-            android:textColor="@color/colorText"
-            android:importantForAutofill="no"
-            android:textSize="16sp" />
-    </LinearLayout>
+    <EditText
+        android:id="@+id/etUrl"
+        style="@style/EditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/scope_url"
+        android:inputType="text|textUri"
+        android:maxLines="1"
+        android:textColor="@color/colorText"
+        android:textSize="16sp" />
 
     <Button
-        android:id="@+id/applyB"
+        android:id="@+id/bApply"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:layout_marginHorizontal="4dp"
-        android:layout_marginVertical="8dp"
         android:background="@drawable/accent_button_background"
         android:enabled="false"
         android:foreground="?android:selectableItemBackground"
-        android:text="@string/create"
+        android:text="@string/apply"
         android:textColor="@color/colorBackground" />
 
 </LinearLayout>

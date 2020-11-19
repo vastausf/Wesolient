@@ -17,7 +17,7 @@
             android:padding="12dp">
 
             <LinearLayout
-                android:id="@+id/logoLL"
+                android:id="@+id/llLogo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -45,12 +45,13 @@
             </LinearLayout>
 
             <ImageButton
-                android:id="@+id/settingsB"
+                android:id="@+id/bSettings"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/settings"
                 android:src="@drawable/ic_settings"
+                android:tint="@color/colorSecondary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -62,7 +63,7 @@
             android:orientation="horizontal">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/scopeListRV"
+                android:id="@+id/rvScopeList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:overScrollMode="ifContentScrolls"
@@ -70,27 +71,26 @@
                 tools:listitem="@layout/item_scope_list" />
 
             <TextView
-                android:id="@+id/scopeListPlaceholder"
+                android:id="@+id/tvScopeListPlaceholder"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="@string/scope_list_placeholder"
-                android:textColor="@color/colorTextHint"
+                android:textColor="@color/colorTextSecondary"
                 android:visibility="visible" />
         </FrameLayout>
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/createScopeB"
+        android:id="@+id/bCreate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:contentDescription="@string/add"
-        android:foregroundGravity="bottom|right"
         android:src="@drawable/ic_add"
         android:tint="@color/colorBackground"
         app:borderWidth="0dp"
-        app:layout_anchor="@id/scopeListRV"
+        app:layout_anchor="@id/rvScopeList"
         app:layout_anchorGravity="right|bottom"
         app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

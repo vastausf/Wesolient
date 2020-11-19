@@ -16,7 +16,7 @@ class ChatAdapterRV(
 ) : ListAdapter<Message, ChatAdapterRV.ViewHolder>(MessageDiff) {
     companion object MessageDiff : DiffUtil.ItemCallback<Message>() {
         override fun areItemsTheSame(oldItem: Message, newItem: Message) =
-            oldItem.id == newItem.id
+            oldItem == newItem
 
         override fun areContentsTheSame(oldItem: Message, newItem: Message) =
             oldItem == newItem
@@ -60,7 +60,7 @@ class ChatAdapterRV(
             onClick: ((Message) -> Unit)?,
             onLongClick: ((Message) -> Unit)?
         ) {
-            itemView.messageTV.text = item.content
+            itemView.tvMessage.text = item.content
 
             itemView.setOnClickListener {
                 onClick?.invoke(item)

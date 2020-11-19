@@ -6,11 +6,11 @@
     android:padding="8dp">
 
     <TextView
-        android:id="@+id/messageTV"
+        android:id="@+id/tvMessage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:textAlignment="center"
-        android:textColor="@color/colorTextHint"
+        android:textColor="@color/colorTextSecondary"
         android:textSize="12sp" />
 
 </LinearLayout>

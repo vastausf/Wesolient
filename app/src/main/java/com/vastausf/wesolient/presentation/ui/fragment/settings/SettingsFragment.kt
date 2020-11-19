@@ -21,7 +21,7 @@ class SettingsFragment : MvpAppCompatFragment(R.layout.fragment_settings), Setti
         super.onActivityCreated(savedInstanceState)
 
         if (savedInstanceState == null) {
-            logoutB.setOnClickListener {
+            bLogout.setOnClickListener {
                 presenter.onLogout()
             }
         }

@@ -5,12 +5,11 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
-import com.vastausf.wesolient.model.data.Message
 import com.vastausf.wesolient.model.data.Scope
+import com.vastausf.wesolient.model.listener.CreateListener
 import com.vastausf.wesolient.model.listener.DeleteListener
 import com.vastausf.wesolient.model.listener.UpdateListener
 import com.vastausf.wesolient.model.listener.ValueListener
-import com.vastausf.wesolient.model.listener.CreateListener
 import javax.inject.Inject
 
 class ScopeStore
@@ -97,30 +96,10 @@ constructor(
             })
     }
 
-    fun getScope(id: String, updateListener: UpdateListener<Scope>? = null) {
-        firebaseDatabaseScopes
-            .child(id)
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val value = snapshot.getValue<Scope>()
-
-                    if (value != null) {
-                        updateListener?.onUpdate(value)
-                    } else {
-                        updateListener?.onFailure()
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    updateListener?.onFailure()
-                }
-            })
-    }
-
     fun getScopeOnce(id: String, valueListener: ValueListener<Scope>? = null) {
         firebaseDatabaseScopes
             .child(id)
-            .addValueEventListener(object : ValueEventListener {
+            .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val value = snapshot.getValue<Scope>()
 
@@ -133,36 +112,6 @@ constructor(
 
                 override fun onCancelled(error: DatabaseError) {
                     valueListener?.onFailure()
-                }
-            })
-    }
-
-    fun addMessageInScopeHistory(
-        id: String,
-        message: Message,
-        createListener: CreateListener? = null
-    ) {
-        firebaseDatabaseScopes
-            .child(id)
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val value = snapshot.getValue<Scope>()
-
-                    if (value != null) {
-                        firebaseDatabaseScopes
-                            .child(id)
-                            .setValue(value.history.apply { add(message) })
-                            .addOnSuccessListener {
-                                createListener?.onSuccess()
-                            }
-                            .addOnFailureListener {
-                                createListener?.onFailure()
-                            }
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    createListener?.onFailure()
                 }
             })
     }

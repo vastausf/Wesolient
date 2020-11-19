@@ -1,17 +1,15 @@
 package com.vastausf.wesolient.presentation.ui.fragment.chat
 
-import com.tinder.scarlet.Scarlet
-import com.tinder.scarlet.websocket.okhttp.newWebSocketFactory
+import com.vastausf.wesolient.Wesolient
 import com.vastausf.wesolient.model.ScopeStore
-import com.vastausf.wesolient.model.SocketService
+import com.vastausf.wesolient.model.ServiceCreator
 import com.vastausf.wesolient.model.data.Message
 import com.vastausf.wesolient.model.data.Scope
-import kotlinx.coroutines.channels.consumeEach
+import com.vastausf.wesolient.model.listener.ValueListener
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import moxy.presenterScope
-import okhttp3.OkHttpClient
 import javax.inject.Inject
 
 @InjectViewState
@@ -19,45 +17,65 @@ class ChatPresenter
 @Inject
 constructor(
     private val scopeStore: ScopeStore,
-    private val scarletBuilder: Scarlet.Builder
+    private val serviceCreator: ServiceCreator,
+    private val wesolient: Wesolient
 ) : MvpPresenter<ChatView>() {
     private lateinit var scope: Scope
-    private lateinit var service: SocketService
+
+    var serviceHolder: ServiceCreator.ServiceHolder? = null
+
+    private val messageList: MutableList<Message> = mutableListOf()
 
     fun onMessageSend(message: String) {
-        if (message.isNotEmpty()) {
+        if (message.isNotBlank()) {
             clientMessage(message)
 
             viewState.onSend()
         }
     }
 
-    private fun updateMessageList() {
+    fun onStart(uid: String) {
+        scopeStore.getScopeOnce(uid, object : ValueListener<Scope> {
+            override fun onSuccess(value: Scope) {
+                scope = value
+            }
 
+            override fun onNotFound() {
+                viewState.onMissScope()
+            }
+
+            override fun onFailure() {
+                viewState.onMissScope()
+            }
+        })
     }
 
-    private fun clientMessage(message: String) {
-        service.sendMessage(message)
-        addNewMessage(message, Message.Source.CLIENT_SOURCE)
-    }
-
-    private fun systemMessage(message: String) {
-        addNewMessage(message, Message.Source.SYSTEM_SOURCE)
-    }
-
-    private fun serverMessage(message: String) {
-        addNewMessage(message, Message.Source.SERVER_SOURCE)
-    }
-
-    private fun createService() {
-        service = scarletBuilder
-            .webSocketFactory(
-                OkHttpClient.Builder().build().newWebSocketFactory(scope.url)
-            )
-            .build()
-            .create()
+    fun onConnect() {
+        serviceHolder = serviceCreator.create(scope.url)
 
         subscribeOnService()
+
+        serviceHolder?.connect()
+
+        viewState.changeConnectionState(true)
+    }
+
+    fun onDisconnect(code: Int? = null, reason: String? = null) {
+        serviceHolder?.disconnect(code, reason)
+
+        viewState.changeConnectionState(false)
+    }
+
+    private fun subscribeOnService() {
+        presenterScope.launch {
+            serviceHolder?.apply {
+                service
+                    .observeMessage()
+                    .subscribe {
+                        serverMessage(it)
+                    }
+            }
+        }
     }
 
     private fun addNewMessage(content: String, source: Message.Source) {
@@ -67,16 +85,22 @@ constructor(
             dateTime = 0
         )
 
-        scopeStore.addMessageInScopeHistory(scope.uid, message)
+        messageList.add(message)
+
+        viewState.updateChatHistory(messageList)
     }
 
-    private fun subscribeOnService() {
-        presenterScope.launch {
-            service
-                .observeMessage()
-                .consumeEach {
-                    serverMessage(it)
-                }
-        }
+    private fun clientMessage(message: String) {
+        serviceHolder?.service?.sendMessage(message)
+
+        addNewMessage(message, Message.Source.CLIENT_SOURCE)
+    }
+
+    private fun systemMessage(message: String) {
+        addNewMessage(message, Message.Source.SYSTEM_SOURCE)
+    }
+
+    private fun serverMessage(message: String) {
+        addNewMessage(message, Message.Source.SERVER_SOURCE)
     }
 }

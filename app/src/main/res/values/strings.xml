@@ -3,8 +3,8 @@
     <string name="app_head_name">@string/app_name</string>
 
     <!--    DELETE SCOPE DIALOG   -->
-    <string name="scope_deleted_success">deleted</string>
-    <string name="scope_deleted_failure">something went wrong. try later</string>
+    <string name="delete_this_scope">do you want to delete this scope?</string>
+    <string name="delete_yes">yes</string>
 
     <!--    SELECT SCOPE LIST   -->
     <string name="logo">logo</string>
@@ -23,8 +23,9 @@
     <!--    CHAT FRAGMENT   -->
     <string name="miss_scope">can\'t find this scope</string>
     <string name="message_hint">type message here…</string>
-    <string name="delete_this_scope">do you want to delete this scope?</string>
     <string name="log_out">log out</string>
     <string name="settings">settings</string>
     <string name="add">add</string>
+    <string name="connected">connected</string>
+    <string name="disconnected">disconnected</string>
 </resources>

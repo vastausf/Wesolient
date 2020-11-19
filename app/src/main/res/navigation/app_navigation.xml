@@ -17,9 +17,6 @@
             android:id="@+id/action_scopeSelectFragment_to_chatFragment"
             app:destination="@id/chatFragment" />
         <action
-            android:id="@+id/action_scopeSelectFragment_to_deleteScopeDialog"
-            app:destination="@id/deleteScopeDialog" />
-        <action
             android:id="@+id/action_scopeSelectFragment_to_editScopeDialog"
             app:destination="@id/editScopeDialog" />
         <action
@@ -36,16 +33,6 @@
         android:name="com.vastausf.wesolient.presentation.ui.dialog.createScope.CreateScopeDialog"
         android:label="CreateScopeDialog"
         tools:layout="@layout/dialog_create_scope"/>
-
-    <dialog
-        android:id="@+id/deleteScopeDialog"
-        android:name="com.vastausf.wesolient.presentation.ui.dialog.deleteScope.DeleteScopeDialog"
-        android:label="DeleteScopeDialog"
-        tools:layout="@layout/dialog_delete_scope">
-        <argument
-            android:name="uid"
-            app:argType="string" />
-    </dialog>
 
     <dialog
         android:id="@+id/editScopeDialog"
