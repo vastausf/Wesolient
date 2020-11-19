@@ -28,4 +28,11 @@
     <string name="add">add</string>
     <string name="connected">connected</string>
     <string name="disconnected">disconnected</string>
+    <string name="connection_error">connection error</string>
+    <string name="used_reserved_code">codes 1004..1006, 1012..2999 are reserved and may not be used</string>
+
+    <!--    CLOSE REASON DIALOG   -->
+    <string name="reason_code">code</string>
+    <string name="reason_message">message</string>
+    <string name="close">close</string>
 </resources>

@@ -7,6 +7,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vastausf.wesolient.R
+import com.vastausf.wesolient.model.CloseReason
 import com.vastausf.wesolient.model.data.Message
 import com.vastausf.wesolient.presentation.ui.adapter.ChatAdapterRV
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,12 +50,25 @@ class ChatFragment : MvpAppCompatFragment(R.layout.fragment_chat), ChatView {
             }
 
             bDisconnect.setOnLongClickListener {
-                presenter.onDisconnect()
+                launchCloseReasonDialog()
 
                 return@setOnLongClickListener true
             }
 
             presenter.onStart(args.uid)
+        }
+    }
+
+    private fun launchCloseReasonDialog() {
+        findNavController().apply {
+            navigate(ChatFragmentDirections.actionChatFragmentToCloseReasonDialog())
+
+            currentBackStackEntry
+                ?.savedStateHandle
+                ?.getLiveData<CloseReason>(CloseReason.key)
+                ?.observe(viewLifecycleOwner) {
+                    presenter.onDisconnect(it.code, it.message)
+                }
         }
     }
 
@@ -82,5 +96,9 @@ class ChatFragment : MvpAppCompatFragment(R.layout.fragment_chat), ChatView {
         bDisconnect.visibility = if (newState) View.VISIBLE else View.GONE
 
         llMessageBar.visibility = if (newState) View.VISIBLE else View.GONE
+    }
+
+    override fun onConnectionError() {
+        Toast.makeText(context, R.string.connection_error, Toast.LENGTH_SHORT).show()
     }
 }

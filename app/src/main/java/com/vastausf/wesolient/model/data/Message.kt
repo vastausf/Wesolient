@@ -7,7 +7,6 @@ data class Message(
 ) {
     enum class Source {
         SERVER_SOURCE,
-        CLIENT_SOURCE,
-        SYSTEM_SOURCE
+        CLIENT_SOURCE
     }
 }

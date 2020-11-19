@@ -52,6 +52,9 @@
         <argument
             android:name="uid"
             app:argType="string" />
+        <action
+            android:id="@+id/action_chatFragment_to_closeReasonDialog"
+            app:destination="@id/closeReasonDialog" />
     </fragment>
 
     <fragment
@@ -63,4 +66,9 @@
         android:id="@+id/splashActivity"
         android:name="com.vastausf.wesolient.presentation.ui.activity.splash.SplashActivity"
         android:label="SplashActivity" />
+    <dialog
+        android:id="@+id/closeReasonDialog"
+        android:name="com.vastausf.wesolient.presentation.ui.dialog.closeReason.CloseReasonDialog"
+        android:label="CloseReasonDialog"
+        tools:layout="@layout/dialog_close_reason" />
 </navigation>

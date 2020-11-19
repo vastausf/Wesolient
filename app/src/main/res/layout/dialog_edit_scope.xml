@@ -7,7 +7,7 @@
     android:padding="8dp">
 
     <EditText
-        android:id="@+id/etTitle"
+        android:id="@+id/etCode"
         style="@style/EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,7 +18,7 @@
         android:textSize="16sp" />
 
     <EditText
-        android:id="@+id/etUrl"
+        android:id="@+id/etMessage"
         style="@style/EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

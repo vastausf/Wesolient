@@ -44,12 +44,6 @@ class ChatAdapterRV(
                         .inflate(R.layout.item_client_message, parent, false)
                 )
             }
-            Message.Source.SYSTEM_SOURCE.ordinal -> {
-                SystemMessageViewHolder(
-                    LayoutInflater.from(parent.context)
-                        .inflate(R.layout.item_system_message, parent, false)
-                )
-            }
             else -> throw IllegalStateException("Illegal message view type")
         }
     }
@@ -77,6 +71,4 @@ class ChatAdapterRV(
     inner class ServerMessageViewHolder(itemView: View) : ViewHolder(itemView)
 
     inner class ClientMessageViewHolder(itemView: View) : ViewHolder(itemView)
-
-    inner class SystemMessageViewHolder(itemView: View) : ViewHolder(itemView)
 }

@@ -17,7 +17,7 @@ class ServiceCreator {
         val service = Scarlet
             .Builder()
             .addStreamAdapterFactory(RxJava2StreamAdapterFactory())
-            .webSocketFactory(OkHttpClient.Builder().build().newWebSocketFactory(url))
+            .webSocketFactory(OkHttpClient().newWebSocketFactory(url))
             .lifecycle(lifecycleRegistry)
             .build()
             .create<SocketService>()
@@ -30,7 +30,7 @@ class ServiceCreator {
 
     data class ServiceHolder(
         val service: SocketService,
-        private val lifecycleRegistry: LifecycleRegistry
+        val lifecycleRegistry: LifecycleRegistry
     ) {
         fun connect() {
             lifecycleRegistry.onNext(Lifecycle.State.Started)
@@ -47,7 +47,7 @@ class ServiceCreator {
                     )
                 )
             else
-                lifecycleRegistry.onNext(Lifecycle.State.Stopped.AndAborted)
+                lifecycleRegistry.onNext(Lifecycle.State.Stopped.WithReason(ShutdownReason.GRACEFUL))
         }
     }
 }

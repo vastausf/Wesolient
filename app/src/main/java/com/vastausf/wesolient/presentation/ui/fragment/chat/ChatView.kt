@@ -10,6 +10,9 @@ interface ChatView : MvpView {
     fun updateChatHistory(chatHistory: List<Message>)
 
     @Skip
+    fun onConnectionError()
+
+    @Skip
     fun onMissScope()
 
     @AddToEndSingle

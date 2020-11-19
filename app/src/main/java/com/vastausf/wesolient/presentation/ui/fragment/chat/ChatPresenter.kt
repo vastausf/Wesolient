@@ -1,15 +1,17 @@
 package com.vastausf.wesolient.presentation.ui.fragment.chat
 
-import com.vastausf.wesolient.Wesolient
+import android.util.Log
+import com.tinder.scarlet.WebSocket
 import com.vastausf.wesolient.model.ScopeStore
 import com.vastausf.wesolient.model.ServiceCreator
 import com.vastausf.wesolient.model.data.Message
 import com.vastausf.wesolient.model.data.Scope
 import com.vastausf.wesolient.model.listener.ValueListener
-import kotlinx.coroutines.launch
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import moxy.InjectViewState
 import moxy.MvpPresenter
-import moxy.presenterScope
+import java.net.SocketException
 import javax.inject.Inject
 
 @InjectViewState
@@ -17,12 +19,11 @@ class ChatPresenter
 @Inject
 constructor(
     private val scopeStore: ScopeStore,
-    private val serviceCreator: ServiceCreator,
-    private val wesolient: Wesolient
+    private val serviceCreator: ServiceCreator
 ) : MvpPresenter<ChatView>() {
-    private lateinit var scope: Scope
+    private var scope: Scope? = null
 
-    var serviceHolder: ServiceCreator.ServiceHolder? = null
+    private var serviceHolder: ServiceCreator.ServiceHolder? = null
 
     private val messageList: MutableList<Message> = mutableListOf()
 
@@ -51,31 +52,87 @@ constructor(
     }
 
     fun onConnect() {
-        serviceHolder = serviceCreator.create(scope.url)
+        try {
+            scope?.apply {
+                serviceHolder = serviceCreator.create(url)
 
-        subscribeOnService()
+                subscribeOnService()
 
-        serviceHolder?.connect()
-
-        viewState.changeConnectionState(true)
+                serviceHolder?.connect()
+            }
+        } catch (exception: Exception) {
+            onConnectionException(exception)
+        }
     }
 
     fun onDisconnect(code: Int? = null, reason: String? = null) {
-        serviceHolder?.disconnect(code, reason)
-
-        viewState.changeConnectionState(false)
+        try {
+            serviceHolder?.disconnect(code, reason)
+        } catch (exception: Exception) {
+            onConnectionException(exception)
+        }
     }
 
     private fun subscribeOnService() {
-        presenterScope.launch {
+        serviceHolder?.apply {
+            service
+                .observeMessage()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .doOnNext {
+                    Log.d("data", it)
+                    serverMessage(it)
+                }
+                .subscribe()
+
             serviceHolder?.apply {
                 service
-                    .observeMessage()
+                    .observeWebSocketEvent()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
                     .subscribe {
-                        serverMessage(it)
+                        when (it) {
+                            is WebSocket.Event.OnConnectionOpened<*> -> {
+                                onConnectionOpened()
+                            }
+                            is WebSocket.Event.OnMessageReceived -> {
+
+                            }
+                            is WebSocket.Event.OnConnectionFailed -> {
+                                onConnectionException(it.throwable)
+                                onConnectionClosed()
+                            }
+                            is WebSocket.Event.OnConnectionClosing -> {
+
+                            }
+                            is WebSocket.Event.OnConnectionClosed -> {
+                                onConnectionClosed()
+                            }
+                        }
                     }
             }
         }
+    }
+
+    private fun onConnectionException(exception: Throwable) {
+        exception.printStackTrace()
+
+        when (exception) {
+            is SocketException -> {
+                viewState.onConnectionError()
+            }
+            else -> {
+                viewState.onConnectionError()
+            }
+        }
+    }
+
+    private fun onConnectionOpened() {
+        viewState.changeConnectionState(true)
+    }
+
+    private fun onConnectionClosed() {
+        viewState.changeConnectionState(false)
     }
 
     private fun addNewMessage(content: String, source: Message.Source) {
@@ -96,11 +153,11 @@ constructor(
         addNewMessage(message, Message.Source.CLIENT_SOURCE)
     }
 
-    private fun systemMessage(message: String) {
-        addNewMessage(message, Message.Source.SYSTEM_SOURCE)
-    }
-
     private fun serverMessage(message: String) {
         addNewMessage(message, Message.Source.SERVER_SOURCE)
+    }
+
+    override fun onDestroy() {
+        onDisconnect()
     }
 }
