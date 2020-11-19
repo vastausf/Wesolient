@@ -3,33 +3,28 @@
     <string name="app_head_name">@string/app_name</string>
 
     <!--    DELETE SCOPE DIALOG   -->
-    <string name="no">no</string>
-    <string name="deleted_success">deleted</string>
-    <string name="deleted_failure">something went wrong. try later</string>
+    <string name="scope_deleted_success">deleted</string>
+    <string name="scope_deleted_failure">something went wrong. try later</string>
 
     <!--    SELECT SCOPE LIST   -->
+    <string name="logo">logo</string>
     <string name="scope_list_placeholder">Scope list is empty.\nMaybe you should to add one?</string>
-    <string name="create_new_scope">create new</string>
-    <string name="edit">edit</string>
-    <string name="delete">delete</string>
+    <string name="item_menu_edit">edit</string>
+    <string name="item_menu_delete">delete</string>
 
-    <!--    CREATE SCOPE DIALOG    -->
-    <string name="apply">apply</string>
-
-    <!--    CREATE SCOPE DIALOG    -->
-    <string name="scope_title">type title here…</string>
-    <string name="scope_url">…and url here</string>
+    <!--    CREATE SCOPE DIALOG   -->
+    <!--    EDIT SCOPE DIALOG   -->
+    <string name="scope_title">e.g. Awesome project</string>
+    <string name="scope_url">wss://awesome.project.io</string>
     <string name="create">create</string>
-    <string name="title_conflict">you already have a scope with a similar title</string>
+    <string name="apply">apply</string>
+    <string name="scope_create_failure">something went wrong. try later</string>
 
     <!--    CHAT FRAGMENT   -->
     <string name="miss_scope">can\'t find this scope</string>
     <string name="message_hint">type message here…</string>
-    <string name="delete_this_scope">Do you want to delete this scope?</string>
+    <string name="delete_this_scope">do you want to delete this scope?</string>
     <string name="log_out">log out</string>
-    <string name="logo">logo</string>
     <string name="settings">settings</string>
     <string name="add">add</string>
-
-
 </resources>

@@ -16,9 +16,9 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 @AndroidEntryPoint
-class CreateScopeDialog : MvpAppCompatDialogFragment(), CreateScopeDialogView {
+class CreateScopeDialog : MvpAppCompatDialogFragment(), CreateScopeView {
     @Inject
-    lateinit var presenterProvider: Provider<CreateScopeDialogPresenter>
+    lateinit var presenterProvider: Provider<CreateScopePresenter>
 
     private val presenter by moxyPresenter { presenterProvider.get() }
 
@@ -53,11 +53,11 @@ class CreateScopeDialog : MvpAppCompatDialogFragment(), CreateScopeDialogView {
         }
     }
 
-    override fun showConflict() {
-        Toast.makeText(context, R.string.title_conflict, Toast.LENGTH_SHORT).show()
-    }
-
     override fun dismissDialog() {
         dialog?.dismiss()
+    }
+
+    override fun showErrorMessage() {
+        Toast.makeText(context, R.string.scope_create_failure, Toast.LENGTH_SHORT).show()
     }
 }

@@ -17,9 +17,9 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 @AndroidEntryPoint
-class DeleteScopeDialog : MvpAppCompatDialogFragment(), DeleteScopeDialogView {
+class DeleteScopeDialog : MvpAppCompatDialogFragment(), DeleteScopeView {
     @Inject
-    lateinit var presenterProvider: Provider<DeleteScopeDialogPresenter>
+    lateinit var presenterProvider: Provider<DeleteScopePresenter>
 
     private val presenter by moxyPresenter { presenterProvider.get() }
 
@@ -43,22 +43,18 @@ class DeleteScopeDialog : MvpAppCompatDialogFragment(), DeleteScopeDialogView {
             deleteB.setOnClickListener {
                 presenter.onDelete(args.uid)
             }
-
-            cancelB.setOnClickListener {
-                dismiss()
-            }
         }
     }
 
     override fun onDelete() {
-        Toast.makeText(context, R.string.deleted_success, Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, R.string.scope_deleted_success, Toast.LENGTH_SHORT).show()
 
         findNavController()
             .popBackStack()
     }
 
     override fun onFailure() {
-        Toast.makeText(context, R.string.deleted_failure, Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, R.string.scope_deleted_failure, Toast.LENGTH_SHORT).show()
 
         findNavController()
             .popBackStack()

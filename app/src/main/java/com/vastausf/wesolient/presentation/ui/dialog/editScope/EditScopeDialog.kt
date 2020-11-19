@@ -21,7 +21,7 @@ import javax.inject.Provider
 @AndroidEntryPoint
 class EditScopeDialog : MvpAppCompatDialogFragment(), EditScopeDialogView {
     @Inject
-    lateinit var presenterProvider: Provider<EditScopeDialogPresenter>
+    lateinit var presenterProvider: Provider<EditScopePresenter>
 
     private val presenter by moxyPresenter { presenterProvider.get() }
 
