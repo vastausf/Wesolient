@@ -5,10 +5,8 @@ import moxy.MvpPresenter
 import javax.inject.Inject
 
 @InjectViewState
-class MainActivityPresenter
+class MainPresenter
 @Inject
 constructor(
 
-) : MvpPresenter<MainActivityView>() {
-
-}
+) : MvpPresenter<MainView>()

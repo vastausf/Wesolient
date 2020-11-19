@@ -7,11 +7,11 @@ import moxy.MvpPresenter
 import javax.inject.Inject
 
 @InjectViewState
-class DeleteScopeDialogPresenter
+class DeleteScopePresenter
 @Inject
 constructor(
     private val scopeStore: ScopeStore
-) : MvpPresenter<DeleteScopeDialogView>() {
+) : MvpPresenter<DeleteScopeView>() {
     fun onDelete(uid: String) {
         scopeStore
             .deleteScope(uid, object : DeleteListener {

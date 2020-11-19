@@ -29,17 +29,6 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/cancelB"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="4dp"
-            android:layout_marginVertical="8dp"
-            android:background="@drawable/secondary_button_background"
-            android:foreground="?android:selectableItemBackground"
-            android:text="@string/no"
-            android:textColor="@color/colorTextHint" />
-
-        <Button
             android:id="@+id/deleteB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -47,7 +36,7 @@
             android:layout_marginVertical="8dp"
             android:background="@drawable/accent_button_background"
             android:foreground="?android:selectableItemBackground"
-            android:text="@string/delete"
+            android:text="@string/item_menu_delete"
             android:textColor="@color/colorBackground" />
     </LinearLayout>
 </LinearLayout>

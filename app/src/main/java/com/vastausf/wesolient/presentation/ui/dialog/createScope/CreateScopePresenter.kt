@@ -7,11 +7,11 @@ import moxy.MvpPresenter
 import javax.inject.Inject
 
 @InjectViewState
-class CreateScopeDialogPresenter
+class CreateScopePresenter
 @Inject
 constructor(
     private val scopeStore: ScopeStore
-) : MvpPresenter<CreateScopeDialogView>() {
+) : MvpPresenter<CreateScopeView>() {
     fun onNewScopeCreate(
         title: String,
         url: String
@@ -22,7 +22,7 @@ constructor(
             }
 
             override fun onFailure() {
-                viewState.showConflict()
+                viewState.showErrorMessage()
             }
         })
     }

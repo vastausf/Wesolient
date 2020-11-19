@@ -8,7 +8,7 @@ import moxy.MvpPresenter
 import javax.inject.Inject
 
 @InjectViewState
-class EditScopeDialogPresenter
+class EditScopePresenter
 @Inject
 constructor(
     private val scopeStore: ScopeStore
