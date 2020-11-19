@@ -12,7 +12,6 @@ import com.google.firebase.ktx.Firebase
 import com.tinder.scarlet.Scarlet
 import com.tinder.streamadapter.coroutines.CoroutinesStreamAdapterFactory
 import com.vastausf.wesolient.model.ScopeStore
-import com.vastausf.wesolient.model.ScopeWorker
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,7 +22,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 @InstallIn(ApplicationComponent::class)
 object ApplicationModule {
     @Provides
-    fun providesFirebaseUser(firebaseAuth: FirebaseAuth): FirebaseUser {
+    fun providesFirebaseUser(
+        firebaseAuth: FirebaseAuth
+    ): FirebaseUser {
         return firebaseAuth.currentUser!!
     }
 
@@ -62,11 +63,6 @@ object ApplicationModule {
         firebaseDatabaseScopes: DatabaseReference
     ): ScopeStore {
         return ScopeStore(firebaseDatabaseScopes)
-    }
-
-    @Provides
-    fun providesScopeWorker(): ScopeWorker {
-        return ScopeWorker()
     }
 
     @Provides

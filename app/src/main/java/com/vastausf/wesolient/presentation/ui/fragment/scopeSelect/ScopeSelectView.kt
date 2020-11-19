@@ -5,13 +5,10 @@ import moxy.MvpView
 import moxy.viewstate.strategy.alias.AddToEndSingle
 import moxy.viewstate.strategy.alias.Skip
 
-interface ScopeSelectFragmentView : MvpView {
+interface ScopeSelectView : MvpView {
     @AddToEndSingle
     fun updateScopeList(scopeList: List<Scope>)
 
     @Skip
     fun showCreateDialog()
-
-    @AddToEndSingle
-    fun updateLoadState(newState: Boolean)
 }

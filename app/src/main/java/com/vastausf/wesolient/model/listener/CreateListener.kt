@@ -1,6 +1,6 @@
 package com.vastausf.wesolient.model.listener
 
-interface WriteListener {
+interface CreateListener {
     fun onSuccess() {}
 
     fun onFailure() {}

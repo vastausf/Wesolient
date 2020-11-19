@@ -14,28 +14,13 @@ class ScopeSelectPresenter
 @Inject
 constructor(
     private val scopeStore: ScopeStore
-) : MvpPresenter<ScopeSelectFragmentView>() {
-
+) : MvpPresenter<ScopeSelectView>() {
     override fun onFirstViewAttach() {
-        updateScopeList()
-    }
-
-    private fun updateScopeList() {
-        presenterScope.launch {
-            scopeStore.onUpdate(object : UpdateListener<List<Scope>> {
-                override fun onUpdate(snapshot: List<Scope>) {
-                    viewState.updateLoadState(true)
-
-                    viewState.updateScopeList(snapshot)
-
-                    viewState.updateLoadState(false)
-                }
-            })
-        }
-    }
-
-    fun onRefresh() {
-        updateScopeList()
+        scopeStore.onUpdate(object : UpdateListener<List<Scope>> {
+            override fun onUpdate(snapshot: List<Scope>) {
+                viewState.updateScopeList(snapshot)
+            }
+        })
     }
 
     fun onClickCreateNew() {

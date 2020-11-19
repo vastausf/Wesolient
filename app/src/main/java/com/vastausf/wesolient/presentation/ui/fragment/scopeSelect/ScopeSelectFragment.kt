@@ -18,7 +18,7 @@ import javax.inject.Provider
 
 @AndroidEntryPoint
 class ScopeSelectFragment : MvpAppCompatFragment(R.layout.fragment_select_scope),
-    ScopeSelectFragmentView {
+    ScopeSelectView {
     @Inject
     lateinit var presenterProvider: Provider<ScopeSelectPresenter>
 
@@ -60,10 +60,6 @@ class ScopeSelectFragment : MvpAppCompatFragment(R.layout.fragment_select_scope)
                 presenter.onClickCreateNew()
             }
 
-            scopeListSRL.setOnRefreshListener {
-                presenter.onRefresh()
-            }
-
             settingsB.setOnClickListener {
                 launchSettings()
             }
@@ -86,10 +82,6 @@ class ScopeSelectFragment : MvpAppCompatFragment(R.layout.fragment_select_scope)
         findNavController().navigate(
             ScopeSelectFragmentDirections.actionScopeSelectFragmentToCreateScopeDialog()
         )
-    }
-
-    override fun updateLoadState(newState: Boolean) {
-        scopeListSRL.isRefreshing = newState
     }
 
     private fun launchScopeChat(uid: String) {

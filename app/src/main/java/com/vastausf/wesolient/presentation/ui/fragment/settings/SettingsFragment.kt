@@ -1,9 +1,8 @@
 package com.vastausf.wesolient.presentation.ui.fragment.settings
 
-import android.content.Intent
 import android.os.Bundle
+import androidx.navigation.fragment.findNavController
 import com.vastausf.wesolient.R
-import com.vastausf.wesolient.presentation.ui.activity.splash.SplashActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_settings.*
 import moxy.MvpAppCompatFragment
@@ -12,9 +11,9 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 @AndroidEntryPoint
-class SettingsFragment : MvpAppCompatFragment(R.layout.fragment_settings), SettingsFragmentView {
+class SettingsFragment : MvpAppCompatFragment(R.layout.fragment_settings), SettingsView {
     @Inject
-    lateinit var presenterProvider: Provider<SettingsFragmentPresenter>
+    lateinit var presenterProvider: Provider<SettingsPresenter>
 
     private val presenter by moxyPresenter { presenterProvider.get() }
 
@@ -23,13 +22,14 @@ class SettingsFragment : MvpAppCompatFragment(R.layout.fragment_settings), Setti
 
         if (savedInstanceState == null) {
             logoutB.setOnClickListener {
-                presenter.onLogOut()
+                presenter.onLogout()
             }
         }
     }
 
-    override fun signOut() {
-        startActivity(Intent(context, SplashActivity::class.java))
-        activity?.finishAffinity()
+    override fun logout() {
+        findNavController()
+            .navigate(R.id.splashActivity)
+        requireActivity().finishAffinity()
     }
 }

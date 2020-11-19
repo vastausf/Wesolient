@@ -10,7 +10,7 @@ import com.vastausf.wesolient.model.data.Scope
 import com.vastausf.wesolient.model.listener.DeleteListener
 import com.vastausf.wesolient.model.listener.UpdateListener
 import com.vastausf.wesolient.model.listener.ValueListener
-import com.vastausf.wesolient.model.listener.WriteListener
+import com.vastausf.wesolient.model.listener.CreateListener
 import javax.inject.Inject
 
 class ScopeStore
@@ -18,7 +18,7 @@ class ScopeStore
 constructor(
     private val firebaseDatabaseScopes: DatabaseReference
 ) {
-    fun createScope(title: String, url: String, writeListener: WriteListener? = null) {
+    fun createScope(title: String, url: String, createListener: CreateListener? = null) {
         val newScope = Scope(
             title = title,
             url = url
@@ -28,10 +28,10 @@ constructor(
             .child(newScope.uid)
             .setValue(newScope)
             .addOnSuccessListener {
-                writeListener?.onSuccess()
+                createListener?.onSuccess()
             }
             .addOnFailureListener {
-                writeListener?.onFailure()
+                createListener?.onFailure()
             }
     }
 
@@ -39,7 +39,7 @@ constructor(
         uid: String,
         newTitle: String,
         newUrl: String,
-        writeListener: WriteListener? = null
+        createListener: CreateListener? = null
     ) {
         firebaseDatabaseScopes
             .child(uid)
@@ -55,16 +55,16 @@ constructor(
                                 url = newUrl
                             })
                             .addOnSuccessListener {
-                                writeListener?.onSuccess()
+                                createListener?.onSuccess()
                             }
                             .addOnFailureListener {
-                                writeListener?.onFailure()
+                                createListener?.onFailure()
                             }
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    writeListener?.onFailure()
+                    createListener?.onFailure()
                 }
             })
     }
@@ -140,7 +140,7 @@ constructor(
     fun addMessageInScopeHistory(
         id: String,
         message: Message,
-        writeListener: WriteListener? = null
+        createListener: CreateListener? = null
     ) {
         firebaseDatabaseScopes
             .child(id)
@@ -153,16 +153,16 @@ constructor(
                             .child(id)
                             .setValue(value.history.apply { add(message) })
                             .addOnSuccessListener {
-                                writeListener?.onSuccess()
+                                createListener?.onSuccess()
                             }
                             .addOnFailureListener {
-                                writeListener?.onFailure()
+                                createListener?.onFailure()
                             }
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    writeListener?.onFailure()
+                    createListener?.onFailure()
                 }
             })
     }
