@@ -1,10 +1,8 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext.kotlin_version = "1.4.10"
     ext.coroutines_version = "1.4.1"
     ext.scarlet_version = "0.1.10"
     ext.moxy_version = "2.2.0"
-    ext.realm_version = "7.0.5"
     ext.hilt_version = "2.28-alpha"
     ext.navigation_version = "2.3.1"
     ext.gservices_version = "4.3.4"
@@ -19,7 +17,6 @@ buildscript {
         classpath "com.android.tools.build:gradle:4.1.1"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
-        classpath "io.realm:realm-gradle-plugin:$realm_version"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$navigation_version"
         classpath "com.google.gms:google-services:$gservices_version"
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.4.1'

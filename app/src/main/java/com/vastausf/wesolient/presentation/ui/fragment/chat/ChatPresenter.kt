@@ -1,6 +1,5 @@
 package com.vastausf.wesolient.presentation.ui.fragment.chat
 
-import android.util.Log
 import com.tinder.scarlet.WebSocket
 import com.vastausf.wesolient.model.ScopeStore
 import com.vastausf.wesolient.model.ServiceCreator
@@ -9,8 +8,10 @@ import com.vastausf.wesolient.model.data.Scope
 import com.vastausf.wesolient.model.listener.ValueListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import moxy.MvpPresenter
+import moxy.presenterScope
 import java.net.SocketException
 import javax.inject.Inject
 
@@ -75,42 +76,40 @@ constructor(
 
     private fun subscribeOnService() {
         serviceHolder?.apply {
-            service
-                .observeMessage()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .doOnNext {
-                    Log.d("data", it)
-                    serverMessage(it)
-                }
-                .subscribe()
-
-            serviceHolder?.apply {
+            presenterScope.launch {
                 service
-                    .observeWebSocketEvent()
+                    .observeMessage()
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe {
-                        when (it) {
-                            is WebSocket.Event.OnConnectionOpened<*> -> {
-                                onConnectionOpened()
-                            }
-                            is WebSocket.Event.OnMessageReceived -> {
-
-                            }
-                            is WebSocket.Event.OnConnectionFailed -> {
-                                onConnectionException(it.throwable)
-                                onConnectionClosed()
-                            }
-                            is WebSocket.Event.OnConnectionClosing -> {
-
-                            }
-                            is WebSocket.Event.OnConnectionClosed -> {
-                                onConnectionClosed()
-                            }
-                        }
+                        serverMessage(it)
                     }
             }
+
+            service
+                .observeWebSocketEvent()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe {
+                    when (it) {
+                        is WebSocket.Event.OnConnectionOpened<*> -> {
+                            onConnectionOpened()
+                        }
+                        is WebSocket.Event.OnMessageReceived -> {
+
+                        }
+                        is WebSocket.Event.OnConnectionFailed -> {
+                            onConnectionException(it.throwable)
+                            onConnectionClosed()
+                        }
+                        is WebSocket.Event.OnConnectionClosing -> {
+
+                        }
+                        is WebSocket.Event.OnConnectionClosed -> {
+                            onConnectionClosed()
+                        }
+                    }
+                }
         }
     }
 
