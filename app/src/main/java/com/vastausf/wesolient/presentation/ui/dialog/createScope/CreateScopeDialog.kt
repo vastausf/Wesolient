@@ -32,13 +32,13 @@ class CreateScopeDialog : MvpBottomSheetDialogFragment(), CreateScopeView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         view.apply {
             bCreate.setOnClickListener {
-                val title = etCode.text.toString().trim()
-                val url = etMessage.text.toString().trim()
+                val title = etTitle.text.toString().trim()
+                val url = etUrl.text.toString().trim()
 
                 presenter.onNewScopeCreate(title, url)
             }
 
-            etCode.doAfterTextChanged {
+            etTitle.doAfterTextChanged {
                 bCreate.isEnabled = it.toString().isNotBlank()
             }
         }

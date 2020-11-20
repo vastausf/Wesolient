@@ -35,8 +35,8 @@ class EditScopeDialog : MvpBottomSheetDialogFragment(), EditScopeDialogView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         view.apply {
             bApply.setOnClickListener {
-                val newTitle = etCode.text.toString().trim()
-                val newUrl = etMessage.text.toString().trim()
+                val newTitle = etTitle.text.toString().trim()
+                val newUrl = etUrl.text.toString().trim()
 
                 presenter.onApply(
                     newTitle,
@@ -44,7 +44,7 @@ class EditScopeDialog : MvpBottomSheetDialogFragment(), EditScopeDialogView {
                 )
             }
 
-            etCode.doAfterTextChanged {
+            etTitle.doAfterTextChanged {
                 bApply.isEnabled = it.toString().isNotBlank()
             }
         }
@@ -58,8 +58,8 @@ class EditScopeDialog : MvpBottomSheetDialogFragment(), EditScopeDialogView {
 
     override fun bindField(title: String, url: String) {
         view.apply {
-            etCode.setText(title)
-            etMessage.setText(url)
+            etTitle.setText(title)
+            etUrl.setText(url)
         }
     }
 
