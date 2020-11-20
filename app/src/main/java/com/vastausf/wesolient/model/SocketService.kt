@@ -1,14 +1,17 @@
 package com.vastausf.wesolient.model
 
+import com.tinder.scarlet.WebSocket
 import com.tinder.scarlet.ws.Receive
 import com.tinder.scarlet.ws.Send
-import kotlinx.coroutines.channels.ReceiveChannel
-
+import io.reactivex.Flowable
 
 interface SocketService {
+    @Receive
+    fun observeWebSocketEvent(): Flowable<WebSocket.Event>
+
     @Send
     fun sendMessage(message: String)
 
     @Receive
-    fun observeMessage(): ReceiveChannel<String>
+    fun observeMessage(): Flowable<String>
 }

@@ -7,6 +7,5 @@ import java.util.*
 data class Scope(
     var uid: String = UUID.randomUUID().toString(),
     var title: String = "",
-    var url: String = "",
-    var history: MutableList<Message> = mutableListOf()
+    var url: String = ""
 )

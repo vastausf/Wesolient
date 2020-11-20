@@ -11,7 +11,7 @@
     <color name="colorClientMessageBackground">#FFCFCF</color>
 
     <color name="colorText">#202020</color>
-    <color name="colorTextHint">#B3B3B3</color>
+    <color name="colorTextSecondary">#DDDDDD</color>
 
     <color name="colorPrimaryDisabled">#FFB2B2</color>
 </resources>

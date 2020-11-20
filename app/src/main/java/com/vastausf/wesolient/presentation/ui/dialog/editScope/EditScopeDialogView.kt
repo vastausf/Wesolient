@@ -8,8 +8,5 @@ interface EditScopeDialogView : MvpView {
     fun bindField(title: String, url: String)
 
     @AddToEndSingle
-    fun scopeNotFound()
-
-    @AddToEndSingle
     fun onApplySuccess()
 }

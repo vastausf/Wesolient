@@ -7,12 +7,12 @@
     android:orientation="vertical">
 
     <Button
-        android:id="@+id/logoutB"
+        android:id="@+id/bLogout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:foreground="?android:attr/selectableItemBackground"
         android:text="@string/log_out"
-        android:textColor="@color/colorTextHint" />
+        android:textColor="@color/colorTextSecondary" />
 
 </LinearLayout>

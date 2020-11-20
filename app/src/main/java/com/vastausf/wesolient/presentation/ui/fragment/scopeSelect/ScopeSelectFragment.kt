@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.PopupMenu
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.vastausf.wesolient.R
 import com.vastausf.wesolient.model.data.Scope
 import com.vastausf.wesolient.presentation.ui.adapter.ScopeListAdapterRV
@@ -28,8 +29,8 @@ class ScopeSelectFragment : MvpAppCompatFragment(R.layout.fragment_select_scope)
         super.onActivityCreated(savedInstanceState)
 
         if (savedInstanceState == null) {
-            scopeListRV.layoutManager = LinearLayoutManager(requireContext())
-            scopeListRV.adapter = ScopeListAdapterRV(
+            rvScopeList.layoutManager = LinearLayoutManager(requireContext())
+            rvScopeList.adapter = ScopeListAdapterRV(
                 onClick = { item, _ ->
                     launchScopeChat(item.uid)
                 },
@@ -45,7 +46,9 @@ class ScopeSelectFragment : MvpAppCompatFragment(R.layout.fragment_select_scope)
                                     return@setOnMenuItemClickListener true
                                 }
                                 R.id.deleteMI -> {
-                                    launchScopeDelete(item.uid)
+                                    showDeleteSnackbar {
+                                        presenter.onDeleteScope(item.uid)
+                                    }
 
                                     return@setOnMenuItemClickListener true
                                 }
@@ -56,25 +59,34 @@ class ScopeSelectFragment : MvpAppCompatFragment(R.layout.fragment_select_scope)
                 }
             )
 
-            createScopeB.setOnClickListener {
-                presenter.onClickCreateNew()
+            bCreate.setOnClickListener {
+                presenter.onCreateScope()
             }
 
-            settingsB.setOnClickListener {
+            bSettings.setOnClickListener {
                 launchSettings()
             }
         }
     }
 
     override fun updateScopeList(scopeList: List<Scope>) {
-        (scopeListRV.adapter as ScopeListAdapterRV).submitList(scopeList)
+        (rvScopeList.adapter as ScopeListAdapterRV).submitList(scopeList)
 
         if (scopeList.isNotEmpty()) {
-            scopeListRV.visibility = View.VISIBLE
-            scopeListPlaceholder.visibility = View.GONE
+            rvScopeList.visibility = View.VISIBLE
+            tvScopeListPlaceholder.visibility = View.GONE
         } else {
-            scopeListRV.visibility = View.GONE
-            scopeListPlaceholder.visibility = View.VISIBLE
+            rvScopeList.visibility = View.INVISIBLE
+            tvScopeListPlaceholder.visibility = View.VISIBLE
+        }
+    }
+
+    private fun showDeleteSnackbar(onClick: () -> Unit) {
+        Snackbar.make(requireView(), R.string.delete_this_scope, Snackbar.LENGTH_LONG).apply {
+            setAction(R.string.delete_yes) {
+                onClick()
+            }
+            show()
         }
     }
 
@@ -93,12 +105,6 @@ class ScopeSelectFragment : MvpAppCompatFragment(R.layout.fragment_select_scope)
     private fun launchScopeEdit(uid: String) {
         findNavController().navigate(
             ScopeSelectFragmentDirections.actionScopeSelectFragmentToEditScopeDialog(uid)
-        )
-    }
-
-    private fun launchScopeDelete(uid: String) {
-        findNavController().navigate(
-            ScopeSelectFragmentDirections.actionScopeSelectFragmentToDeleteScopeDialog(uid)
         )
     }
 

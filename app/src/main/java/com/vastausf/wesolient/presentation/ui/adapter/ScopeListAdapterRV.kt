@@ -38,7 +38,7 @@ class ScopeListAdapterRV(
             onClick: ((Scope, View) -> Unit)?,
             onLongClick: ((Scope, View) -> Unit)?
         ) {
-            itemView.title.text = item.title
+            itemView.tvTitle.text = item.title
 
             itemView.setOnClickListener {
                 onClick?.invoke(item, itemView)

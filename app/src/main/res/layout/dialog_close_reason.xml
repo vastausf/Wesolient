@@ -7,23 +7,23 @@
     android:padding="8dp">
 
     <EditText
-        android:id="@+id/etTitle"
+        android:id="@+id/etCode"
         style="@style/EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/scope_title"
-        android:inputType="text"
+        android:hint="@string/reason_code"
+        android:inputType="number"
         android:maxLines="1"
         android:textColor="@color/colorPrimary"
         android:textSize="16sp" />
 
     <EditText
-        android:id="@+id/etUrl"
+        android:id="@+id/etMessage"
         style="@style/EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/scope_url"
-        android:inputType="text|textUri"
+        android:hint="@string/reason_message"
+        android:inputType="text"
         android:maxLines="1"
         android:textColor="@color/colorText"
         android:textSize="16sp" />
@@ -36,7 +36,7 @@
         android:background="@drawable/accent_button_background"
         android:enabled="false"
         android:foreground="?android:selectableItemBackground"
-        android:text="@string/apply"
+        android:text="@string/close"
         android:textColor="@color/colorBackground" />
 
 </LinearLayout>

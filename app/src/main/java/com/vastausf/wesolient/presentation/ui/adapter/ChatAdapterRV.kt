@@ -16,7 +16,7 @@ class ChatAdapterRV(
 ) : ListAdapter<Message, ChatAdapterRV.ViewHolder>(MessageDiff) {
     companion object MessageDiff : DiffUtil.ItemCallback<Message>() {
         override fun areItemsTheSame(oldItem: Message, newItem: Message) =
-            oldItem.id == newItem.id
+            oldItem == newItem
 
         override fun areContentsTheSame(oldItem: Message, newItem: Message) =
             oldItem == newItem
@@ -44,12 +44,6 @@ class ChatAdapterRV(
                         .inflate(R.layout.item_client_message, parent, false)
                 )
             }
-            Message.Source.SYSTEM_SOURCE.ordinal -> {
-                SystemMessageViewHolder(
-                    LayoutInflater.from(parent.context)
-                        .inflate(R.layout.item_system_message, parent, false)
-                )
-            }
             else -> throw IllegalStateException("Illegal message view type")
         }
     }
@@ -60,7 +54,7 @@ class ChatAdapterRV(
             onClick: ((Message) -> Unit)?,
             onLongClick: ((Message) -> Unit)?
         ) {
-            itemView.messageTV.text = item.content
+            itemView.tvMessage.text = item.content
 
             itemView.setOnClickListener {
                 onClick?.invoke(item)
@@ -77,6 +71,4 @@ class ChatAdapterRV(
     inner class ServerMessageViewHolder(itemView: View) : ViewHolder(itemView)
 
     inner class ClientMessageViewHolder(itemView: View) : ViewHolder(itemView)
-
-    inner class SystemMessageViewHolder(itemView: View) : ViewHolder(itemView)
 }

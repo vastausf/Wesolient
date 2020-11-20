@@ -1,10 +1,13 @@
 package com.vastausf.wesolient.presentation.ui.fragment.chat
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vastausf.wesolient.R
+import com.vastausf.wesolient.model.CloseReason
 import com.vastausf.wesolient.model.data.Message
 import com.vastausf.wesolient.presentation.ui.adapter.ChatAdapterRV
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,31 +30,75 @@ class ChatFragment : MvpAppCompatFragment(R.layout.fragment_chat), ChatView {
         super.onActivityCreated(savedInstanceState)
 
         if (savedInstanceState == null) {
-            chatRV.apply {
+            rvChat.apply {
                 layoutManager = LinearLayoutManager(requireContext()).apply {
                     stackFromEnd = true
                 }
                 adapter = ChatAdapterRV()
             }
 
-            sendB.setOnClickListener {
-                presenter.onMessageSend(messageET.text.toString())
+            bSend.setOnClickListener {
+                presenter.onMessageSend(etMessage.text.toString())
             }
+
+            bConnect.setOnClickListener {
+                presenter.onConnect()
+            }
+
+            bDisconnect.setOnClickListener {
+                presenter.onDisconnect()
+            }
+
+            bDisconnect.setOnLongClickListener {
+                launchCloseReasonDialog()
+
+                return@setOnLongClickListener true
+            }
+
+            presenter.onStart(args.uid)
+        }
+    }
+
+    private fun launchCloseReasonDialog() {
+        findNavController().apply {
+            navigate(ChatFragmentDirections.actionChatFragmentToCloseReasonDialog())
+
+            currentBackStackEntry
+                ?.savedStateHandle
+                ?.getLiveData<CloseReason>(CloseReason.key)
+                ?.observe(viewLifecycleOwner) {
+                    presenter.onDisconnect(it.code, it.message)
+                }
         }
     }
 
     override fun updateChatHistory(chatHistory: List<Message>) {
-        (chatRV.adapter as ChatAdapterRV).submitList(chatHistory)
-        if (!chatRV.canScrollVertically(1)) {
-            chatRV.smoothScrollToPosition(chatHistory.size)
+        (rvChat.adapter as ChatAdapterRV).submitList(chatHistory.toList())
+
+        if (!rvChat.canScrollVertically(1)) {
+            rvChat.smoothScrollToPosition(chatHistory.size)
         }
     }
 
-    override fun showMessageMissScope() {
+    override fun onMissScope() {
         Toast.makeText(context, R.string.miss_scope, Toast.LENGTH_SHORT).show()
+
+        findNavController()
+            .popBackStack()
     }
 
     override fun onSend() {
-        messageET.text.clear()
+        etMessage.text.clear()
+    }
+
+    override fun changeConnectionState(newState: Boolean) {
+        bConnect.visibility = if (!newState) View.VISIBLE else View.GONE
+        bDisconnect.visibility = if (newState) View.VISIBLE else View.GONE
+
+        llMessageBar.visibility = if (newState) View.VISIBLE else View.GONE
+    }
+
+    override fun onConnectionError() {
+        Toast.makeText(context, R.string.connection_error, Toast.LENGTH_SHORT).show()
     }
 }

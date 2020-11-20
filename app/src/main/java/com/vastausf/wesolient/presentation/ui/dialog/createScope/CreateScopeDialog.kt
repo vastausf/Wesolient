@@ -1,54 +1,45 @@
 package com.vastausf.wesolient.presentation.ui.dialog.createScope
 
-import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doAfterTextChanged
 import com.vastausf.wesolient.R
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.dialog_create_scope.*
-import moxy.MvpAppCompatDialogFragment
+import moxy.MvpBottomSheetDialogFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 import javax.inject.Provider
 
 @AndroidEntryPoint
-class CreateScopeDialog : MvpAppCompatDialogFragment(), CreateScopeView {
+class CreateScopeDialog : MvpBottomSheetDialogFragment(), CreateScopeView {
     @Inject
     lateinit var presenterProvider: Provider<CreateScopePresenter>
 
     private val presenter by moxyPresenter { presenterProvider.get() }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = AlertDialog
-            .Builder(requireContext())
-
-        dialog.setView(R.layout.dialog_create_scope)
-
-        return dialog.create().apply {
-            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        }
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.dialog_create_scope, container, false)
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        view.apply {
+            bCreate.setOnClickListener {
+                val title = etTitle.text.toString().trim()
+                val url = etUrl.text.toString().trim()
 
-        requireDialog().apply {
-            createB.setOnClickListener {
-                val title = newScopeTitleET.text.toString().trim()
-                val url = newScopeUrlET.text.toString().trim()
-
-                presenter.onNewScopeCreate(
-                    title,
-                    url
-                )
+                presenter.onNewScopeCreate(title, url)
             }
 
-            newScopeTitleET.doAfterTextChanged {
-                createB.isEnabled = it.toString().isNotBlank()
+            etTitle.doAfterTextChanged {
+                bCreate.isEnabled = it.toString().isNotBlank()
             }
         }
     }

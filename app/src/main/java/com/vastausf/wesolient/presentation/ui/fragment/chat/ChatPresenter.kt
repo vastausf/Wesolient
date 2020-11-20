@@ -1,17 +1,17 @@
 package com.vastausf.wesolient.presentation.ui.fragment.chat
 
-import com.tinder.scarlet.Scarlet
-import com.tinder.scarlet.websocket.okhttp.newWebSocketFactory
+import android.util.Log
+import com.tinder.scarlet.WebSocket
 import com.vastausf.wesolient.model.ScopeStore
-import com.vastausf.wesolient.model.SocketService
+import com.vastausf.wesolient.model.ServiceCreator
 import com.vastausf.wesolient.model.data.Message
 import com.vastausf.wesolient.model.data.Scope
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.launch
+import com.vastausf.wesolient.model.listener.ValueListener
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import moxy.InjectViewState
 import moxy.MvpPresenter
-import moxy.presenterScope
-import okhttp3.OkHttpClient
+import java.net.SocketException
 import javax.inject.Inject
 
 @InjectViewState
@@ -19,45 +19,120 @@ class ChatPresenter
 @Inject
 constructor(
     private val scopeStore: ScopeStore,
-    private val scarletBuilder: Scarlet.Builder
+    private val serviceCreator: ServiceCreator
 ) : MvpPresenter<ChatView>() {
-    private lateinit var scope: Scope
-    private lateinit var service: SocketService
+    private var scope: Scope? = null
+
+    private var serviceHolder: ServiceCreator.ServiceHolder? = null
+
+    private val messageList: MutableList<Message> = mutableListOf()
 
     fun onMessageSend(message: String) {
-        if (message.isNotEmpty()) {
+        if (message.isNotBlank()) {
             clientMessage(message)
 
             viewState.onSend()
         }
     }
 
-    private fun updateMessageList() {
+    fun onStart(uid: String) {
+        scopeStore.getScopeOnce(uid, object : ValueListener<Scope> {
+            override fun onSuccess(value: Scope) {
+                scope = value
+            }
 
+            override fun onNotFound() {
+                viewState.onMissScope()
+            }
+
+            override fun onFailure() {
+                viewState.onMissScope()
+            }
+        })
     }
 
-    private fun clientMessage(message: String) {
-        service.sendMessage(message)
-        addNewMessage(message, Message.Source.CLIENT_SOURCE)
+    fun onConnect() {
+        try {
+            scope?.apply {
+                serviceHolder = serviceCreator.create(url)
+
+                subscribeOnService()
+
+                serviceHolder?.connect()
+            }
+        } catch (exception: Exception) {
+            onConnectionException(exception)
+        }
     }
 
-    private fun systemMessage(message: String) {
-        addNewMessage(message, Message.Source.SYSTEM_SOURCE)
+    fun onDisconnect(code: Int? = null, reason: String? = null) {
+        try {
+            serviceHolder?.disconnect(code, reason)
+        } catch (exception: Exception) {
+            onConnectionException(exception)
+        }
     }
 
-    private fun serverMessage(message: String) {
-        addNewMessage(message, Message.Source.SERVER_SOURCE)
+    private fun subscribeOnService() {
+        serviceHolder?.apply {
+            service
+                .observeMessage()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .doOnNext {
+                    Log.d("data", it)
+                    serverMessage(it)
+                }
+                .subscribe()
+
+            serviceHolder?.apply {
+                service
+                    .observeWebSocketEvent()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe {
+                        when (it) {
+                            is WebSocket.Event.OnConnectionOpened<*> -> {
+                                onConnectionOpened()
+                            }
+                            is WebSocket.Event.OnMessageReceived -> {
+
+                            }
+                            is WebSocket.Event.OnConnectionFailed -> {
+                                onConnectionException(it.throwable)
+                                onConnectionClosed()
+                            }
+                            is WebSocket.Event.OnConnectionClosing -> {
+
+                            }
+                            is WebSocket.Event.OnConnectionClosed -> {
+                                onConnectionClosed()
+                            }
+                        }
+                    }
+            }
+        }
     }
 
-    private fun createService() {
-        service = scarletBuilder
-            .webSocketFactory(
-                OkHttpClient.Builder().build().newWebSocketFactory(scope.url)
-            )
-            .build()
-            .create()
+    private fun onConnectionException(exception: Throwable) {
+        exception.printStackTrace()
 
-        subscribeOnService()
+        when (exception) {
+            is SocketException -> {
+                viewState.onConnectionError()
+            }
+            else -> {
+                viewState.onConnectionError()
+            }
+        }
+    }
+
+    private fun onConnectionOpened() {
+        viewState.changeConnectionState(true)
+    }
+
+    private fun onConnectionClosed() {
+        viewState.changeConnectionState(false)
     }
 
     private fun addNewMessage(content: String, source: Message.Source) {
@@ -67,16 +142,22 @@ constructor(
             dateTime = 0
         )
 
-        scopeStore.addMessageInScopeHistory(scope.uid, message)
+        messageList.add(message)
+
+        viewState.updateChatHistory(messageList)
     }
 
-    private fun subscribeOnService() {
-        presenterScope.launch {
-            service
-                .observeMessage()
-                .consumeEach {
-                    serverMessage(it)
-                }
-        }
+    private fun clientMessage(message: String) {
+        serviceHolder?.service?.sendMessage(message)
+
+        addNewMessage(message, Message.Source.CLIENT_SOURCE)
+    }
+
+    private fun serverMessage(message: String) {
+        addNewMessage(message, Message.Source.SERVER_SOURCE)
+    }
+
+    override fun onDestroy() {
+        onDisconnect()
     }
 }

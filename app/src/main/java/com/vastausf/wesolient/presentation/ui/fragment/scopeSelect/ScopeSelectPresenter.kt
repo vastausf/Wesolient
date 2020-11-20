@@ -3,10 +3,8 @@ package com.vastausf.wesolient.presentation.ui.fragment.scopeSelect
 import com.vastausf.wesolient.model.ScopeStore
 import com.vastausf.wesolient.model.data.Scope
 import com.vastausf.wesolient.model.listener.UpdateListener
-import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import moxy.MvpPresenter
-import moxy.presenterScope
 import javax.inject.Inject
 
 @InjectViewState
@@ -23,7 +21,11 @@ constructor(
         })
     }
 
-    fun onClickCreateNew() {
+    fun onCreateScope() {
         viewState.showCreateDialog()
+    }
+
+    fun onDeleteScope(uid: String) {
+        scopeStore.deleteScope(uid)
     }
 }
