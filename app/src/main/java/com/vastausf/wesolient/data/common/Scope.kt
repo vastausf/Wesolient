@@ -1,4 +1,4 @@
-package com.vastausf.wesolient.model.data
+package com.vastausf.wesolient.data.common
 
 import com.google.firebase.database.IgnoreExtraProperties
 import java.util.*

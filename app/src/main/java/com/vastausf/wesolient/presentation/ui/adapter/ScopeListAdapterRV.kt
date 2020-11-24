@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.vastausf.wesolient.R
-import com.vastausf.wesolient.model.data.Scope
+import com.vastausf.wesolient.data.common.Scope
 import kotlinx.android.synthetic.main.item_scope_list.view.*
 
 class ScopeListAdapterRV(
@@ -16,7 +16,7 @@ class ScopeListAdapterRV(
 ) : ListAdapter<Scope, ScopeListAdapterRV.ViewHolder>(ScopeDiff) {
     companion object ScopeDiff : DiffUtil.ItemCallback<Scope>() {
         override fun areItemsTheSame(oldItem: Scope, newItem: Scope) =
-            oldItem == newItem
+            oldItem.uid == newItem.uid
 
         override fun areContentsTheSame(oldItem: Scope, newItem: Scope) =
             oldItem == newItem

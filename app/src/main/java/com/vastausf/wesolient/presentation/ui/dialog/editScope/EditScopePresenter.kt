@@ -1,7 +1,7 @@
 package com.vastausf.wesolient.presentation.ui.dialog.editScope
 
+import com.vastausf.wesolient.data.common.Scope
 import com.vastausf.wesolient.model.ScopeStore
-import com.vastausf.wesolient.model.data.Scope
 import com.vastausf.wesolient.model.listener.ValueListener
 import moxy.InjectViewState
 import moxy.MvpPresenter

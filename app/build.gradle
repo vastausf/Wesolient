@@ -73,10 +73,14 @@ dependencies {
     //Scarlet
     implementation "com.tinder.scarlet:scarlet:$scarlet_version"
     implementation "com.tinder.scarlet:websocket-okhttp:$scarlet_version"
+    implementation "com.tinder.scarlet:message-adapter-gson:$scarlet_version"
     implementation "com.tinder.scarlet:stream-adapter-rxjava2:$scarlet_version"
 
     //RxAndroid
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+
+    //ThreeTenABP
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.4'
 
     //Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"

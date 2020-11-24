@@ -7,18 +7,18 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.vastausf.wesolient.R
-import com.vastausf.wesolient.model.data.Message
+import com.vastausf.wesolient.data.client.Frame
 import kotlinx.android.synthetic.main.item_server_message.view.*
 
 class ChatAdapterRV(
-    private val onClick: ((Message) -> Unit)? = null,
-    private val onLongClick: ((Message) -> Unit)? = null
-) : ListAdapter<Message, ChatAdapterRV.ViewHolder>(MessageDiff) {
-    companion object MessageDiff : DiffUtil.ItemCallback<Message>() {
-        override fun areItemsTheSame(oldItem: Message, newItem: Message) =
-            oldItem == newItem
+    private val onClick: ((Frame) -> Unit)? = null,
+    private val onLongClick: ((Frame) -> Unit)? = null
+) : ListAdapter<Frame, ChatAdapterRV.ViewHolder>(MessageDiff) {
+    companion object MessageDiff : DiffUtil.ItemCallback<Frame>() {
+        override fun areItemsTheSame(oldItem: Frame, newItem: Frame) =
+            oldItem.uid == newItem.uid
 
-        override fun areContentsTheSame(oldItem: Message, newItem: Message) =
+        override fun areContentsTheSame(oldItem: Frame, newItem: Frame) =
             oldItem == newItem
     }
 
@@ -32,13 +32,13 @@ class ChatAdapterRV(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return when (viewType) {
-            Message.Source.SERVER_SOURCE.ordinal -> {
+            Frame.Source.SERVER_SOURCE.ordinal -> {
                 ServerMessageViewHolder(
                     LayoutInflater.from(parent.context)
                         .inflate(R.layout.item_server_message, parent, false)
                 )
             }
-            Message.Source.CLIENT_SOURCE.ordinal -> {
+            Frame.Source.CLIENT_SOURCE.ordinal -> {
                 ClientMessageViewHolder(
                     LayoutInflater.from(parent.context)
                         .inflate(R.layout.item_client_message, parent, false)
@@ -50,9 +50,9 @@ class ChatAdapterRV(
 
     open inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         open fun bind(
-            item: Message,
-            onClick: ((Message) -> Unit)?,
-            onLongClick: ((Message) -> Unit)?
+            item: Frame,
+            onClick: ((Frame) -> Unit)?,
+            onLongClick: ((Frame) -> Unit)?
         ) {
             itemView.tvMessage.text = item.content
 

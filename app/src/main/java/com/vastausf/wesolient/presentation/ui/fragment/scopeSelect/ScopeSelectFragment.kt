@@ -8,7 +8,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.vastausf.wesolient.R
-import com.vastausf.wesolient.model.data.Scope
+import com.vastausf.wesolient.data.common.Scope
 import com.vastausf.wesolient.presentation.ui.adapter.ScopeListAdapterRV
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_select_scope.*

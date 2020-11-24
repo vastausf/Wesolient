@@ -5,7 +5,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
-import com.vastausf.wesolient.model.data.Scope
+import com.vastausf.wesolient.data.common.Scope
 import com.vastausf.wesolient.model.listener.CreateListener
 import com.vastausf.wesolient.model.listener.DeleteListener
 import com.vastausf.wesolient.model.listener.UpdateListener

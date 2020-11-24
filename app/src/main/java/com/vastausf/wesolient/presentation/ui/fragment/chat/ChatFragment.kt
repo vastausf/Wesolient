@@ -7,8 +7,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vastausf.wesolient.R
+import com.vastausf.wesolient.data.client.Frame
+import com.vastausf.wesolient.data.common.Scope
 import com.vastausf.wesolient.model.CloseReason
-import com.vastausf.wesolient.model.data.Message
 import com.vastausf.wesolient.presentation.ui.adapter.ChatAdapterRV
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_chat.*
@@ -38,7 +39,7 @@ class ChatFragment : MvpAppCompatFragment(R.layout.fragment_chat), ChatView {
             }
 
             bSend.setOnClickListener {
-                presenter.onMessageSend(etMessage.text.toString())
+                presenter.sendMessage(etMessage.text.toString())
             }
 
             bConnect.setOnClickListener {
@@ -72,7 +73,11 @@ class ChatFragment : MvpAppCompatFragment(R.layout.fragment_chat), ChatView {
         }
     }
 
-    override fun updateChatHistory(chatHistory: List<Message>) {
+    override fun bindData(scope: Scope) {
+        tvScopeTitle.text = scope.title
+    }
+
+    override fun updateChatHistory(chatHistory: List<Frame>) {
         (rvChat.adapter as ChatAdapterRV).submitList(chatHistory.toList())
 
         if (!rvChat.canScrollVertically(1)) {
@@ -91,14 +96,33 @@ class ChatFragment : MvpAppCompatFragment(R.layout.fragment_chat), ChatView {
         etMessage.text.clear()
     }
 
-    override fun changeConnectionState(newState: Boolean) {
-        bConnect.visibility = if (!newState) View.VISIBLE else View.GONE
-        bDisconnect.visibility = if (newState) View.VISIBLE else View.GONE
+    override fun changeConnectionState(newState: Boolean?) {
+        if (newState != null) {
+            llMessageBar.visibility = if (newState) View.VISIBLE else View.GONE
+            bDisconnect.visibility = if (newState) View.VISIBLE else View.GONE
 
-        llMessageBar.visibility = if (newState) View.VISIBLE else View.GONE
+            bConnect.visibility = if (!newState) View.VISIBLE else View.GONE
+
+            pbConnection.visibility = View.GONE
+        } else {
+            llMessageBar.visibility = View.GONE
+            bDisconnect.visibility = View.GONE
+
+            bConnect.visibility = View.GONE
+
+            pbConnection.visibility = View.VISIBLE
+        }
     }
 
     override fun onConnectionError() {
         Toast.makeText(context, R.string.connection_error, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDisconnectWithReason(code: Int, reason: String) {
+        Toast.makeText(
+            context,
+            getString(R.string.connection_closed_with_data, code, reason),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 }

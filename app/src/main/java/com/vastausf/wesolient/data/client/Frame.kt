@@ -1,6 +1,7 @@
-package com.vastausf.wesolient.model.data
+package com.vastausf.wesolient.data.client
 
-data class Message(
+data class Frame(
+    var uid: String,
     var source: Source,
     var content: String,
     var dateTime: Long

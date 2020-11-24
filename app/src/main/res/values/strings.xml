@@ -30,6 +30,11 @@
     <string name="disconnected">disconnected</string>
     <string name="connection_error">connection error</string>
     <string name="used_reserved_code">codes 1004..1006, 1012..2999 are reserved and may not be used</string>
+    <string name="connection_closed">connection closed</string>
+    <string name="connection_closed_with_data">connection closed(%1$d: %2$s)</string>
+    <string name="connect">connect</string>
+    <string name="disconnect">disconnect</string>
+    <string name="send">send</string>
 
     <!--    CLOSE REASON DIALOG   -->
     <string name="reason_code">code</string>
