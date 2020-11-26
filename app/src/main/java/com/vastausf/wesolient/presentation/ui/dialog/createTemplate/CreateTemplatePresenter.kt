@@ -21,14 +21,6 @@ constructor(
             override fun onSuccess(value: Scope) {
                 scope = value
             }
-
-            override fun onFailure() {
-                viewState.onTemplateNotFound()
-            }
-
-            override fun onNotFound() {
-                viewState.onTemplateNotFound()
-            }
         })
     }
 

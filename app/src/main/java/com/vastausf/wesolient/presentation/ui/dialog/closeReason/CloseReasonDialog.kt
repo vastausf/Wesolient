@@ -39,20 +39,20 @@ class CloseReasonDialog : MvpBottomSheetDialogFragment(), CloseReasonView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.apply {
-            bClose.setOnClickListener {
-                val code = etCode.text.toString().trim().toInt()
-                val message = etMessage.text.toString().trim()
+            bSendCloseReason.setOnClickListener {
+                val code = etCloseReasonCode.text.toString().trim().toInt()
+                val message = etCloseReasonMessage.text.toString().trim()
 
                 presenter.onDisconnect(code, message)
             }
 
-            etCode.doAfterTextChanged {
+            etCloseReasonCode.doAfterTextChanged {
                 try {
-                    val code = etCode.text.toString().toInt()
+                    val code = etCloseReasonCode.text.toString().toInt()
 
-                    bClose.isEnabled = (code in 1000..4999)
+                    bSendCloseReason.isEnabled = (code in 1000..4999)
                 } catch (e: Exception) {
-                    bClose.isEnabled = false
+                    bSendCloseReason.isEnabled = false
                 }
             }
         }
@@ -67,6 +67,6 @@ class CloseReasonDialog : MvpBottomSheetDialogFragment(), CloseReasonView {
     }
 
     override fun onUsedReservedCode() {
-        Toast.makeText(context, R.string.used_reserved_code, Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, R.string.close_reason_used_reserved_code, Toast.LENGTH_SHORT).show()
     }
 }

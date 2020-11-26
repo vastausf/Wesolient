@@ -9,9 +9,6 @@ interface TemplateSelectView : MvpView {
     @AddToEndSingle
     fun bindTemplateList(templateList: List<Template>)
 
-    @AddToEndSingle
-    fun onError()
-
     @Skip
     fun onDeleteSuccess()
 

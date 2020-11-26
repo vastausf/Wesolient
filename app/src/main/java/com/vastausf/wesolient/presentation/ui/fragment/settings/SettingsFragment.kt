@@ -30,7 +30,7 @@ class SettingsFragment : MvpAppCompatFragment(R.layout.fragment_settings), Setti
         binding = FragmentSettingsBinding.inflate(LayoutInflater.from(context))
 
         binding.apply {
-            bLogout.setOnClickListener {
+            bLogOut.setOnClickListener {
                 presenter.onLogout()
             }
         }

@@ -168,7 +168,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
     }
 
     override fun onMissScope() {
-        Toast.makeText(context, R.string.miss_scope, Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, R.string.chat_miss_scope, Toast.LENGTH_SHORT).show()
 
         findNavController()
             .popBackStack()
@@ -199,13 +199,13 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
     }
 
     override fun onConnectionError() {
-        Toast.makeText(context, R.string.connection_error, Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, R.string.chat_connection_error, Toast.LENGTH_SHORT).show()
     }
 
     override fun onDisconnectWithReason(code: Int, reason: String) {
         Toast.makeText(
             context,
-            getString(R.string.connection_closed_with_data, code, reason),
+            getString(R.string.chat_connection_closed, code, reason),
             Toast.LENGTH_SHORT
         ).show()
     }

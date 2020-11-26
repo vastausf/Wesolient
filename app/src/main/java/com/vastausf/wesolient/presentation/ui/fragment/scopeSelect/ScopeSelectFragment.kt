@@ -93,8 +93,8 @@ class ScopeSelectFragment : MvpAppCompatFragment(), ScopeSelectView {
     }
 
     private fun showDeleteSnackbar(onClick: () -> Unit) {
-        Snackbar.make(requireView(), R.string.delete_this_scope, Snackbar.LENGTH_LONG).apply {
-            setAction(R.string.delete_yes) {
+        Snackbar.make(requireView(), R.string.delete_scope_confirmation, Snackbar.LENGTH_LONG).apply {
+            setAction(R.string.delete_scope_positive) {
                 onClick()
             }
             show()

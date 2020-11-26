@@ -41,8 +41,8 @@ class TemplateListAdapterRV(
             onClick: ((Template, View) -> Unit)?,
             onLongClick: ((Template, View) -> Unit)?
         ) {
-            binding.tvTitle.text = item.title
-            binding.tvMessage.text = item.message
+            binding.tvTemplateTitle.text = item.title
+            binding.tvTemplateMessage.text = item.message
 
             binding.root.setOnClickListener {
                 onClick?.invoke(item, itemView)

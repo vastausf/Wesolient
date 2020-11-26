@@ -39,9 +39,9 @@ class EditTemplateDialog : MvpBottomSheetDialogFragment(), EditTemplateView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.apply {
-            bClose.setOnClickListener {
-                val newTitle = etTitle.text.toString().trim()
-                val newUrl = etMessage.text.toString().trim()
+            bApply.setOnClickListener {
+                val newTitle = etTemplateTitle.text.toString().trim()
+                val newUrl = etTemplateMessage.text.toString().trim()
 
                 presenter.onApply(
                     newTitle,
@@ -49,8 +49,8 @@ class EditTemplateDialog : MvpBottomSheetDialogFragment(), EditTemplateView {
                 )
             }
 
-            etTitle.doAfterTextChanged {
-                bClose.isEnabled = it.toString().isNotBlank()
+            etTemplateTitle.doAfterTextChanged {
+                bApply.isEnabled = it.toString().isNotBlank()
             }
         }
     }
@@ -63,8 +63,8 @@ class EditTemplateDialog : MvpBottomSheetDialogFragment(), EditTemplateView {
 
     override fun bindField(title: String, message: String) {
         binding.apply {
-            etTitle.setText(title)
-            etMessage.setText(message)
+            etTemplateTitle.setText(title)
+            etTemplateMessage.setText(message)
         }
     }
 
@@ -73,6 +73,6 @@ class EditTemplateDialog : MvpBottomSheetDialogFragment(), EditTemplateView {
     }
 
     override fun onApplyFailure() {
-        Toast.makeText(context, R.string.template_edit_failure, Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, R.string.edit_template_failure, Toast.LENGTH_SHORT).show()
     }
 }

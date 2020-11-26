@@ -10,7 +10,6 @@ import javax.inject.Inject
 class SettingsPresenter
 @Inject
 constructor(
-    private val scopeStore: ScopeStore,
     private val firebaseAuth: FirebaseAuth
 ) : MvpPresenter<SettingsView>() {
     fun onLogout() {

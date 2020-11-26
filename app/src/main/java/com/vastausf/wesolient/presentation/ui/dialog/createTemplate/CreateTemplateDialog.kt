@@ -38,15 +38,15 @@ class CreateTemplateDialog : MvpBottomSheetDialogFragment(), CreateTemplateView 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.apply {
-            fabCreateTemplate.setOnClickListener {
-                val title = etTitle.text.toString().trim()
-                val message = etMessage.text.toString().trim()
+            bCreateTemplate.setOnClickListener {
+                val title = etTemplateTitle.text.toString().trim()
+                val message = etTemplateMessage.text.toString().trim()
 
                 presenter.onNewTemplateCreate(title, message)
             }
 
-            etTitle.doAfterTextChanged {
-                fabCreateTemplate.isEnabled = it.toString().isNotBlank()
+            etTemplateTitle.doAfterTextChanged {
+                bCreateTemplate.isEnabled = it.toString().isNotBlank()
             }
         }
     }
@@ -62,12 +62,6 @@ class CreateTemplateDialog : MvpBottomSheetDialogFragment(), CreateTemplateView 
     }
 
     override fun showErrorMessage() {
-        Toast.makeText(context, R.string.template_create_failure, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onTemplateNotFound() {
-        Toast.makeText(context, R.string.miss_scope, Toast.LENGTH_SHORT).show()
-
-        dismissDialog()
+        Toast.makeText(context, R.string.create_template_failure, Toast.LENGTH_SHORT).show()
     }
 }

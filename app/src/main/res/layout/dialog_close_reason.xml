@@ -6,36 +6,38 @@
     android:padding="8dp">
 
     <EditText
-        android:id="@+id/etCode"
+        android:id="@+id/etCloseReasonCode"
         style="@style/EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/reason_code"
+        android:hint="@string/close_reason_code_hint"
+        android:importantForAutofill="no"
         android:inputType="number"
         android:maxLines="1"
         android:textColor="@color/colorPrimary"
         android:textSize="16sp" />
 
     <EditText
-        android:id="@+id/etMessage"
+        android:id="@+id/etCloseReasonMessage"
         style="@style/EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/reason_message"
+        android:hint="@string/close_reason_message_hint"
+        android:importantForAutofill="no"
         android:inputType="text"
         android:maxLines="1"
         android:textColor="@color/colorText"
         android:textSize="16sp" />
 
     <Button
-        android:id="@+id/bClose"
+        android:id="@+id/bSendCloseReason"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:background="@drawable/accent_button_background"
         android:enabled="false"
         android:foreground="?android:selectableItemBackground"
-        android:text="@string/close"
+        android:text="@string/close_reason_send"
         android:textColor="@color/colorBackground" />
 
 </LinearLayout>

@@ -35,15 +35,15 @@ class CreateScopeDialog : MvpBottomSheetDialogFragment(), CreateScopeView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.apply {
-            fabCreateScope.setOnClickListener {
-                val title = etTitle.text.toString().trim()
-                val url = etUrl.text.toString().trim()
+            bCreateScope.setOnClickListener {
+                val title = etScopeTitle.text.toString().trim()
+                val url = etScopeUrl.text.toString().trim()
 
                 presenter.onNewScopeCreate(title, url)
             }
 
-            etTitle.doAfterTextChanged {
-                fabCreateScope.isEnabled = it.toString().isNotBlank()
+            etScopeTitle.doAfterTextChanged {
+                bCreateScope.isEnabled = it.toString().isNotBlank()
             }
         }
     }
@@ -53,6 +53,6 @@ class CreateScopeDialog : MvpBottomSheetDialogFragment(), CreateScopeView {
     }
 
     override fun showErrorMessage() {
-        Toast.makeText(context, R.string.scope_create_failure, Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, R.string.create_scope_failure, Toast.LENGTH_SHORT).show()
     }
 }

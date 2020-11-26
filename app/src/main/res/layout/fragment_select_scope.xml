@@ -30,8 +30,8 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:contentDescription="@string/logo"
-                    android:src="@drawable/ic_app" />
+                    android:src="@drawable/ic_app"
+                    android:contentDescription="@string/select_scope_logo" />
 
                 <Space
                     android:layout_width="8dp"
@@ -41,7 +41,7 @@
                     style="@style/LogoText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/app_name" />
+                    android:text="@string/app_head_name" />
             </LinearLayout>
 
             <ImageButton
@@ -49,12 +49,12 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="@android:color/transparent"
-                android:contentDescription="@string/settings"
                 android:src="@drawable/ic_settings"
                 android:tint="@color/colorSecondary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/select_scope_settings" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <FrameLayout
@@ -75,7 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="@string/scope_list_placeholder"
+                android:text="@string/select_scope_list_placeholder"
                 android:textColor="@color/colorTextSecondary"
                 android:visibility="visible" />
         </FrameLayout>
@@ -86,11 +86,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:contentDescription="@string/add"
         android:src="@drawable/ic_add"
         android:tint="@color/colorBackground"
         app:borderWidth="0dp"
         app:layout_anchor="@id/rvScopeList"
         app:layout_anchorGravity="right|bottom"
-        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior" />
+        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
+        android:contentDescription="@string/select_scope_create" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

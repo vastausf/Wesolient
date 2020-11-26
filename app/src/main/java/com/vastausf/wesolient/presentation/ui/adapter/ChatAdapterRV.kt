@@ -64,7 +64,7 @@ class ChatAdapterRV(
             onClick: ((Frame) -> Unit)?,
             onLongClick: ((Frame) -> Unit)?
         ) {
-            binding.tvMessage.text = item.content
+            binding.tvFrameMessage.text = item.content
 
             binding.root.setOnClickListener {
                 onClick?.invoke(item)
@@ -86,7 +86,7 @@ class ChatAdapterRV(
             onClick: ((Frame) -> Unit)?,
             onLongClick: ((Frame) -> Unit)?
         ) {
-            binding.tvMessage.text = item.content
+            binding.tvFrameMessage.text = item.content
 
             binding.root.setOnClickListener {
                 onClick?.invoke(item)

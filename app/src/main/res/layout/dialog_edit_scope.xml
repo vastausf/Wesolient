@@ -6,36 +6,38 @@
     android:padding="8dp">
 
     <EditText
-        android:id="@+id/etTitle"
+        android:id="@+id/etScopeTitle"
         style="@style/EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/scope_title"
+        android:hint="@string/edit_scope_title_hint"
+        android:importantForAutofill="no"
         android:inputType="text"
         android:maxLines="1"
         android:textColor="@color/colorPrimary"
         android:textSize="16sp" />
 
     <EditText
-        android:id="@+id/etUrl"
+        android:id="@+id/etScopeUrl"
         style="@style/EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/scope_url"
+        android:hint="@string/edit_scope_url_hint"
+        android:importantForAutofill="no"
         android:inputType="text|textUri"
         android:maxLines="1"
         android:textColor="@color/colorText"
         android:textSize="16sp" />
 
     <Button
-        android:id="@+id/bClose"
+        android:id="@+id/bApply"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:background="@drawable/accent_button_background"
         android:enabled="false"
         android:foreground="?android:selectableItemBackground"
-        android:text="@string/apply"
+        android:text="@string/edit_scope_apply"
         android:textColor="@color/colorBackground" />
 
 </LinearLayout>

@@ -9,7 +9,4 @@ interface CreateTemplateView : MvpView {
 
     @Skip
     fun showErrorMessage()
-
-    @Skip
-    fun onTemplateNotFound()
 }

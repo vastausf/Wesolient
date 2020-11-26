@@ -25,14 +25,6 @@ constructor(
 
                 loadTemplates()
             }
-
-            override fun onNotFound() {
-                onError()
-            }
-
-            override fun onFailure() {
-                onError()
-            }
         })
     }
 
@@ -54,9 +46,5 @@ constructor(
                 viewState.onDeleteFailure()
             }
         })
-    }
-
-    private fun onError() {
-        viewState.onError()
     }
 }

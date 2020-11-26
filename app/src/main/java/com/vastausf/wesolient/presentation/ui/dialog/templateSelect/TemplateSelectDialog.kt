@@ -1,7 +1,6 @@
 package com.vastausf.wesolient.presentation.ui.dialog.templateSelect
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -93,13 +92,8 @@ class TemplateSelectDialog : MvpBottomSheetDialogFragment(), TemplateSelectView 
 
     override fun bindTemplateList(templateList: List<Template>) {
         view?.apply {
-            Log.d("templateList", templateList.toString())
             (binding.rvTemplateList.adapter as TemplateListAdapterRV).submitList(templateList)
         }
-    }
-
-    override fun onError() {
-        Toast.makeText(context, R.string.miss_template, Toast.LENGTH_SHORT).show()
     }
 
     override fun onDeleteSuccess() {
@@ -128,12 +122,13 @@ class TemplateSelectDialog : MvpBottomSheetDialogFragment(), TemplateSelectView 
     }
 
     private fun showDeleteSnackbar(onClick: () -> Unit) {
-        Snackbar.make(requireView(), R.string.delete_this_template, Snackbar.LENGTH_LONG).apply {
-            setAction(R.string.delete_yes) {
-                onClick()
+        Snackbar.make(requireView(), R.string.delete_template_confirmation, Snackbar.LENGTH_LONG)
+            .apply {
+                setAction(R.string.delete_scope_positive) {
+                    onClick()
+                }
+                show()
             }
-            show()
-        }
     }
 
     private fun onTemplateSelect(template: Template) {
