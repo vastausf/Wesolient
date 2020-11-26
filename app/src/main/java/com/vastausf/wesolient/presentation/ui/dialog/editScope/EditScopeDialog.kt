@@ -7,16 +7,16 @@ import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.vastausf.wesolient.R
+import com.vastausf.wesolient.databinding.DialogEditScopeBinding
+import com.vastausf.wesolient.presentation.ui.dialog.editTemplate.EditScopeDialogArgs
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.dialog_edit_scope.*
 import moxy.MvpBottomSheetDialogFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 import javax.inject.Provider
 
 @AndroidEntryPoint
-class EditScopeDialog : MvpBottomSheetDialogFragment(), EditScopeDialogView {
+class EditScopeDialog : MvpBottomSheetDialogFragment(), EditScopeView {
     @Inject
     lateinit var presenterProvider: Provider<EditScopePresenter>
 
@@ -24,19 +24,23 @@ class EditScopeDialog : MvpBottomSheetDialogFragment(), EditScopeDialogView {
 
     private val args by navArgs<EditScopeDialogArgs>()
 
+    private lateinit var binding: DialogEditScopeBinding
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_edit_scope, container, false)
+    ): View {
+        binding = DialogEditScopeBinding.inflate(LayoutInflater.from(context))
+
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        view.apply {
+        binding.apply {
             bApply.setOnClickListener {
-                val newTitle = etTitle.text.toString().trim()
-                val newUrl = etUrl.text.toString().trim()
+                val newTitle = etScopeTitle.text.toString().trim()
+                val newUrl = etScopeUrl.text.toString().trim()
 
                 presenter.onApply(
                     newTitle,
@@ -44,7 +48,7 @@ class EditScopeDialog : MvpBottomSheetDialogFragment(), EditScopeDialogView {
                 )
             }
 
-            etTitle.doAfterTextChanged {
+            etScopeTitle.doAfterTextChanged {
                 bApply.isEnabled = it.toString().isNotBlank()
             }
         }
@@ -57,9 +61,9 @@ class EditScopeDialog : MvpBottomSheetDialogFragment(), EditScopeDialogView {
     }
 
     override fun bindField(title: String, url: String) {
-        view.apply {
-            etTitle.setText(title)
-            etUrl.setText(url)
+        binding.apply {
+            etScopeTitle.setText(title)
+            etScopeUrl.setText(url)
         }
     }
 

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/editMI"
+        android:title="@string/select_variable_menu_item_edit" />
+    <item
+        android:id="@+id/deleteMI"
+        android:title="@string/select_variable_menu_item_delete" />
+</menu>

@@ -7,7 +7,7 @@
     android:foreground="?android:attr/selectableItemBackground">
 
     <TextView
-        android:id="@+id/tvTitle"
+        android:id="@+id/tvScopeTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/colorText" />

@@ -1,6 +1,6 @@
 package com.vastausf.wesolient.presentation.ui.fragment.scopeSelect
 
-import com.vastausf.wesolient.model.data.Scope
+import com.vastausf.wesolient.data.common.Scope
 import moxy.MvpView
 import moxy.viewstate.strategy.alias.AddToEndSingle
 import moxy.viewstate.strategy.alias.Skip

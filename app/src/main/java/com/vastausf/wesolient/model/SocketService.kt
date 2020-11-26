@@ -11,7 +11,4 @@ interface SocketService {
 
     @Send
     fun sendMessage(message: String)
-
-    @Receive
-    fun observeMessage(): Flowable<String>
 }

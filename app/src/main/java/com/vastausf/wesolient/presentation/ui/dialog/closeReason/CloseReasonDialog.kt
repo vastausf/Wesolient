@@ -8,9 +8,11 @@ import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.navigation.fragment.findNavController
 import com.vastausf.wesolient.R
-import com.vastausf.wesolient.model.CloseReason
+import com.vastausf.wesolient.data.client.CloseReason
+import com.vastausf.wesolient.databinding.DialogCloseReasonBinding
+import com.vastausf.wesolient.presentation.ui.NavigationCode
+import com.vastausf.wesolient.sendDialogResult
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.dialog_close_reason.*
 import moxy.MvpBottomSheetDialogFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
@@ -23,30 +25,34 @@ class CloseReasonDialog : MvpBottomSheetDialogFragment(), CloseReasonView {
 
     private val presenter by moxyPresenter { presenterProvider.get() }
 
+    private lateinit var binding: DialogCloseReasonBinding
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_close_reason, container, false)
+    ): View {
+        binding = DialogCloseReasonBinding.inflate(LayoutInflater.from(context))
+
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        view.apply {
-            bApply.setOnClickListener {
-                val code = etCode.text.toString().trim().toInt()
-                val message = etMessage.text.toString().trim()
+        binding.apply {
+            bSendCloseReason.setOnClickListener {
+                val code = etCloseReasonCode.text.toString().trim().toInt()
+                val message = etCloseReasonMessage.text.toString().trim()
 
                 presenter.onDisconnect(code, message)
             }
 
-            etCode.doAfterTextChanged {
+            etCloseReasonCode.doAfterTextChanged {
                 try {
-                    val code = etCode.text.toString().toInt()
+                    val code = etCloseReasonCode.text.toString().toInt()
 
-                    bApply.isEnabled = (code in 1000..4999)
+                    bSendCloseReason.isEnabled = (code in 1000..4999)
                 } catch (e: Exception) {
-                    bApply.isEnabled = false
+                    bSendCloseReason.isEnabled = false
                 }
             }
         }
@@ -54,18 +60,13 @@ class CloseReasonDialog : MvpBottomSheetDialogFragment(), CloseReasonView {
 
     override fun sendCloseReason(code: Int, message: String) {
         findNavController().apply {
-            currentBackStackEntry
-                ?.savedStateHandle
-                ?.set(
-                    CloseReason.key,
-                    CloseReason(code, message)
-                )
+            sendDialogResult(NavigationCode.CLOSE_REASON, CloseReason(code, message))
 
             popBackStack()
         }
     }
 
     override fun onUsedReservedCode() {
-        Toast.makeText(context, R.string.used_reserved_code, Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, R.string.close_reason_used_reserved_code, Toast.LENGTH_SHORT).show()
     }
 }

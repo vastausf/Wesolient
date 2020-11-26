@@ -6,9 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.vastausf.wesolient.R
-import com.vastausf.wesolient.model.data.Scope
-import kotlinx.android.synthetic.main.item_scope_list.view.*
+import com.vastausf.wesolient.data.common.Scope
+import com.vastausf.wesolient.databinding.ItemScopeListBinding
 
 class ScopeListAdapterRV(
     private val onClick: ((Scope, View) -> Unit)? = null,
@@ -16,7 +15,7 @@ class ScopeListAdapterRV(
 ) : ListAdapter<Scope, ScopeListAdapterRV.ViewHolder>(ScopeDiff) {
     companion object ScopeDiff : DiffUtil.ItemCallback<Scope>() {
         override fun areItemsTheSame(oldItem: Scope, newItem: Scope) =
-            oldItem == newItem
+            oldItem.uid == newItem.uid
 
         override fun areContentsTheSame(oldItem: Scope, newItem: Scope) =
             oldItem == newItem
@@ -27,25 +26,29 @@ class ScopeListAdapterRV(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
+
         return ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_scope_list, parent, false)
+            ItemScopeListBinding.inflate(layoutInflater, parent, false)
         )
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(
+        private val binding: ItemScopeListBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(
             item: Scope,
             onClick: ((Scope, View) -> Unit)?,
             onLongClick: ((Scope, View) -> Unit)?
         ) {
-            itemView.tvTitle.text = item.title
+            binding.tvScopeTitle.text = item.title
 
-            itemView.setOnClickListener {
-                onClick?.invoke(item, itemView)
+            binding.root.setOnClickListener {
+                onClick?.invoke(item, binding.root)
             }
 
-            itemView.setOnLongClickListener {
-                onLongClick?.invoke(item, itemView)
+            binding.root.setOnLongClickListener {
+                onLongClick?.invoke(item, binding.root)
 
                 true
             }

@@ -1,4 +1,4 @@
-package com.vastausf.wesolient.model
+package com.vastausf.wesolient.data.client
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
@@ -7,8 +7,4 @@ import kotlinx.android.parcel.Parcelize
 data class CloseReason(
     val code: Int,
     val message: String
-) : Parcelable {
-    companion object {
-        val key = "CLOSE_REASON"
-    }
-}
+) : Parcelable

@@ -24,6 +24,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="?android:attr/selectableItemBackground"
+                android:contentDescription="@string/chat_connect"
                 android:src="@drawable/ic_connection"
                 android:tint="@color/colorSecondary"
                 android:visibility="visible" />
@@ -33,20 +34,34 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="?android:attr/selectableItemBackground"
+                android:contentDescription="@string/chat_disconnect"
                 android:src="@drawable/ic_connection"
                 android:tint="@color/colorPrimary"
                 android:visibility="gone" />
 
-            <Space
+            <ProgressBar
+                android:id="@+id/pbConnection"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvScopeTitle"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:ellipsize="marquee"
+                android:gravity="center"
+                android:padding="4dp"
+                android:textColor="@color/colorText"
+                android:textSize="18sp" />
 
             <ImageButton
                 android:id="@+id/bSettings"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="?android:attr/selectableItemBackground"
+                android:contentDescription="@string/chat_settings"
                 android:src="@drawable/ic_settings"
                 android:tint="@color/colorSecondary" />
         </LinearLayout>
@@ -74,8 +89,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="@string/message_hint"
-                android:inputType="text"
+                android:hint="@string/chat_message_hint"
+                android:importantForAutofill="no"
+                android:inputType="textMultiLine"
                 android:maxLines="5" />
 
             <ImageButton
@@ -83,10 +99,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
+                android:contentDescription="@string/chat_send_message"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:padding="16dp"
                 android:src="@drawable/ic_send"
-                android:tint="@color/colorPrimary" />
+                android:tint="@color/colorPrimary"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/bTemplates"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/chat_send_message"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:padding="16dp"
+                android:src="@drawable/ic_templates"
+                android:tint="@color/colorPrimary"
+                android:visibility="visible" />
         </LinearLayout>
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

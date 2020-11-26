@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/editMI"
-        android:title="@string/item_menu_edit" />
+        android:title="@string/select_scope_menu_item_edit" />
     <item
         android:id="@+id/deleteMI"
-        android:title="@string/item_menu_delete" />
+        android:title="@string/select_scope_menu_item_delete" />
 </menu>
