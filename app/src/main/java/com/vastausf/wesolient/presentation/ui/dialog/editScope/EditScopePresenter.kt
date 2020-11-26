@@ -12,7 +12,7 @@ class EditScopePresenter
 @Inject
 constructor(
     private val scopeStore: ScopeStore
-) : MvpPresenter<EditScopeDialogView>() {
+) : MvpPresenter<EditScopeView>() {
     private lateinit var scope: Scope
 
     fun onStart(uid: String) {

@@ -2,6 +2,9 @@
     <string name="app_name">Wesolient</string>
     <string name="app_head_name">@string/app_name</string>
 
+    <string name="item_menu_edit">edit</string>
+    <string name="item_menu_delete">delete</string>
+
     <!--    DELETE SCOPE DIALOG   -->
     <string name="delete_this_scope">do you want to delete this scope?</string>
     <string name="delete_yes">yes</string>
@@ -9,8 +12,6 @@
     <!--    SELECT SCOPE LIST   -->
     <string name="logo">logo</string>
     <string name="scope_list_placeholder">Scope list is empty.\nMaybe you should to add one?</string>
-    <string name="item_menu_edit">edit</string>
-    <string name="item_menu_delete">delete</string>
 
     <!--    CREATE SCOPE DIALOG   -->
     <!--    EDIT SCOPE DIALOG   -->
@@ -29,7 +30,6 @@
     <string name="connected">connected</string>
     <string name="disconnected">disconnected</string>
     <string name="connection_error">connection error</string>
-    <string name="used_reserved_code">codes 1004..1006, 1012..2999 are reserved and may not be used</string>
     <string name="connection_closed">connection closed</string>
     <string name="connection_closed_with_data">connection closed(%1$d: %2$s)</string>
     <string name="connect">connect</string>
@@ -37,7 +37,20 @@
     <string name="send">send</string>
 
     <!--    CLOSE REASON DIALOG   -->
+    <string name="used_reserved_code">codes 1004..1006, 1012..2999 are reserved and may not be used</string>
     <string name="reason_code">code</string>
     <string name="reason_message">message</string>
     <string name="close">close</string>
+
+    <!--    TEMPLATE SELECT DIALOG   -->
+    <string name="miss_template">can\'t find this template</string>
+    <string name="delete_this_template">do you want to delete this template?</string>
+    <string name="template_delete_success">deleted</string>
+    <string name="template_delete_failure">something went wrong</string>
+
+    <!--    TEMPLATE CREATE DIALOG   -->
+    <string name="template_message_hint">Hello @{serverTitle}</string>
+    <string name="template_title_hint">e.g. say \'Hello server\'</string>
+    <string name="template_create_failure">something went wrong. try later</string>
+    <string name="template_edit_failure">something went wrong. try later</string>
 </resources>

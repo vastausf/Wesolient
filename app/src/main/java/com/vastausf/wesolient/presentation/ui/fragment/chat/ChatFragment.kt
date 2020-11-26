@@ -3,13 +3,16 @@ package com.vastausf.wesolient.presentation.ui.fragment.chat
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.core.widget.doAfterTextChanged
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vastausf.wesolient.R
+import com.vastausf.wesolient.data.client.CloseReason
 import com.vastausf.wesolient.data.client.Frame
 import com.vastausf.wesolient.data.common.Scope
-import com.vastausf.wesolient.model.CloseReason
+import com.vastausf.wesolient.listenResult
+import com.vastausf.wesolient.presentation.ui.NavigationCode
 import com.vastausf.wesolient.presentation.ui.adapter.ChatAdapterRV
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_chat.*
@@ -32,7 +35,7 @@ class ChatFragment : MvpAppCompatFragment(R.layout.fragment_chat), ChatView {
 
         if (savedInstanceState == null) {
             rvChat.apply {
-                layoutManager = LinearLayoutManager(requireContext()).apply {
+                layoutManager = LinearLayoutManager(context).apply {
                     stackFromEnd = true
                 }
                 adapter = ChatAdapterRV()
@@ -40,6 +43,16 @@ class ChatFragment : MvpAppCompatFragment(R.layout.fragment_chat), ChatView {
 
             bSend.setOnClickListener {
                 presenter.sendMessage(etMessage.text.toString())
+            }
+
+            bTemplates.setOnClickListener {
+                launchTemplateDialog()
+            }
+
+            etMessage.doAfterTextChanged { text ->
+                text?.isNotEmpty()?.let { isNotEmpty ->
+                    sendVisibleState(isNotEmpty)
+                }
             }
 
             bConnect.setOnClickListener {
@@ -64,12 +77,57 @@ class ChatFragment : MvpAppCompatFragment(R.layout.fragment_chat), ChatView {
         findNavController().apply {
             navigate(ChatFragmentDirections.actionChatFragmentToCloseReasonDialog())
 
-            currentBackStackEntry
-                ?.savedStateHandle
-                ?.getLiveData<CloseReason>(CloseReason.key)
-                ?.observe(viewLifecycleOwner) {
-                    presenter.onDisconnect(it.code, it.message)
-                }
+            listenResult<CloseReason>(NavigationCode.CLOSE_REASON, viewLifecycleOwner) {
+                presenter.onDisconnect(it.code, it.message)
+            }
+        }
+    }
+
+    private fun launchTemplateDialog() {
+        findNavController().apply {
+            navigate(ChatFragmentDirections.actionChatFragmentToTemplateSelectDialog(presenter.scope.uid))
+
+            listenResult<String>(NavigationCode.TEMPLATE_CODE, viewLifecycleOwner) {
+                presenter.sendTemplateMessage(it)
+            }
+        }
+    }
+
+    private fun messageBarVisibleState(isVisible: Boolean) {
+        if (isVisible) {
+            llMessageBar.visibility = View.VISIBLE
+        } else {
+            llMessageBar.visibility = View.GONE
+        }
+    }
+
+    private fun connectionVisibleState(isVisible: Boolean?) {
+        if (isVisible != null) {
+            if (isVisible) {
+                bDisconnect.visibility = View.VISIBLE
+
+                bConnect.visibility = View.GONE
+            } else {
+                bDisconnect.visibility = View.GONE
+
+                bConnect.visibility = View.VISIBLE
+            }
+        } else {
+            bConnect.visibility = View.GONE
+
+            bDisconnect.visibility = View.GONE
+        }
+    }
+
+    private fun sendVisibleState(isVisible: Boolean) {
+        if (isVisible) {
+            bSend.visibility = View.VISIBLE
+
+            bTemplates.visibility = View.GONE
+        } else {
+            bSend.visibility = View.GONE
+
+            bTemplates.visibility = View.VISIBLE
         }
     }
 
@@ -98,17 +156,15 @@ class ChatFragment : MvpAppCompatFragment(R.layout.fragment_chat), ChatView {
 
     override fun changeConnectionState(newState: Boolean?) {
         if (newState != null) {
-            llMessageBar.visibility = if (newState) View.VISIBLE else View.GONE
-            bDisconnect.visibility = if (newState) View.VISIBLE else View.GONE
+            messageBarVisibleState(newState)
 
-            bConnect.visibility = if (!newState) View.VISIBLE else View.GONE
+            connectionVisibleState(newState)
 
             pbConnection.visibility = View.GONE
         } else {
-            llMessageBar.visibility = View.GONE
-            bDisconnect.visibility = View.GONE
+            messageBarVisibleState(false)
 
-            bConnect.visibility = View.GONE
+            connectionVisibleState(null)
 
             pbConnection.visibility = View.VISIBLE
         }

@@ -59,7 +59,7 @@ class ScopeSelectFragment : MvpAppCompatFragment(R.layout.fragment_select_scope)
                 }
             )
 
-            bCreate.setOnClickListener {
+            fabCreateScope.setOnClickListener {
                 presenter.onCreateScope()
             }
 

@@ -14,7 +14,7 @@ constructor(
     private val scopeStore: ScopeStore
 ) : MvpPresenter<ScopeSelectView>() {
     override fun onFirstViewAttach() {
-        scopeStore.onUpdate(object : UpdateListener<List<Scope>> {
+        scopeStore.onScopeListUpdate(object : UpdateListener<List<Scope>> {
             override fun onUpdate(snapshot: List<Scope>) {
                 viewState.updateScopeList(snapshot)
             }

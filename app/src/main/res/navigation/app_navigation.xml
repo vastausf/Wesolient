@@ -36,7 +36,7 @@
 
     <dialog
         android:id="@+id/editScopeDialog"
-        android:name="com.vastausf.wesolient.presentation.ui.dialog.editScope.EditScopeDialog"
+        android:name="com.vastausf.wesolient.presentation.ui.dialog.editTemplate.EditScopeDialog"
         android:label="EditScopeDialog"
         tools:layout="@layout/dialog_edit_scope">
         <argument
@@ -55,6 +55,9 @@
         <action
             android:id="@+id/action_chatFragment_to_closeReasonDialog"
             app:destination="@id/closeReasonDialog" />
+        <action
+            android:id="@+id/action_chatFragment_to_templateSelectDialog"
+            app:destination="@id/templateSelectDialog" />
     </fragment>
 
     <fragment
@@ -71,4 +74,40 @@
         android:name="com.vastausf.wesolient.presentation.ui.dialog.closeReason.CloseReasonDialog"
         android:label="CloseReasonDialog"
         tools:layout="@layout/dialog_close_reason" />
+    <dialog
+        android:id="@+id/templateSelectDialog"
+        android:name="com.vastausf.wesolient.presentation.ui.dialog.templateSelect.TemplateSelectDialog"
+        android:label="TemplateSelectDialog"
+        tools:layout="@layout/dialog_templates_select">
+        <argument
+            android:name="scopeUid"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_templateSelectDialog_to_createTemplateDialog"
+            app:destination="@id/createTemplateDialog" />
+        <action
+            android:id="@+id/action_templateSelectDialog_to_editTemplateDialog"
+            app:destination="@id/editTemplateDialog" />
+    </dialog>
+    <dialog
+        android:id="@+id/createTemplateDialog"
+        android:name="com.vastausf.wesolient.presentation.ui.dialog.createTemplate.CreateTemplateDialog"
+        android:label="CreateTemplateDialog"
+        tools:layout="@layout/dialog_create_template">
+        <argument
+            android:name="scopeUid"
+            app:argType="string" />
+    </dialog>
+    <dialog
+        android:id="@+id/editTemplateDialog"
+        android:name="com.vastausf.wesolient.presentation.ui.dialog.editTemplate.EditTemplateDialog"
+        android:label="EditTemplateDialog"
+        tools:layout="@layout/dialog_edit_scope">
+        <argument
+            android:name="scopeUid"
+            app:argType="string" />
+        <argument
+            android:name="templateUid"
+            app:argType="string" />
+    </dialog>
 </navigation>

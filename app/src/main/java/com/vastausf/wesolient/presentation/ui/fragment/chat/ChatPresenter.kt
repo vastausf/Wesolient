@@ -8,6 +8,7 @@ import com.vastausf.wesolient.getLocalSystemTimestamp
 import com.vastausf.wesolient.model.ScopeStore
 import com.vastausf.wesolient.model.ServiceCreator
 import com.vastausf.wesolient.model.listener.ValueListener
+import com.vastausf.wesolient.replaceVariables
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -25,7 +26,7 @@ constructor(
     private val scopeStore: ScopeStore,
     private val serviceCreator: ServiceCreator
 ) : MvpPresenter<ChatView>() {
-    private lateinit var scope: Scope
+    lateinit var scope: Scope
 
     private lateinit var serviceHolder: ServiceCreator.ServiceHolder
 
@@ -38,6 +39,14 @@ constructor(
             clientMessage(message)
 
             viewState.onSend()
+        }
+    }
+
+    fun sendTemplateMessage(uid: String) {
+        scope.templates.find {
+            it.uid == uid
+        }?.let {
+            sendMessage(it.replaceVariables(scope))
         }
     }
 

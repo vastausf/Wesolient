@@ -21,7 +21,7 @@ class ExampleInstrumentedTest {
 
     @Test
     fun useAppContext() {
-        onView(withId(R.id.bCreate))
+        onView(withId(R.id.fabCreateScope))
             .perform(click())
 
         onView(withId(R.id.etTitle))

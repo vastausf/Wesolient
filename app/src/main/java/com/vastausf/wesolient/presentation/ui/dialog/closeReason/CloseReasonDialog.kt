@@ -8,7 +8,9 @@ import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.navigation.fragment.findNavController
 import com.vastausf.wesolient.R
-import com.vastausf.wesolient.model.CloseReason
+import com.vastausf.wesolient.data.client.CloseReason
+import com.vastausf.wesolient.presentation.ui.NavigationCode
+import com.vastausf.wesolient.sendDialogResult
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.dialog_close_reason.*
 import moxy.MvpBottomSheetDialogFragment
@@ -54,12 +56,7 @@ class CloseReasonDialog : MvpBottomSheetDialogFragment(), CloseReasonView {
 
     override fun sendCloseReason(code: Int, message: String) {
         findNavController().apply {
-            currentBackStackEntry
-                ?.savedStateHandle
-                ?.set(
-                    CloseReason.key,
-                    CloseReason(code, message)
-                )
+            sendDialogResult(NavigationCode.CLOSE_REASON, CloseReason(code, message))
 
             popBackStack()
         }

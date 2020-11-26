@@ -4,10 +4,8 @@ import com.google.firebase.database.IgnoreExtraProperties
 import java.util.*
 
 @IgnoreExtraProperties
-data class Scope(
+data class Variable(
     var uid: String = UUID.randomUUID().toString(),
     var title: String = "",
-    var url: String = "",
-    var templates: List<Template> = emptyList(),
-    var variables: List<Variable> = emptyList()
+    var value: String = ""
 )
