@@ -2,33 +2,40 @@ package com.vastausf.wesolient.presentation.ui.fragment.scopeSelect
 
 import android.os.Bundle
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.vastausf.wesolient.R
 import com.vastausf.wesolient.data.common.Scope
+import com.vastausf.wesolient.databinding.FragmentSelectScopeBinding
 import com.vastausf.wesolient.presentation.ui.adapter.ScopeListAdapterRV
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_select_scope.*
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 import javax.inject.Provider
 
 @AndroidEntryPoint
-class ScopeSelectFragment : MvpAppCompatFragment(R.layout.fragment_select_scope),
-    ScopeSelectView {
+class ScopeSelectFragment : MvpAppCompatFragment(), ScopeSelectView {
     @Inject
     lateinit var presenterProvider: Provider<ScopeSelectPresenter>
 
     private val presenter by moxyPresenter { presenterProvider.get() }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    private lateinit var binding: FragmentSelectScopeBinding
 
-        if (savedInstanceState == null) {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentSelectScopeBinding.inflate(LayoutInflater.from(context))
+
+        binding.apply {
             rvScopeList.layoutManager = LinearLayoutManager(requireContext())
             rvScopeList.adapter = ScopeListAdapterRV(
                 onClick = { item, _ ->
@@ -67,17 +74,21 @@ class ScopeSelectFragment : MvpAppCompatFragment(R.layout.fragment_select_scope)
                 launchSettings()
             }
         }
+
+        return binding.root
     }
 
     override fun updateScopeList(scopeList: List<Scope>) {
-        (rvScopeList.adapter as ScopeListAdapterRV).submitList(scopeList)
+        binding.apply {
+            (rvScopeList.adapter as ScopeListAdapterRV).submitList(scopeList)
 
-        if (scopeList.isNotEmpty()) {
-            rvScopeList.visibility = View.VISIBLE
-            tvScopeListPlaceholder.visibility = View.GONE
-        } else {
-            rvScopeList.visibility = View.INVISIBLE
-            tvScopeListPlaceholder.visibility = View.VISIBLE
+            if (scopeList.isNotEmpty()) {
+                rvScopeList.visibility = View.VISIBLE
+                tvScopeListPlaceholder.visibility = View.GONE
+            } else {
+                rvScopeList.visibility = View.INVISIBLE
+                tvScopeListPlaceholder.visibility = View.VISIBLE
+            }
         }
     }
 

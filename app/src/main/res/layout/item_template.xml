@@ -7,13 +7,13 @@
     android:padding="8dp">
 
     <TextView
-        android:id="@+id/tvTitle_ItemTemplate"
+        android:id="@+id/tvTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/colorText" />
 
     <TextView
-        android:id="@+id/tvMessage_ItemTemplate"
+        android:id="@+id/tvMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/colorSecondary"

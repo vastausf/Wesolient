@@ -9,8 +9,8 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.vastausf.wesolient.R
+import com.vastausf.wesolient.databinding.DialogEditTemplateBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.dialog_edit_scope.*
 import moxy.MvpBottomSheetDialogFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
@@ -25,19 +25,23 @@ class EditTemplateDialog : MvpBottomSheetDialogFragment(), EditTemplateView {
 
     private val args by navArgs<EditTemplateDialogArgs>()
 
+    private lateinit var binding: DialogEditTemplateBinding
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_edit_template, container, false)
+    ): View {
+        binding = DialogEditTemplateBinding.inflate(LayoutInflater.from(context))
+
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        view.apply {
-            bApply.setOnClickListener {
+        binding.apply {
+            bClose.setOnClickListener {
                 val newTitle = etTitle.text.toString().trim()
-                val newUrl = etUrl.text.toString().trim()
+                val newUrl = etMessage.text.toString().trim()
 
                 presenter.onApply(
                     newTitle,
@@ -46,7 +50,7 @@ class EditTemplateDialog : MvpBottomSheetDialogFragment(), EditTemplateView {
             }
 
             etTitle.doAfterTextChanged {
-                bApply.isEnabled = it.toString().isNotBlank()
+                bClose.isEnabled = it.toString().isNotBlank()
             }
         }
     }
@@ -58,9 +62,9 @@ class EditTemplateDialog : MvpBottomSheetDialogFragment(), EditTemplateView {
     }
 
     override fun bindField(title: String, message: String) {
-        view.apply {
+        binding.apply {
             etTitle.setText(title)
-            etUrl.setText(message)
+            etMessage.setText(message)
         }
     }
 

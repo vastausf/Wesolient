@@ -1,7 +1,9 @@
 package com.vastausf.wesolient.presentation.ui.fragment.chat
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.navigation.fragment.findNavController
@@ -11,18 +13,18 @@ import com.vastausf.wesolient.R
 import com.vastausf.wesolient.data.client.CloseReason
 import com.vastausf.wesolient.data.client.Frame
 import com.vastausf.wesolient.data.common.Scope
+import com.vastausf.wesolient.databinding.FragmentChatBinding
 import com.vastausf.wesolient.listenResult
 import com.vastausf.wesolient.presentation.ui.NavigationCode
 import com.vastausf.wesolient.presentation.ui.adapter.ChatAdapterRV
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_chat.*
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 import javax.inject.Provider
 
 @AndroidEntryPoint
-class ChatFragment : MvpAppCompatFragment(R.layout.fragment_chat), ChatView {
+class ChatFragment : MvpAppCompatFragment(), ChatView {
     @Inject
     lateinit var presenterProvider: Provider<ChatPresenter>
 
@@ -30,10 +32,16 @@ class ChatFragment : MvpAppCompatFragment(R.layout.fragment_chat), ChatView {
 
     private val args by navArgs<ChatFragmentArgs>()
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    private lateinit var binding: FragmentChatBinding
 
-        if (savedInstanceState == null) {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentChatBinding.inflate(LayoutInflater.from(context))
+
+        binding.apply {
             rvChat.apply {
                 layoutManager = LinearLayoutManager(context).apply {
                     stackFromEnd = true
@@ -68,9 +76,15 @@ class ChatFragment : MvpAppCompatFragment(R.layout.fragment_chat), ChatView {
 
                 return@setOnLongClickListener true
             }
-
-            presenter.onStart(args.uid)
         }
+
+        return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        presenter.onStart(args.uid)
     }
 
     private fun launchCloseReasonDialog() {
@@ -94,52 +108,62 @@ class ChatFragment : MvpAppCompatFragment(R.layout.fragment_chat), ChatView {
     }
 
     private fun messageBarVisibleState(isVisible: Boolean) {
-        if (isVisible) {
-            llMessageBar.visibility = View.VISIBLE
-        } else {
-            llMessageBar.visibility = View.GONE
+        binding.apply {
+            if (isVisible) {
+                llMessageBar.visibility = View.VISIBLE
+            } else {
+                llMessageBar.visibility = View.GONE
+            }
         }
     }
 
     private fun connectionVisibleState(isVisible: Boolean?) {
-        if (isVisible != null) {
-            if (isVisible) {
-                bDisconnect.visibility = View.VISIBLE
+        binding.apply {
+            if (isVisible != null) {
+                if (isVisible) {
+                    bDisconnect.visibility = View.VISIBLE
 
-                bConnect.visibility = View.GONE
+                    bConnect.visibility = View.GONE
+                } else {
+                    bDisconnect.visibility = View.GONE
+
+                    bConnect.visibility = View.VISIBLE
+                }
             } else {
+                bConnect.visibility = View.GONE
+
                 bDisconnect.visibility = View.GONE
-
-                bConnect.visibility = View.VISIBLE
             }
-        } else {
-            bConnect.visibility = View.GONE
-
-            bDisconnect.visibility = View.GONE
         }
     }
 
     private fun sendVisibleState(isVisible: Boolean) {
-        if (isVisible) {
-            bSend.visibility = View.VISIBLE
+        binding.apply {
+            if (isVisible) {
+                bSend.visibility = View.VISIBLE
 
-            bTemplates.visibility = View.GONE
-        } else {
-            bSend.visibility = View.GONE
+                bTemplates.visibility = View.GONE
+            } else {
+                bSend.visibility = View.GONE
 
-            bTemplates.visibility = View.VISIBLE
+                bTemplates.visibility = View.VISIBLE
+            }
         }
     }
 
     override fun bindData(scope: Scope) {
-        tvScopeTitle.text = scope.title
+        binding.apply {
+            tvScopeTitle.text = scope.title
+        }
     }
 
     override fun updateChatHistory(chatHistory: List<Frame>) {
-        (rvChat.adapter as ChatAdapterRV).submitList(chatHistory.toList())
+        binding.apply {
+            (rvChat.adapter as ChatAdapterRV).submitList(chatHistory.toList())
 
-        if (!rvChat.canScrollVertically(1)) {
-            rvChat.smoothScrollToPosition(chatHistory.size)
+            if (!rvChat.canScrollVertically(1)) {
+                rvChat.smoothScrollToPosition(chatHistory.size)
+            }
         }
     }
 
@@ -151,22 +175,26 @@ class ChatFragment : MvpAppCompatFragment(R.layout.fragment_chat), ChatView {
     }
 
     override fun onSend() {
-        etMessage.text.clear()
+        binding.apply {
+            etMessage.text.clear()
+        }
     }
 
     override fun changeConnectionState(newState: Boolean?) {
-        if (newState != null) {
-            messageBarVisibleState(newState)
+        binding.apply {
+            if (newState != null) {
+                messageBarVisibleState(newState)
 
-            connectionVisibleState(newState)
+                connectionVisibleState(newState)
 
-            pbConnection.visibility = View.GONE
-        } else {
-            messageBarVisibleState(false)
+                pbConnection.visibility = View.GONE
+            } else {
+                messageBarVisibleState(false)
 
-            connectionVisibleState(null)
+                connectionVisibleState(null)
 
-            pbConnection.visibility = View.VISIBLE
+                pbConnection.visibility = View.VISIBLE
+            }
         }
     }
 

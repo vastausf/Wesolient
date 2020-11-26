@@ -14,12 +14,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.vastausf.wesolient.R
 import com.vastausf.wesolient.data.common.Template
+import com.vastausf.wesolient.databinding.DialogTemplatesSelectBinding
 import com.vastausf.wesolient.presentation.ui.NavigationCode
 import com.vastausf.wesolient.presentation.ui.adapter.TemplateListAdapterRV
 import com.vastausf.wesolient.sendDialogResult
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.dialog_edit_scope.*
-import kotlinx.android.synthetic.main.dialog_templates_select.view.*
 import moxy.MvpBottomSheetDialogFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
@@ -34,17 +33,21 @@ class TemplateSelectDialog : MvpBottomSheetDialogFragment(), TemplateSelectView 
 
     private val args by navArgs<TemplateSelectDialogArgs>()
 
+    private lateinit var binding: DialogTemplatesSelectBinding
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_templates_select, container, false)
+    ): View {
+        binding = DialogTemplatesSelectBinding.inflate(LayoutInflater.from(context))
+
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         view.apply {
-            rvTemplateList.apply {
+            binding.rvTemplateList.apply {
                 adapter = TemplateListAdapterRV(
                     onClick = { item, _ ->
                         onTemplateSelect(item)
@@ -76,7 +79,7 @@ class TemplateSelectDialog : MvpBottomSheetDialogFragment(), TemplateSelectView 
                 layoutManager = LinearLayoutManager(context)
             }
 
-            fabCreateTemplate.setOnClickListener {
+            binding.fabCreateTemplate.setOnClickListener {
                 showCreateDialog()
             }
         }
@@ -91,7 +94,7 @@ class TemplateSelectDialog : MvpBottomSheetDialogFragment(), TemplateSelectView 
     override fun bindTemplateList(templateList: List<Template>) {
         view?.apply {
             Log.d("templateList", templateList.toString())
-            (rvTemplateList.adapter as TemplateListAdapterRV).submitList(templateList)
+            (binding.rvTemplateList.adapter as TemplateListAdapterRV).submitList(templateList)
         }
     }
 

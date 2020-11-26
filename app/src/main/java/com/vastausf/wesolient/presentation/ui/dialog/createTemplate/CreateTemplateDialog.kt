@@ -8,8 +8,8 @@ import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.navigation.fragment.navArgs
 import com.vastausf.wesolient.R
+import com.vastausf.wesolient.databinding.DialogCreateTemplateBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.dialog_create_template.view.*
 import moxy.MvpBottomSheetDialogFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
@@ -24,16 +24,20 @@ class CreateTemplateDialog : MvpBottomSheetDialogFragment(), CreateTemplateView 
 
     private val args by navArgs<CreateTemplateDialogArgs>()
 
+    private lateinit var binding: DialogCreateTemplateBinding
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_create_template, container, false)
+    ): View {
+        binding = DialogCreateTemplateBinding.inflate(LayoutInflater.from(context))
+
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        view.apply {
+        binding.apply {
             fabCreateTemplate.setOnClickListener {
                 val title = etTitle.text.toString().trim()
                 val message = etMessage.text.toString().trim()

@@ -7,10 +7,9 @@ import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.vastausf.wesolient.R
+import com.vastausf.wesolient.databinding.DialogEditScopeBinding
 import com.vastausf.wesolient.presentation.ui.dialog.editTemplate.EditScopeDialogArgs
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.dialog_edit_scope.*
 import moxy.MvpBottomSheetDialogFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
@@ -25,17 +24,21 @@ class EditScopeDialog : MvpBottomSheetDialogFragment(), EditScopeView {
 
     private val args by navArgs<EditScopeDialogArgs>()
 
+    private lateinit var binding: DialogEditScopeBinding
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_edit_scope, container, false)
+    ): View {
+        binding = DialogEditScopeBinding.inflate(LayoutInflater.from(context))
+
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        view.apply {
-            bApply.setOnClickListener {
+        binding.apply {
+            bClose.setOnClickListener {
                 val newTitle = etTitle.text.toString().trim()
                 val newUrl = etUrl.text.toString().trim()
 
@@ -46,7 +49,7 @@ class EditScopeDialog : MvpBottomSheetDialogFragment(), EditScopeView {
             }
 
             etTitle.doAfterTextChanged {
-                bApply.isEnabled = it.toString().isNotBlank()
+                bClose.isEnabled = it.toString().isNotBlank()
             }
         }
     }
@@ -58,7 +61,7 @@ class EditScopeDialog : MvpBottomSheetDialogFragment(), EditScopeView {
     }
 
     override fun bindField(title: String, url: String) {
-        view.apply {
+        binding.apply {
             etTitle.setText(title)
             etUrl.setText(url)
         }

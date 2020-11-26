@@ -6,15 +6,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.vastausf.wesolient.R
 import com.vastausf.wesolient.data.client.Frame
-import kotlinx.android.synthetic.main.item_server_message.view.*
+import com.vastausf.wesolient.databinding.ItemClientMessageBinding
+import com.vastausf.wesolient.databinding.ItemServerMessageBinding
 
 class ChatAdapterRV(
     private val onClick: ((Frame) -> Unit)? = null,
     private val onLongClick: ((Frame) -> Unit)? = null
-) : ListAdapter<Frame, ChatAdapterRV.ViewHolder>(MessageDiff) {
-    companion object MessageDiff : DiffUtil.ItemCallback<Frame>() {
+) : ListAdapter<Frame, ChatAdapterRV.ViewHolder>(Diff) {
+    companion object Diff : DiffUtil.ItemCallback<Frame>() {
         override fun areItemsTheSame(oldItem: Frame, newItem: Frame) =
             oldItem.uid == newItem.uid
 
@@ -31,36 +31,46 @@ class ChatAdapterRV(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
+
         return when (viewType) {
             Frame.Source.SERVER_SOURCE.ordinal -> {
                 ServerMessageViewHolder(
-                    LayoutInflater.from(parent.context)
-                        .inflate(R.layout.item_server_message, parent, false)
+                    ItemServerMessageBinding.inflate(layoutInflater, parent, false)
                 )
             }
             Frame.Source.CLIENT_SOURCE.ordinal -> {
                 ClientMessageViewHolder(
-                    LayoutInflater.from(parent.context)
-                        .inflate(R.layout.item_client_message, parent, false)
+                    ItemClientMessageBinding.inflate(layoutInflater, parent, false)
                 )
             }
             else -> throw IllegalStateException("Illegal message view type")
         }
     }
 
-    open inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        open fun bind(
+    abstract inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        abstract fun bind(
+            item: Frame,
+            onClick: ((Frame) -> Unit)?,
+            onLongClick: ((Frame) -> Unit)?
+        )
+    }
+
+    inner class ServerMessageViewHolder(
+        private val binding: ItemServerMessageBinding
+    ) : ViewHolder(binding.root) {
+        override fun bind(
             item: Frame,
             onClick: ((Frame) -> Unit)?,
             onLongClick: ((Frame) -> Unit)?
         ) {
-            itemView.tvMessage.text = item.content
+            binding.tvMessage.text = item.content
 
-            itemView.setOnClickListener {
+            binding.root.setOnClickListener {
                 onClick?.invoke(item)
             }
 
-            itemView.setOnLongClickListener {
+            binding.root.setOnLongClickListener {
                 onLongClick?.invoke(item)
 
                 return@setOnLongClickListener true
@@ -68,7 +78,25 @@ class ChatAdapterRV(
         }
     }
 
-    inner class ServerMessageViewHolder(itemView: View) : ViewHolder(itemView)
+    inner class ClientMessageViewHolder(
+        private val binding: ItemClientMessageBinding
+    ) : ViewHolder(binding.root) {
+        override fun bind(
+            item: Frame,
+            onClick: ((Frame) -> Unit)?,
+            onLongClick: ((Frame) -> Unit)?
+        ) {
+            binding.tvMessage.text = item.content
 
-    inner class ClientMessageViewHolder(itemView: View) : ViewHolder(itemView)
+            binding.root.setOnClickListener {
+                onClick?.invoke(item)
+            }
+
+            binding.root.setOnLongClickListener {
+                onLongClick?.invoke(item)
+
+                return@setOnLongClickListener true
+            }
+        }
+    }
 }

@@ -6,9 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.vastausf.wesolient.R
 import com.vastausf.wesolient.data.common.Template
-import kotlinx.android.synthetic.main.item_template.view.*
+import com.vastausf.wesolient.databinding.ItemTemplateBinding
 
 class TemplateListAdapterRV(
     private val onClick: ((Template, View) -> Unit)? = null,
@@ -27,25 +26,29 @@ class TemplateListAdapterRV(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
+
         return ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_template, parent, false)
+            ItemTemplateBinding.inflate(layoutInflater, parent, false)
         )
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(
+        private val binding: ItemTemplateBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(
             item: Template,
             onClick: ((Template, View) -> Unit)?,
             onLongClick: ((Template, View) -> Unit)?
         ) {
-            itemView.tvTitle_ItemTemplate.text = item.title
-            itemView.tvMessage_ItemTemplate.text = item.message
+            binding.tvTitle.text = item.title
+            binding.tvMessage.text = item.message
 
-            itemView.setOnClickListener {
+            binding.root.setOnClickListener {
                 onClick?.invoke(item, itemView)
             }
 
-            itemView.setOnLongClickListener {
+            binding.root.setOnLongClickListener {
                 onLongClick?.invoke(item, itemView)
 
                 true

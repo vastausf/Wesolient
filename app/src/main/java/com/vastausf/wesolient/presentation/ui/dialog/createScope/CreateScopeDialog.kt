@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import com.vastausf.wesolient.R
+import com.vastausf.wesolient.databinding.DialogCreateScopeBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.dialog_create_scope.*
 import moxy.MvpBottomSheetDialogFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
@@ -21,16 +21,20 @@ class CreateScopeDialog : MvpBottomSheetDialogFragment(), CreateScopeView {
 
     private val presenter by moxyPresenter { presenterProvider.get() }
 
+    private lateinit var binding: DialogCreateScopeBinding
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_create_scope, container, false)
+    ): View {
+        binding = DialogCreateScopeBinding.inflate(LayoutInflater.from(context))
+
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        view.apply {
+        binding.apply {
             fabCreateScope.setOnClickListener {
                 val title = etTitle.text.toString().trim()
                 val url = etUrl.text.toString().trim()
