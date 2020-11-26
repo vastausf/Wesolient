@@ -57,6 +57,12 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
                 launchTemplateDialog()
             }
 
+            bTemplates.setOnLongClickListener {
+                launchVariableDialog()
+
+                return@setOnLongClickListener true
+            }
+
             etMessage.doAfterTextChanged { text ->
                 text?.isNotEmpty()?.let { isNotEmpty ->
                     sendVisibleState(isNotEmpty)
@@ -102,9 +108,14 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
             navigate(ChatFragmentDirections.actionChatFragmentToTemplateSelectDialog(presenter.scope.uid))
 
             listenResult<String>(NavigationCode.TEMPLATE_CODE, viewLifecycleOwner) {
-                presenter.sendTemplateMessage(it)
+                presenter.onTemplateSelect(it)
             }
         }
+    }
+
+    private fun launchVariableDialog() {
+        findNavController()
+            .navigate(ChatFragmentDirections.actionChatFragmentToVariableSelectDialog(presenter.scope.uid))
     }
 
     private fun messageBarVisibleState(isVisible: Boolean) {
@@ -172,6 +183,12 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
 
         findNavController()
             .popBackStack()
+    }
+
+    override fun bindMessageTemplate(template: String) {
+        binding.apply {
+            etMessage.setText(template)
+        }
     }
 
     override fun onSend() {

@@ -4,6 +4,8 @@ import com.tinder.scarlet.Message
 import com.tinder.scarlet.WebSocket
 import com.vastausf.wesolient.data.client.Frame
 import com.vastausf.wesolient.data.common.Scope
+import com.vastausf.wesolient.data.common.Template
+import com.vastausf.wesolient.data.common.Variable
 import com.vastausf.wesolient.getLocalSystemTimestamp
 import com.vastausf.wesolient.model.ScopeStore
 import com.vastausf.wesolient.model.ServiceCreator
@@ -42,12 +44,12 @@ constructor(
         }
     }
 
-    fun sendTemplateMessage(uid: String) {
-        scope.templates.find {
-            it.uid == uid
-        }?.let {
-            sendMessage(it.replaceVariables(scope))
-        }
+    fun onTemplateSelect(uid: String) {
+        scopeStore.getTemplateOnce(scope.uid, uid, object : ValueListener<Template> {
+            override fun onSuccess(value: Template) {
+                viewState.bindMessageTemplate(value.message)
+            }
+        })
     }
 
     fun onStart(uid: String) {
@@ -177,9 +179,15 @@ constructor(
     }
 
     private fun clientMessage(message: String) {
-        serviceHolder.service.sendMessage(message)
+        scopeStore.getVariableListOnce(scope.uid, object : ValueListener<List<Variable>> {
+            override fun onSuccess(value: List<Variable>) {
+                val replacedMessage = message.replaceVariables(value)
 
-        addNewMessage(message, Frame.Source.CLIENT_SOURCE)
+                serviceHolder.service.sendMessage(replacedMessage)
+
+                addNewMessage(replacedMessage, Frame.Source.CLIENT_SOURCE)
+            }
+        })
     }
 
     private fun serverMessage(message: String) {

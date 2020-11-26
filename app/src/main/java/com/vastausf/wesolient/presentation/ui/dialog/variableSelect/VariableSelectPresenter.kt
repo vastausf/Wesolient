@@ -1,7 +1,7 @@
-package com.vastausf.wesolient.presentation.ui.dialog.templateSelect
+package com.vastausf.wesolient.presentation.ui.dialog.variableSelect
 
 import com.vastausf.wesolient.data.common.Scope
-import com.vastausf.wesolient.data.common.Template
+import com.vastausf.wesolient.data.common.Variable
 import com.vastausf.wesolient.model.ScopeStore
 import com.vastausf.wesolient.model.listener.DeleteListener
 import com.vastausf.wesolient.model.listener.UpdateListener
@@ -11,11 +11,11 @@ import moxy.MvpPresenter
 import javax.inject.Inject
 
 @InjectViewState
-class TemplateSelectPresenter
+class VariableSelectPresenter
 @Inject
 constructor(
     private val scopeStore: ScopeStore
-) : MvpPresenter<TemplateSelectView>() {
+) : MvpPresenter<VariableSelectView>() {
     lateinit var scope: Scope
 
     fun onStart(scopeUid: String) {
@@ -23,21 +23,21 @@ constructor(
             override fun onSuccess(value: Scope) {
                 scope = value
 
-                loadTemplates()
+                loadVariables()
             }
         })
     }
 
-    private fun loadTemplates() {
-        scopeStore.onTemplateListUpdate(scope.uid, object : UpdateListener<List<Template>> {
-            override fun onUpdate(snapshot: List<Template>) {
-                viewState.bindTemplateList(snapshot)
+    private fun loadVariables() {
+        scopeStore.onVariableListUpdate(scope.uid, object : UpdateListener<List<Variable>> {
+            override fun onUpdate(snapshot: List<Variable>) {
+                viewState.bindVariableList(snapshot)
             }
         })
     }
 
     fun onDelete(uid: String) {
-        scopeStore.deleteTemplate(scope.uid, uid, object : DeleteListener {
+        scopeStore.deleteVariable(scope.uid, uid, object : DeleteListener {
             override fun onSuccess() {
                 viewState.onDeleteSuccess()
             }

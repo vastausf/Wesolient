@@ -2,8 +2,8 @@ package com.vastausf.wesolient
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
-import com.vastausf.wesolient.data.common.Scope
 import com.vastausf.wesolient.data.common.Template
+import com.vastausf.wesolient.data.common.Variable
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneOffset
 import org.threeten.bp.format.DateTimeFormatter
@@ -44,10 +44,14 @@ fun <T> NavController.listenResult(key: String, lifecycleOwner: LifecycleOwner, 
         }
 }
 
-fun Template.replaceVariables(scope: Scope): String {
-    var replacedMessage = message
+fun Template.replaceVariables(variables: List<Variable>): String {
+    return message.replaceVariables(variables)
+}
 
-    scope.variables.forEach {
+fun String.replaceVariables(variables: List<Variable>): String {
+    var replacedMessage = this
+
+    variables.forEach {
         replacedMessage = replacedMessage.replace("@{${it.title}}", it.value)
     }
 

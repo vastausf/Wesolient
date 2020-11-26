@@ -10,6 +10,9 @@ interface ChatView : MvpView {
     @AddToEndSingle
     fun bindData(scope: Scope)
 
+    @Skip
+    fun bindMessageTemplate(template: String)
+
     @AddToEndSingle
     fun updateChatHistory(chatHistory: List<Frame>)
 

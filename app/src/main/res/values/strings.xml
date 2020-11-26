@@ -52,23 +52,48 @@
     <string name="select_template_menu_item_delete">delete</string>
 
     <!--    CREATE TEMPLATE DIALOG   -->
-    <string name="create_template_message_hint">Hello @{serverTitle}</string>
     <string name="create_template_title_hint">e.g. say \'Hello server\'</string>
-    <string name="create_template_apply">create</string>
+    <string name="create_template_message_hint">Hello @{serverTitle}</string>
+    <string name="create_template_create">create</string>
     <string name="create_template_failure">something went wrong. try later</string>
 
     <!--    EDIT TEMPLATE DIALOG   -->
     <string name="edit_template_miss">can\'t find this template</string>
-    <string name="edit_template_message_hint">Hello @{serverTitle}</string>
     <string name="edit_template_title_hint">e.g. say \'Hello server\'</string>
+    <string name="edit_template_message_hint">Hello @{serverTitle}</string>
     <string name="edit_template_apply">apply</string>
     <string name="edit_template_failure">something went wrong. try later</string>
 
-    <!--    DELETE SCOPE DIALOG   -->
-    <string name="delete_template_confirmation">do you want to delete this scope?</string>
+    <!--    DELETE TEMPLATE DIALOG   -->
+    <string name="delete_template_confirmation">do you want to delete this template?</string>
     <string name="delete_template_positive">yes</string>
-    <string name="template_delete_success">deleted</string>
-    <string name="template_delete_failure">something went wrong</string>
+    <string name="delete_template_success">deleted</string>
+    <string name="delete_template_failure">something went wrong</string>
+
+
+    <!--    VARIABLE SELECT DIALOG   -->
+    <string name="select_variable_create">create new</string>
+    <string name="select_variable_menu_item_edit">edit</string>
+    <string name="select_variable_menu_item_delete">delete</string>
+
+    <!--    CREATE VARIABLE DIALOG   -->
+    <string name="create_variable_title_hint">e.g. serverTitle</string>
+    <string name="create_variable_value_hint">Awesome server</string>
+    <string name="create_variable_create">create</string>
+    <string name="create_variable_failure">something went wrong. try later</string>
+
+    <!--    EDIT VARIABLE DIALOG   -->
+    <string name="edit_variable_miss">can\'t find this variable</string>
+    <string name="edit_variable_title_hint">Awesome server</string>
+    <string name="edit_variable_value_hint">e.g. serverTitle</string>
+    <string name="edit_variable_apply">apply</string>
+    <string name="edit_variable_failure">something went wrong. try later</string>
+
+    <!--    DELETE VARIABLE DIALOG   -->
+    <string name="delete_variable_confirmation">do you want to delete this variable?</string>
+    <string name="delete_variable_positive">yes</string>
+    <string name="delete_variable_success">deleted</string>
+    <string name="delete_variable_failure">something went wrong</string>
 
 
     <!--    SETTINGS FRAGMENT   -->

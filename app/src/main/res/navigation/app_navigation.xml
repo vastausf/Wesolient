@@ -36,7 +36,7 @@
 
     <dialog
         android:id="@+id/editScopeDialog"
-        android:name="com.vastausf.wesolient.presentation.ui.dialog.editTemplate.EditScopeDialog"
+        android:name="com.vastausf.wesolient.presentation.ui.dialog.editScope.EditScopeDialog"
         android:label="EditScopeDialog"
         tools:layout="@layout/dialog_edit_scope">
         <argument
@@ -58,6 +58,9 @@
         <action
             android:id="@+id/action_chatFragment_to_templateSelectDialog"
             app:destination="@id/templateSelectDialog" />
+        <action
+            android:id="@+id/action_chatFragment_to_variableSelectDialog"
+            app:destination="@id/variableSelectDialog" />
     </fragment>
 
     <fragment
@@ -108,6 +111,42 @@
             app:argType="string" />
         <argument
             android:name="templateUid"
+            app:argType="string" />
+    </dialog>
+    <dialog
+        android:id="@+id/createVariableDialog"
+        android:name="com.vastausf.wesolient.presentation.ui.dialog.createVariable.CreateVariableDialog"
+        android:label="CreateVariableDialog"
+        tools:layout="@layout/dialog_create_variable">
+        <argument
+            android:name="scopeUid"
+            app:argType="string" />
+    </dialog>
+    <dialog
+        android:id="@+id/variableSelectDialog"
+        android:name="com.vastausf.wesolient.presentation.ui.dialog.variableSelect.VariableSelectDialog"
+        android:label="VariableSelectDialog"
+        tools:layout="@layout/dialog_variable_select">
+        <action
+            android:id="@+id/action_variableSelectDialog_to_createVariableDialog"
+            app:destination="@id/createVariableDialog" />
+        <action
+            android:id="@+id/action_variableSelectDialog_to_editVariableDialog"
+            app:destination="@id/editVariableDialog" />
+        <argument
+            android:name="scopeUid"
+            app:argType="string" />
+    </dialog>
+    <dialog
+        android:id="@+id/editVariableDialog"
+        android:name="com.vastausf.wesolient.presentation.ui.dialog.editVariable.EditVariableDialog"
+        android:label="EditVariableDialog"
+        tools:layout="@layout/dialog_edit_variable">
+        <argument
+            android:name="scopeUid"
+            app:argType="string" />
+        <argument
+            android:name="variableUid"
             app:argType="string" />
     </dialog>
 </navigation>

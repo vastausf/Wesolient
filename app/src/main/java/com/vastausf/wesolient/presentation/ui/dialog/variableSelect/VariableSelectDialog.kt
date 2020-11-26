@@ -1,4 +1,4 @@
-package com.vastausf.wesolient.presentation.ui.dialog.templateSelect
+package com.vastausf.wesolient.presentation.ui.dialog.variableSelect
 
 import android.os.Bundle
 import android.view.Gravity
@@ -12,11 +12,9 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.vastausf.wesolient.R
-import com.vastausf.wesolient.data.common.Template
-import com.vastausf.wesolient.databinding.DialogTemplatesSelectBinding
-import com.vastausf.wesolient.presentation.ui.NavigationCode
-import com.vastausf.wesolient.presentation.ui.adapter.TemplateListAdapterRV
-import com.vastausf.wesolient.sendDialogResult
+import com.vastausf.wesolient.data.common.Variable
+import com.vastausf.wesolient.databinding.DialogVariableSelectBinding
+import com.vastausf.wesolient.presentation.ui.adapter.VariableListAdapterRV
 import dagger.hilt.android.AndroidEntryPoint
 import moxy.MvpBottomSheetDialogFragment
 import moxy.ktx.moxyPresenter
@@ -24,41 +22,38 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 @AndroidEntryPoint
-class TemplateSelectDialog : MvpBottomSheetDialogFragment(), TemplateSelectView {
+class VariableSelectDialog : MvpBottomSheetDialogFragment(), VariableSelectView {
     @Inject
-    lateinit var presenterProvider: Provider<TemplateSelectPresenter>
+    lateinit var presenterProvider: Provider<VariableSelectPresenter>
 
     private val presenter by moxyPresenter { presenterProvider.get() }
 
-    private val args by navArgs<TemplateSelectDialogArgs>()
+    private val args by navArgs<VariableSelectDialogArgs>()
 
-    private lateinit var binding: DialogTemplatesSelectBinding
+    private lateinit var binding: DialogVariableSelectBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DialogTemplatesSelectBinding.inflate(LayoutInflater.from(context))
+        binding = DialogVariableSelectBinding.inflate(LayoutInflater.from(context))
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         view.apply {
-            binding.rvTemplateList.apply {
-                adapter = TemplateListAdapterRV(
-                    onClick = { item, _ ->
-                        onTemplateSelect(item)
-                    },
+            binding.rvVariableList.apply {
+                adapter = VariableListAdapterRV(
                     onLongClick = { item, _ ->
                         PopupMenu(context, view).apply {
-                            inflate(R.menu.template_menu)
+                            inflate(R.menu.variable_menu)
                             gravity = Gravity.END
                             setOnMenuItemClickListener {
                                 when (it.itemId) {
                                     R.id.editMI -> {
-                                        launchScopeEdit(item.uid)
+                                        launchVariableEdit(item.uid)
 
                                         return@setOnMenuItemClickListener true
                                     }
@@ -78,7 +73,7 @@ class TemplateSelectDialog : MvpBottomSheetDialogFragment(), TemplateSelectView 
                 layoutManager = LinearLayoutManager(context)
             }
 
-            binding.fabCreateTemplate.setOnClickListener {
+            binding.fabCreateVariable.setOnClickListener {
                 showCreateDialog()
             }
         }
@@ -90,52 +85,45 @@ class TemplateSelectDialog : MvpBottomSheetDialogFragment(), TemplateSelectView 
         presenter.onStart(args.scopeUid)
     }
 
-    override fun bindTemplateList(templateList: List<Template>) {
+    override fun bindVariableList(variableList: List<Variable>) {
         view?.apply {
-            (binding.rvTemplateList.adapter as TemplateListAdapterRV).submitList(templateList)
+            (binding.rvVariableList.adapter as VariableListAdapterRV).submitList(variableList)
         }
     }
 
     override fun onDeleteSuccess() {
-        Toast.makeText(context, R.string.delete_template_success, Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, R.string.delete_variable_success, Toast.LENGTH_SHORT).show()
     }
 
     override fun onDeleteFailure() {
-        Toast.makeText(context, R.string.delete_template_failure, Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, R.string.delete_variable_failure, Toast.LENGTH_SHORT).show()
     }
 
-    private fun launchScopeEdit(templateUid: String) {
+    private fun launchVariableEdit(variableUid: String) {
         findNavController()
             .navigate(
-                TemplateSelectDialogDirections.actionTemplateSelectDialogToEditTemplateDialog(
+                VariableSelectDialogDirections.actionVariableSelectDialogToEditVariableDialog(
                     presenter.scope.uid,
-                    templateUid
+                    variableUid
                 )
             )
     }
 
     private fun showCreateDialog() {
         findNavController().navigate(
-            TemplateSelectDialogDirections
-                .actionTemplateSelectDialogToCreateTemplateDialog(presenter.scope.uid)
+            VariableSelectDialogDirections.actionVariableSelectDialogToCreateVariableDialog(
+                presenter.scope.uid
+            )
         )
     }
 
     private fun showDeleteSnackbar(onClick: () -> Unit) {
-        Snackbar.make(requireView(), R.string.delete_template_confirmation, Snackbar.LENGTH_LONG)
+        Snackbar.make(requireView(), R.string.delete_variable_confirmation, Snackbar.LENGTH_LONG)
             .apply {
-                setAction(R.string.delete_template_positive) {
+                setAction(R.string.delete_variable_positive) {
                     onClick()
                 }
                 show()
             }
-    }
-
-    private fun onTemplateSelect(template: Template) {
-        findNavController().apply {
-            sendDialogResult(NavigationCode.TEMPLATE_CODE, template.uid)
-
-            popBackStack()
-        }
     }
 }

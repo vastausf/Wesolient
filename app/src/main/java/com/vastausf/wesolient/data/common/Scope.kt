@@ -8,6 +8,6 @@ data class Scope(
     var uid: String = UUID.randomUUID().toString(),
     var title: String = "",
     var url: String = "",
-    var templates: List<Template> = emptyList(),
-    var variables: List<Variable> = emptyList()
+    var templates: HashMap<String, Template> = hashMapOf(),
+    var variables: HashMap<String, Variable> = hashMapOf()
 )
