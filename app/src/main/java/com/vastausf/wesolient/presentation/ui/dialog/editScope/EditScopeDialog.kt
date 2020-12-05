@@ -8,7 +8,6 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.vastausf.wesolient.databinding.DialogEditScopeBinding
-import com.vastausf.wesolient.presentation.ui.dialog.editTemplate.EditScopeDialogArgs
 import dagger.hilt.android.AndroidEntryPoint
 import moxy.MvpBottomSheetDialogFragment
 import moxy.ktx.moxyPresenter
