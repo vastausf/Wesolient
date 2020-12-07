@@ -11,11 +11,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvTemplateList"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="500dp"
-            tools:listitem="@layout/item_template" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:text="@string/select_template_header"
+                android:layout_gravity="center"
+                android:padding="16dp"
+                android:textColor="@color/colorText"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvTemplateList"
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                tools:listitem="@layout/item_template" />
+        </LinearLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabCreateTemplate"
@@ -27,6 +42,7 @@
             app:borderWidth="0dp"
             app:layout_anchor="@id/rvTemplateList"
             app:layout_anchorGravity="right|bottom"
-            app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior" />
+            app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
+            android:contentDescription="@string/select_template_create" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.core.widget.NestedScrollView>

@@ -1,8 +1,6 @@
 package com.vastausf.wesolient.presentation.ui.fragment.scopeSelect
 
-import com.vastausf.wesolient.data.common.Scope
-import com.vastausf.wesolient.model.ScopeStore
-import com.vastausf.wesolient.model.listener.UpdateListener
+import com.vastausf.wesolient.model.store.ScopeStore
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import javax.inject.Inject
@@ -14,11 +12,11 @@ constructor(
     private val scopeStore: ScopeStore
 ) : MvpPresenter<ScopeSelectView>() {
     override fun onFirstViewAttach() {
-        scopeStore.onScopeListUpdate(object : UpdateListener<List<Scope>> {
-            override fun onUpdate(snapshot: List<Scope>) {
-                viewState.updateScopeList(snapshot)
+        scopeStore.onScopeListUpdate(
+            onUpdate = { scopeList ->
+                viewState.updateScopeList(scopeList)
             }
-        })
+        )
     }
 
     fun onCreateScope() {

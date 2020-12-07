@@ -9,7 +9,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.vastausf.wesolient.model.ScopeStore
+import com.vastausf.wesolient.model.store.ScopeStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,7 +38,7 @@ object ActivityModule {
     }
 
     @Provides
-    fun providesFirebaseDatabaseScopes(
+    fun providesFirebaseDatabaseUserRoot(
         firebaseDatabase: FirebaseDatabase,
         firebaseUser: FirebaseUser
     ): DatabaseReference {
@@ -46,7 +46,6 @@ object ActivityModule {
             .reference
             .child("USERS")
             .child(firebaseUser.uid)
-            .child("SCOPES")
     }
 
     @Provides
@@ -60,6 +59,8 @@ object ActivityModule {
     fun providesScopeStore(
         firebaseDatabaseScopes: DatabaseReference
     ): ScopeStore {
-        return ScopeStore(firebaseDatabaseScopes)
+        return ScopeStore(
+            firebaseDatabaseScopes
+        )
     }
 }

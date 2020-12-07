@@ -1,7 +1,6 @@
 package com.vastausf.wesolient.presentation.ui.dialog.createScope
 
-import com.vastausf.wesolient.model.ScopeStore
-import com.vastausf.wesolient.model.listener.CreateListener
+import com.vastausf.wesolient.model.store.ScopeStore
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import javax.inject.Inject
@@ -16,14 +15,14 @@ constructor(
         title: String,
         url: String
     ) {
-        scopeStore.createScope(title, url, object : CreateListener {
-            override fun onSuccess() {
+        scopeStore.createScope(title, url,
+            onSuccess = {
                 viewState.dismissDialog()
-            }
-
-            override fun onFailure() {
+            },
+            onFailure = {
                 viewState.showErrorMessage()
             }
-        })
+        )
     }
 }
+

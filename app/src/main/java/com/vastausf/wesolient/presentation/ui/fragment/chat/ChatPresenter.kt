@@ -4,12 +4,9 @@ import com.tinder.scarlet.Message
 import com.tinder.scarlet.WebSocket
 import com.vastausf.wesolient.data.client.Frame
 import com.vastausf.wesolient.data.common.Scope
-import com.vastausf.wesolient.data.common.Template
-import com.vastausf.wesolient.data.common.Variable
 import com.vastausf.wesolient.getLocalSystemTimestamp
-import com.vastausf.wesolient.model.ScopeStore
 import com.vastausf.wesolient.model.ServiceCreator
-import com.vastausf.wesolient.model.listener.ValueListener
+import com.vastausf.wesolient.model.store.*
 import com.vastausf.wesolient.replaceVariables
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -26,6 +23,9 @@ class ChatPresenter
 @Inject
 constructor(
     private val scopeStore: ScopeStore,
+    private val templateStore: TemplateStore,
+    private val variableStore: VariableStore,
+    private val settingsStore: SettingsStore,
     private val serviceCreator: ServiceCreator
 ) : MvpPresenter<ChatView>() {
     lateinit var scope: Scope
@@ -36,6 +36,9 @@ constructor(
 
     private lateinit var connectionDisposable: CompositeDisposable
 
+    private val wsPrefix: String = "ws://"
+    private val wssPrefix: String = "wss://"
+
     fun sendMessage(message: String) {
         if (message.isNotBlank()) {
             clientMessage(message)
@@ -45,35 +48,43 @@ constructor(
     }
 
     fun onTemplateSelect(uid: String) {
-        scopeStore.getTemplateOnce(scope.uid, uid, object : ValueListener<Template> {
-            override fun onSuccess(value: Template) {
+        templateStore.getTemplateOnce(scope.uid, uid,
+            onSuccess = { value ->
                 viewState.bindMessageTemplate(value.message)
             }
-        })
+        )
     }
 
     fun onStart(uid: String) {
-        scopeStore.getScopeOnce(uid, object : ValueListener<Scope> {
-            override fun onSuccess(value: Scope) {
+        scopeStore.getScopeOnce(uid,
+            onSuccess = { value ->
                 scope = value
 
                 viewState.bindData(value)
-            }
 
-            override fun onNotFound() {
+                settingsStore.getSettingsOnce { settings ->
+                    if (settings.autoConnect) {
+                        onConnect()
+                    }
+                }
+            },
+            onNotFound = {
+                viewState.onMissScope()
+            },
+            onFailure = {
                 viewState.onMissScope()
             }
-
-            override fun onFailure() {
-                viewState.onMissScope()
-            }
-        })
+        )
     }
 
     fun onConnect() {
         try {
             scope.apply {
                 viewState.changeConnectionState(null)
+
+                if (!(url.startsWith(wsPrefix, true) || url.startsWith(wssPrefix, true)))
+                    throw IllegalArgumentException()
+
 
                 serviceHolder = serviceCreator.create(url)
 
@@ -151,6 +162,9 @@ constructor(
             is SocketException -> {
                 viewState.onConnectionError()
             }
+            is IllegalArgumentException -> {
+                viewState.onIllegalUrl()
+            }
             else -> {
                 viewState.onConnectionError()
             }
@@ -179,15 +193,13 @@ constructor(
     }
 
     private fun clientMessage(message: String) {
-        scopeStore.getVariableListOnce(scope.uid, object : ValueListener<List<Variable>> {
-            override fun onSuccess(value: List<Variable>) {
-                val replacedMessage = message.replaceVariables(value)
+        variableStore.getVariableListOnce(scope.uid) { variableList ->
+            val replacedMessage = message.replaceVariables(variableList)
 
-                serviceHolder.service.sendMessage(replacedMessage)
+            serviceHolder.service.sendMessage(replacedMessage)
 
-                addNewMessage(replacedMessage, Frame.Source.CLIENT_SOURCE)
-            }
-        })
+            addNewMessage(replacedMessage, Frame.Source.CLIENT_SOURCE)
+        }
     }
 
     private fun serverMessage(message: String) {

@@ -20,6 +20,9 @@ interface ChatView : MvpView {
     fun onConnectionError()
 
     @Skip
+    fun onIllegalUrl()
+
+    @Skip
     fun onMissScope()
 
     @AddToEndSingle

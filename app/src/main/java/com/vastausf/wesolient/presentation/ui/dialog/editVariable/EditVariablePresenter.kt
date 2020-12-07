@@ -2,9 +2,8 @@ package com.vastausf.wesolient.presentation.ui.dialog.editVariable
 
 import com.vastausf.wesolient.data.common.Scope
 import com.vastausf.wesolient.data.common.Variable
-import com.vastausf.wesolient.model.ScopeStore
-import com.vastausf.wesolient.model.listener.CreateListener
-import com.vastausf.wesolient.model.listener.ValueListener
+import com.vastausf.wesolient.model.store.ScopeStore
+import com.vastausf.wesolient.model.store.VariableStore
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import javax.inject.Inject
@@ -13,46 +12,45 @@ import javax.inject.Inject
 class EditVariablePresenter
 @Inject
 constructor(
-    private val scopeStore: ScopeStore
+    private val scopeStore: ScopeStore,
+    private val variableStore: VariableStore
 ) : MvpPresenter<EditVariableView>() {
     private lateinit var scope: Scope
     private lateinit var variable: Variable
 
     fun onStart(scopeUid: String, variableUid: String) {
-        scopeStore.getScopeOnce(scopeUid, object : ValueListener<Scope> {
-            override fun onSuccess(value: Scope) {
+        scopeStore.getScopeOnce(scopeUid,
+            onSuccess = { value ->
                 scope = value
 
                 loadVariable(variableUid)
             }
-        })
+        )
     }
 
-    fun loadVariable(uid: String) {
-        scopeStore.getVariableOnce(scope.uid, uid, object : ValueListener<Variable> {
-            override fun onSuccess(value: Variable) {
+    private fun loadVariable(uid: String) {
+        variableStore.getVariableOnce(scope.uid, uid,
+            onSuccess = { value ->
                 variable = value
 
                 viewState.bindField(value.title, value.value)
             }
-        })
+        )
     }
 
     fun onApply(newTitle: String, newValue: String) {
-        scopeStore.editVariable(
+        variableStore.editVariable(
             scope.uid,
             variable.uid,
             newTitle,
             newValue,
-            object : CreateListener {
-                override fun onSuccess() {
-                    viewState.onApplySuccess()
-                }
-
-                override fun onFailure() {
-                    viewState.onApplyFailure()
-                }
-            })
+            onSuccess = {
+                viewState.onApplySuccess()
+            },
+            onFailure = {
+                viewState.onApplyFailure()
+            }
+        )
 
         viewState.onApplySuccess()
     }

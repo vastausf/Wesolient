@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.vastausf.wesolient.R
+import com.vastausf.wesolient.data.common.Settings
 import com.vastausf.wesolient.databinding.FragmentSettingsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import moxy.MvpAppCompatFragment
@@ -30,12 +31,34 @@ class SettingsFragment : MvpAppCompatFragment(R.layout.fragment_settings), Setti
         binding = FragmentSettingsBinding.inflate(LayoutInflater.from(context))
 
         binding.apply {
+            sAutoConnect.setOnCheckedChangeListener { _, isChecked ->
+                presenter.onAutoConnectUpdate(isChecked)
+            }
+
             bLogOut.setOnClickListener {
                 presenter.onLogout()
             }
         }
 
         return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        presenter.onStart()
+    }
+
+    override fun bindSetting(settings: Settings) {
+        binding.apply {
+            sAutoConnect.isChecked = settings.autoConnect
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        presenter.saveSettings()
     }
 
     override fun logout() {

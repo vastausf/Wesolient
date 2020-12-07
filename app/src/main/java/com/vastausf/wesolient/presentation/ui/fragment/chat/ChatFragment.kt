@@ -219,6 +219,10 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
         Toast.makeText(context, R.string.chat_connection_error, Toast.LENGTH_SHORT).show()
     }
 
+    override fun onIllegalUrl() {
+        Toast.makeText(context, R.string.chat_illegal_url, Toast.LENGTH_SHORT).show()
+    }
+
     override fun onDisconnectWithReason(code: Int, reason: String) {
         Toast.makeText(
             context,

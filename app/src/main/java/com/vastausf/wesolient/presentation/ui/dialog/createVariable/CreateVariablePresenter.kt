@@ -1,9 +1,8 @@
 package com.vastausf.wesolient.presentation.ui.dialog.createVariable
 
 import com.vastausf.wesolient.data.common.Scope
-import com.vastausf.wesolient.model.ScopeStore
-import com.vastausf.wesolient.model.listener.CreateListener
-import com.vastausf.wesolient.model.listener.ValueListener
+import com.vastausf.wesolient.model.store.ScopeStore
+import com.vastausf.wesolient.model.store.VariableStore
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import javax.inject.Inject
@@ -12,30 +11,28 @@ import javax.inject.Inject
 class CreateVariablePresenter
 @Inject
 constructor(
-    private val scopeStore: ScopeStore
+    private val scopeStore: ScopeStore,
+    private val variableStore: VariableStore
 ) : MvpPresenter<CreateVariableView>() {
     private lateinit var scope: Scope
 
     fun onStart(scopeUid: String) {
-        scopeStore.getScopeOnce(scopeUid, object : ValueListener<Scope> {
-            override fun onSuccess(value: Scope) {
-                scope = value
-            }
-        })
+        scopeStore.getScopeOnce(scopeUid) { value ->
+            scope = value
+        }
     }
 
     fun onNewVariableCreate(
         title: String,
         message: String
     ) {
-        scopeStore.createVariable(scope.uid, title, message, object : CreateListener {
-            override fun onSuccess() {
+        variableStore.createVariable(scope.uid, title, message,
+            onSuccess = {
                 viewState.dismissDialog()
-            }
-
-            override fun onFailure() {
+            },
+            onFailure = {
                 viewState.showErrorMessage()
             }
-        })
+        )
     }
 }
