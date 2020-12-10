@@ -4,13 +4,13 @@
     <color name="colorPrimaryDark">#F44336</color>
     <color name="colorAccent">#F44336</color>
 
-    <color name="colorSecondary">#DDDDDD</color>
+    <color name="colorSecondary">#4A4A4A</color>
 
-    <color name="colorBackground">#FFFFFF</color>
-    <color name="colorServerMessageBackground">#4DFFFFFF</color>
-    <color name="colorClientMessageBackground">#80FFFFFF</color>
+    <color name="colorBackground">#121212</color>
+    <color name="colorServerMessageBackground">#26FFFFFF</color>
+    <color name="colorClientMessageBackground">#4DFFFFFF</color>
 
-    <color name="colorText">#202020</color>
+    <color name="colorText">#E1E1E1</color>
     <color name="colorTextSecondary">@color/colorSecondary</color>
 
     <color name="colorPrimaryDisabled">@color/colorSecondary</color>

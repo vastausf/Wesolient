@@ -1,10 +1,10 @@
 buildscript {
-    ext.kotlin_version = "1.4.10"
+    ext.kotlin_version = "1.4.21"
     ext.coroutines_version = "1.4.1"
     ext.scarlet_version = "0.1.10"
     ext.moxy_version = "2.2.0"
     ext.hilt_version = "2.28-alpha"
-    ext.navigation_version = "2.3.1"
+    ext.navigation_version = "2.3.2"
     ext.gservices_version = "4.3.4"
     ext.firebase_bom_version = "26.0.0"
 
