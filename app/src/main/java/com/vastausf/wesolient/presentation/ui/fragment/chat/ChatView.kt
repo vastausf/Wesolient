@@ -17,13 +17,16 @@ interface ChatView : MvpView {
     fun updateChatHistory(chatHistory: List<Frame>)
 
     @Skip
-    fun onConnectionError()
+    fun onConnectionError(url: String)
 
     @Skip
     fun onIllegalUrl()
 
     @Skip
     fun onMissScope()
+
+    @Skip
+    fun onUndefinedError()
 
     @AddToEndSingle
     fun changeConnectionState(newState: Boolean?)

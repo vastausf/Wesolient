@@ -12,7 +12,8 @@ import java.util.concurrent.TimeUnit
 
 class ServiceCreator {
     fun create(
-        url: String
+        url: String,
+        reconnectCount: Int
     ): ServiceHolder {
         val lifecycleRegistry = LifecycleRegistry()
 
@@ -34,13 +35,15 @@ class ServiceCreator {
 
         return ServiceHolder(
             service,
-            lifecycleRegistry
+            lifecycleRegistry,
+            reconnectCount
         )
     }
 
     data class ServiceHolder(
         val service: SocketService,
-        private val lifecycleRegistry: LifecycleRegistry
+        private val lifecycleRegistry: LifecycleRegistry,
+        var reconnectCount: Int
     ) {
         fun connect() {
             lifecycleRegistry.onNext(Lifecycle.State.Started)

@@ -6,12 +6,13 @@
     <string name="chat_miss_scope">Can\'t find this scope</string>
     <string name="chat_message_hint">Type message here…</string>
     <string name="chat_settings">Settings</string>
-    <string name="chat_connection_error">Connection error</string>
+    <string name="chat_connection_error">Connection to %1$s failed</string>
     <string name="chat_illegal_url">Illegal websocket url</string>
     <string name="chat_connection_closed">Connection closed\n%1$d: %2$s</string>
     <string name="chat_connect">Connect</string>
     <string name="chat_disconnect">Disconnect</string>
     <string name="chat_send_message">Send</string>
+    <string name="chat_undefined_error">Something went wrong</string>
 
 
     <!--    CLOSE REASON DIALOG   -->
@@ -102,5 +103,5 @@
     <!--    SETTINGS FRAGMENT   -->
     <string name="settings_auto_connect">Auto-connect on scope open</string>
     <string name="settings_logout">LogOut</string>
-
+    <string name="settings_reconnect_count">Reconnect count</string>
 </resources>

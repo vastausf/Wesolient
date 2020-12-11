@@ -1,12 +1,18 @@
 package com.vastausf.wesolient.presentation.ui.fragment.chat
 
+import android.util.Log
 import com.tinder.scarlet.Message
 import com.tinder.scarlet.WebSocket
 import com.vastausf.wesolient.data.client.Frame
 import com.vastausf.wesolient.data.common.Scope
+import com.vastausf.wesolient.data.common.Settings
+import com.vastausf.wesolient.exception.IllegalUrlException
 import com.vastausf.wesolient.getLocalSystemTimestamp
 import com.vastausf.wesolient.model.ServiceCreator
-import com.vastausf.wesolient.model.store.*
+import com.vastausf.wesolient.model.store.ScopeStore
+import com.vastausf.wesolient.model.store.SettingsStore
+import com.vastausf.wesolient.model.store.TemplateStore
+import com.vastausf.wesolient.model.store.VariableStore
 import com.vastausf.wesolient.replaceVariables
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -14,6 +20,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import moxy.InjectViewState
 import moxy.MvpPresenter
+import java.net.ConnectException
 import java.net.SocketException
 import java.util.*
 import javax.inject.Inject
@@ -29,6 +36,7 @@ constructor(
     private val serviceCreator: ServiceCreator
 ) : MvpPresenter<ChatView>() {
     lateinit var scope: Scope
+    lateinit var settings: Settings
 
     private lateinit var serviceHolder: ServiceCreator.ServiceHolder
 
@@ -48,11 +56,9 @@ constructor(
     }
 
     fun onTemplateSelect(uid: String) {
-        templateStore.getTemplateOnce(scope.uid, uid,
-            onSuccess = { value ->
-                viewState.bindMessageTemplate(value.message)
-            }
-        )
+        templateStore.getTemplateOnce(scope.uid, uid) { template ->
+            viewState.bindMessageTemplate(template.message)
+        }
     }
 
     fun onStart(uid: String) {
@@ -75,6 +81,10 @@ constructor(
                 viewState.onMissScope()
             }
         )
+
+        settingsStore.onSettingsUpdate { settings ->
+            this.settings = settings
+        }
     }
 
     fun onConnect() {
@@ -83,10 +93,9 @@ constructor(
                 viewState.changeConnectionState(null)
 
                 if (!(url.startsWith(wsPrefix, true) || url.startsWith(wssPrefix, true)))
-                    throw IllegalArgumentException()
+                    throw IllegalUrlException()
 
-
-                serviceHolder = serviceCreator.create(url)
+                serviceHolder = serviceCreator.create(url, settings.reconnectCount)
 
                 connectionDisposable = CompositeDisposable()
 
@@ -130,13 +139,18 @@ constructor(
                                 serverMessage(message.value)
                             }
                             is Message.Bytes -> {
-
+                                serverMessage(message.value.toString())
                             }
                         }
                     }
                     is WebSocket.Event.OnConnectionFailed -> {
                         onConnectionException(it.throwable)
                         onConnectionClosed()
+
+                        Log.d("reconnectCount", serviceHolder.reconnectCount.toString())
+                        if (serviceHolder.reconnectCount-- == 0) {
+                            serviceHolder.disconnect()
+                        }
                     }
                     is WebSocket.Event.OnConnectionClosing -> {
 
@@ -159,14 +173,14 @@ constructor(
         exception.printStackTrace()
 
         when (exception) {
-            is SocketException -> {
-                viewState.onConnectionError()
+            is ConnectException -> {
+                viewState.onConnectionError(scope.url)
             }
-            is IllegalArgumentException -> {
+            is IllegalUrlException -> {
                 viewState.onIllegalUrl()
             }
             else -> {
-                viewState.onConnectionError()
+                viewState.onUndefinedError()
             }
         }
     }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.doAfterTextChanged
 import androidx.navigation.fragment.findNavController
 import com.vastausf.wesolient.R
 import com.vastausf.wesolient.data.common.Settings
@@ -35,6 +36,18 @@ class SettingsFragment : MvpAppCompatFragment(R.layout.fragment_settings), Setti
                 presenter.onAutoConnectUpdate(isChecked)
             }
 
+            etReconnectCount.hint = resources
+                .getInteger(R.integer.settings_reconnect_count_default).toString()
+            etReconnectCount.doAfterTextChanged { text ->
+                presenter.onReconnectCountUpdate(
+                    if (text.isNullOrBlank()) {
+                        resources.getInteger(R.integer.settings_reconnect_count_default)
+                    } else {
+                        text.toString().toInt()
+                    }
+                )
+            }
+
             bLogOut.setOnClickListener {
                 presenter.onLogout()
             }
@@ -52,6 +65,7 @@ class SettingsFragment : MvpAppCompatFragment(R.layout.fragment_settings), Setti
     override fun bindSetting(settings: Settings) {
         binding.apply {
             sAutoConnect.isChecked = settings.autoConnect
+            etReconnectCount.setText(settings.reconnectCount.toString())
         }
     }
 

@@ -178,13 +178,6 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
         }
     }
 
-    override fun onMissScope() {
-        Toast.makeText(context, R.string.chat_miss_scope, Toast.LENGTH_SHORT).show()
-
-        findNavController()
-            .popBackStack()
-    }
-
     override fun bindMessageTemplate(template: String) {
         binding.apply {
             etMessage.setText(template)
@@ -215,19 +208,30 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
         }
     }
 
-    override fun onConnectionError() {
-        Toast.makeText(context, R.string.chat_connection_error, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onIllegalUrl() {
-        Toast.makeText(context, R.string.chat_illegal_url, Toast.LENGTH_SHORT).show()
-    }
-
     override fun onDisconnectWithReason(code: Int, reason: String) {
         Toast.makeText(
             context,
             getString(R.string.chat_connection_closed, code, reason),
             Toast.LENGTH_SHORT
         ).show()
+    }
+
+    override fun onConnectionError(url: String) {
+        Toast.makeText(context, getString(R.string.chat_connection_error, url), Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onUndefinedError() {
+        Toast.makeText(context, R.string.chat_undefined_error, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onIllegalUrl() {
+        Toast.makeText(context, R.string.chat_illegal_url, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onMissScope() {
+        Toast.makeText(context, R.string.chat_miss_scope, Toast.LENGTH_SHORT).show()
+
+        findNavController()
+            .popBackStack()
     }
 }

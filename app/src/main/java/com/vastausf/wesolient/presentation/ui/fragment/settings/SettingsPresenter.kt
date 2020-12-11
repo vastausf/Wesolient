@@ -28,6 +28,10 @@ constructor(
         settings.autoConnect = newValue
     }
 
+    fun onReconnectCountUpdate(newValue: Int) {
+        settings.reconnectCount = newValue
+    }
+
     fun saveSettings() {
         settingsStore.editSettings(settings)
     }
