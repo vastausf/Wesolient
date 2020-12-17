@@ -6,22 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
-import com.vastausf.wesolient.R
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.vastausf.wesolient.databinding.DialogCreateTemplateBinding
 import dagger.hilt.android.AndroidEntryPoint
-import moxy.MvpBottomSheetDialogFragment
-import moxy.ktx.moxyPresenter
-import javax.inject.Inject
-import javax.inject.Provider
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class CreateTemplateDialog : MvpBottomSheetDialogFragment(), CreateTemplateView {
-    @Inject
-    lateinit var presenterProvider: Provider<CreateTemplatePresenter>
-
-    private val presenter by moxyPresenter { presenterProvider.get() }
-
+class CreateTemplateDialog : BottomSheetDialogFragment() {
+    private val viewModel: CreateTemplateViewModel by viewModels()
     private val args by navArgs<CreateTemplateDialogArgs>()
 
     private lateinit var binding: DialogCreateTemplateBinding
@@ -36,32 +34,42 @@ class CreateTemplateDialog : MvpBottomSheetDialogFragment(), CreateTemplateView 
         return binding.root
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        viewModel.onStart(args.scopeUid)
+
+        lifecycleScope.launch {
+            viewModel.messageFlow.filterNotNull()
+                .map {
+                    it.getValueIfNotHandled()
+                }.filterNotNull()
+                .collect {
+                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                }
+        }
+
+        lifecycleScope.launch {
+            viewModel.dialogState
+                .collect {
+                    if (!it)
+                        dialog?.dismiss()
+                }
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.apply {
             bCreateTemplate.setOnClickListener {
                 val title = etTemplateTitle.text.toString().trim()
                 val message = etTemplateMessage.text.toString().trim()
 
-                presenter.onNewTemplateCreate(title, message)
+                viewModel.onNewTemplateCreate(title, message)
             }
 
             etTemplateTitle.doAfterTextChanged {
                 bCreateTemplate.isEnabled = it.toString().isNotBlank()
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        presenter.onStart(args.scopeUid)
-    }
-
-    override fun dismissDialog() {
-        dialog?.dismiss()
-    }
-
-    override fun showErrorMessage() {
-        Toast.makeText(context, R.string.create_template_failure, Toast.LENGTH_SHORT).show()
     }
 }

@@ -6,22 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
-import androidx.navigation.fragment.findNavController
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
-import com.vastausf.wesolient.R
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.vastausf.wesolient.databinding.DialogEditVariableBinding
 import dagger.hilt.android.AndroidEntryPoint
-import moxy.MvpBottomSheetDialogFragment
-import moxy.ktx.moxyPresenter
-import javax.inject.Inject
-import javax.inject.Provider
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class EditVariableDialog : MvpBottomSheetDialogFragment(), EditVariableView {
-    @Inject
-    lateinit var presenterProvider: Provider<EditVariablePresenter>
-
-    private val presenter by moxyPresenter { presenterProvider.get() }
+class EditVariableDialog : BottomSheetDialogFragment() {
+    private val viewModel: EditVariableViewModel by viewModels()
 
     private val args by navArgs<EditVariableDialogArgs>()
 
@@ -43,7 +41,7 @@ class EditVariableDialog : MvpBottomSheetDialogFragment(), EditVariableView {
                 val newTitle = etVariableTitle.text.toString().trim()
                 val newUrl = etVariableValue.text.toString().trim()
 
-                presenter.onApply(
+                viewModel.apply(
                     newTitle,
                     newUrl
                 )
@@ -58,21 +56,37 @@ class EditVariableDialog : MvpBottomSheetDialogFragment(), EditVariableView {
     override fun onStart() {
         super.onStart()
 
-        presenter.onStart(args.scopeUid, args.variableUid)
-    }
+        viewModel.onStart(args.scopeUid, args.variableUid)
 
-    override fun bindField(title: String, value: String) {
-        binding.apply {
-            etVariableTitle.setText(title)
-            etVariableValue.setText(value)
+        lifecycleScope.launch {
+            viewModel.dialogState
+                .collect {
+                    if (!it) dialog?.dismiss()
+                }
         }
-    }
 
-    override fun onApplySuccess() {
-        findNavController().popBackStack()
-    }
+        lifecycleScope.launch {
+            viewModel.messageFlow.filterNotNull()
+                .map {
+                    it.getValueIfNotHandled()
+                }.filterNotNull()
+                .collect {
+                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                }
+        }
 
-    override fun onApplyFailure() {
-        Toast.makeText(context, R.string.edit_variable_failure, Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch {
+            viewModel.titleField
+                .collect {
+                    binding.etVariableTitle.setText(it)
+                }
+        }
+
+        lifecycleScope.launch {
+            viewModel.valueField
+                .collect {
+                    binding.etVariableValue.setText(it)
+                }
+        }
     }
 }

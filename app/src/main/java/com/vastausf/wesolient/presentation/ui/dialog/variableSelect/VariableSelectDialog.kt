@@ -7,26 +7,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.vastausf.wesolient.R
-import com.vastausf.wesolient.data.common.Variable
 import com.vastausf.wesolient.databinding.DialogVariableSelectBinding
 import com.vastausf.wesolient.presentation.ui.adapter.VariableListAdapterRV
 import dagger.hilt.android.AndroidEntryPoint
-import moxy.MvpBottomSheetDialogFragment
-import moxy.ktx.moxyPresenter
-import javax.inject.Inject
-import javax.inject.Provider
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class VariableSelectDialog : MvpBottomSheetDialogFragment(), VariableSelectView {
-    @Inject
-    lateinit var presenterProvider: Provider<VariableSelectPresenter>
-
-    private val presenter by moxyPresenter { presenterProvider.get() }
+class VariableSelectDialog : BottomSheetDialogFragment() {
+    private val viewModel: VariableSelectViewModel by viewModels()
 
     private val args by navArgs<VariableSelectDialogArgs>()
 
@@ -59,7 +58,7 @@ class VariableSelectDialog : MvpBottomSheetDialogFragment(), VariableSelectView 
                                     }
                                     R.id.deleteMI -> {
                                         showDeleteSnackbar {
-                                            presenter.onDelete(item.uid)
+                                            viewModel.delete(item.uid)
                                         }
 
                                         return@setOnMenuItemClickListener true
@@ -82,28 +81,38 @@ class VariableSelectDialog : MvpBottomSheetDialogFragment(), VariableSelectView 
     override fun onStart() {
         super.onStart()
 
-        presenter.onStart(args.scopeUid)
-    }
+        viewModel.onStart(args.scopeUid)
 
-    override fun bindVariableList(variableList: List<Variable>) {
-        view?.apply {
-            (binding.rvVariableList.adapter as VariableListAdapterRV).submitList(variableList)
+        lifecycleScope.launch {
+            viewModel.dialogState
+                .collect {
+                    if (!it) dialog?.dismiss()
+                }
         }
-    }
 
-    override fun onDeleteSuccess() {
-        Toast.makeText(context, R.string.delete_variable_success, Toast.LENGTH_SHORT).show()
-    }
+        lifecycleScope.launch {
+            viewModel.messageFlow.filterNotNull()
+                .map {
+                    it.getValueIfNotHandled()
+                }.filterNotNull()
+                .collect {
+                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                }
+        }
 
-    override fun onDeleteFailure() {
-        Toast.makeText(context, R.string.delete_variable_failure, Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch {
+            viewModel.variableList
+                .collect {
+                    (binding.rvVariableList.adapter as VariableListAdapterRV).submitList(it)
+                }
+        }
     }
 
     private fun launchVariableEdit(variableUid: String) {
         findNavController()
             .navigate(
                 VariableSelectDialogDirections.actionVariableSelectDialogToEditVariableDialog(
-                    presenter.scope.uid,
+                    viewModel.scope.uid,
                     variableUid
                 )
             )
@@ -112,15 +121,19 @@ class VariableSelectDialog : MvpBottomSheetDialogFragment(), VariableSelectView 
     private fun showCreateDialog() {
         findNavController().navigate(
             VariableSelectDialogDirections.actionVariableSelectDialogToCreateVariableDialog(
-                presenter.scope.uid
+                viewModel.scope.uid
             )
         )
     }
 
     private fun showDeleteSnackbar(onClick: () -> Unit) {
-        Snackbar.make(requireView(), R.string.delete_variable_confirmation, Snackbar.LENGTH_LONG)
+        Snackbar.make(
+            requireView(),
+            R.string.select_variable_delete_confirmation,
+            Snackbar.LENGTH_LONG
+        )
             .apply {
-                setAction(R.string.delete_variable_positive) {
+                setAction(R.string.select_variable_delete_positive) {
                     onClick()
                 }
                 show()

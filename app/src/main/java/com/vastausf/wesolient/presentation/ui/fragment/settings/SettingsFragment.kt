@@ -5,22 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.vastausf.wesolient.R
-import com.vastausf.wesolient.data.common.Settings
 import com.vastausf.wesolient.databinding.FragmentSettingsBinding
 import dagger.hilt.android.AndroidEntryPoint
-import moxy.MvpAppCompatFragment
-import moxy.ktx.moxyPresenter
-import javax.inject.Inject
-import javax.inject.Provider
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SettingsFragment : MvpAppCompatFragment(R.layout.fragment_settings), SettingsView {
-    @Inject
-    lateinit var presenterProvider: Provider<SettingsPresenter>
-
-    private val presenter by moxyPresenter { presenterProvider.get() }
+class SettingsFragment : Fragment() {
+    private val viewModel: SettingsViewModel by viewModels()
 
     private lateinit var binding: FragmentSettingsBinding
 
@@ -32,14 +30,23 @@ class SettingsFragment : MvpAppCompatFragment(R.layout.fragment_settings), Setti
         binding = FragmentSettingsBinding.inflate(LayoutInflater.from(context))
 
         binding.apply {
+            bBack.setOnClickListener {
+                findNavController().popBackStack()
+            }
+
+            bSaveSettings.setOnClickListener {
+                viewModel.saveSettings()
+                findNavController().popBackStack()
+            }
+
             sAutoConnect.setOnCheckedChangeListener { _, isChecked ->
-                presenter.onAutoConnectUpdate(isChecked)
+                viewModel.onAutoConnectUpdate(isChecked)
             }
 
             etReconnectCount.hint = resources
                 .getInteger(R.integer.settings_reconnect_count_default).toString()
             etReconnectCount.doAfterTextChanged { text ->
-                presenter.onReconnectCountUpdate(
+                viewModel.onReconnectCountUpdate(
                     if (text.isNullOrBlank()) {
                         resources.getInteger(R.integer.settings_reconnect_count_default)
                     } else {
@@ -49,7 +56,7 @@ class SettingsFragment : MvpAppCompatFragment(R.layout.fragment_settings), Setti
             }
 
             bLogOut.setOnClickListener {
-                presenter.onLogout()
+                viewModel.logout()
             }
         }
 
@@ -59,25 +66,32 @@ class SettingsFragment : MvpAppCompatFragment(R.layout.fragment_settings), Setti
     override fun onStart() {
         super.onStart()
 
-        presenter.onStart()
-    }
+        viewModel.onStart()
 
-    override fun bindSetting(settings: Settings) {
-        binding.apply {
-            sAutoConnect.isChecked = settings.autoConnect
-            etReconnectCount.setText(settings.reconnectCount.toString())
+        lifecycleScope.launch {
+            viewModel.logOut
+                .collect {
+                    if (it) {
+                        findNavController().navigate(R.id.splashActivity)
+                        requireActivity().finishAffinity()
+                    }
+                }
         }
-    }
 
-    override fun onDestroy() {
-        super.onDestroy()
+        lifecycleScope.launch {
+            viewModel.autoConnectState
+                .filterNotNull()
+                .collect {
+                    binding.sAutoConnect.isChecked = it
+                }
+        }
 
-        presenter.saveSettings()
-    }
-
-    override fun logout() {
-        findNavController()
-            .navigate(R.id.splashActivity)
-        requireActivity().finishAffinity()
+        lifecycleScope.launch {
+            viewModel.reconnectCountState
+                .filterNotNull()
+                .collect {
+                    binding.etReconnectCount.setText(it.toString())
+                }
+        }
     }
 }

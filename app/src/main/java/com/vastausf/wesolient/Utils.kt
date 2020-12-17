@@ -4,6 +4,9 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.vastausf.wesolient.data.common.Template
 import com.vastausf.wesolient.data.common.Variable
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneOffset
 import org.threeten.bp.format.DateTimeFormatter
@@ -56,4 +59,16 @@ fun String.replaceVariables(variables: List<Variable>): String {
     }
 
     return replacedMessage
+}
+
+class SingleEvent<out T>(val value: T) {
+    var hasBeenHandled: Boolean = false
+
+    fun getValueIfNotHandled(): T? =
+        if (hasBeenHandled) {
+            null
+        } else {
+            hasBeenHandled = true
+            value
+        }
 }

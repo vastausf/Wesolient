@@ -53,6 +53,10 @@
     <string name="select_template_create">Create new</string>
     <string name="select_template_menu_item_edit">Edit</string>
     <string name="select_template_menu_item_delete">Delete</string>
+    <string name="select_template_delete_confirmation">Do you want to delete this template?</string>
+    <string name="select_template_delete_positive">Yes</string>
+    <string name="select_template_delete_success">Deleted</string>
+    <string name="select_template_delete_failure">Something went wrong</string>
 
     <!--    CREATE TEMPLATE DIALOG   -->
     <string name="create_template_title_hint">E.g. say \'Hello Scarlet\'</string>
@@ -67,18 +71,16 @@
     <string name="edit_template_apply">Apply</string>
     <string name="edit_template_failure">Something went wrong. try later</string>
 
-    <!--    DELETE TEMPLATE DIALOG   -->
-    <string name="delete_template_confirmation">Do you want to delete this template?</string>
-    <string name="delete_template_positive">Yes</string>
-    <string name="delete_template_success">Deleted</string>
-    <string name="delete_template_failure">Something went wrong</string>
-
 
     <!--    VARIABLE SELECT DIALOG   -->
     <string name="select_variable_header">Variables</string>
     <string name="select_variable_create">Create new</string>
     <string name="select_variable_menu_item_edit">Edit</string>
     <string name="select_variable_menu_item_delete">Delete</string>
+    <string name="select_variable_delete_confirmation">Do you want to delete this variable?</string>
+    <string name="select_variable_delete_positive">Yes</string>
+    <string name="select_variable_delete_success">Deleted</string>
+    <string name="select_variable_delete_failure">Something went wrong</string>
 
     <!--    CREATE VARIABLE DIALOG   -->
     <string name="create_variable_title_hint">E.g. userName</string>
@@ -93,14 +95,9 @@
     <string name="edit_variable_apply">Apply</string>
     <string name="edit_variable_failure">Something went wrong. try later</string>
 
-    <!--    DELETE VARIABLE DIALOG   -->
-    <string name="delete_variable_confirmation">Do you want to delete this variable?</string>
-    <string name="delete_variable_positive">Yes</string>
-    <string name="delete_variable_success">Deleted</string>
-    <string name="delete_variable_failure">Something went wrong</string>
-
 
     <!--    SETTINGS FRAGMENT   -->
+    <string name="settings_header">Settings</string>
     <string name="settings_auto_connect">Auto-connect on scope open</string>
     <string name="settings_logout">LogOut</string>
     <string name="settings_reconnect_count">Reconnect count</string>

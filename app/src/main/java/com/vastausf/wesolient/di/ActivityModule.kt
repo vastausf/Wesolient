@@ -9,6 +9,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.vastausf.wesolient.model.ServiceCreator
 import com.vastausf.wesolient.model.store.ScopeStore
 import dagger.Module
 import dagger.Provides
@@ -62,5 +63,10 @@ object ActivityModule {
         return ScopeStore(
             firebaseDatabaseScopes
         )
+    }
+
+    @Provides
+    fun providesServiceCreator(): ServiceCreator {
+        return ServiceCreator()
     }
 }
