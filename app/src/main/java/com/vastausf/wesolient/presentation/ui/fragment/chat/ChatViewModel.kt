@@ -22,7 +22,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import java.net.ConnectException
 import java.util.*
 
@@ -35,33 +35,32 @@ constructor(
     private val settingsStore: SettingsStore,
     private val serviceCreator: ServiceCreator
 ) : ViewModel() {
-    private val _messageField = MutableStateFlow("")
-    val messageField: StateFlow<String> = _messageField
+    val messageField = MutableStateFlow("")
 
     private val _titleField = MutableStateFlow("")
-    val titleField: StateFlow<String> = _titleField
+    val titleField = _titleField.asStateFlow()
 
     private val _connectionState = MutableStateFlow<Boolean?>(false)
-    val connectionState: StateFlow<Boolean?> = _connectionState
+    val connectionState = _connectionState.asStateFlow()
 
     private val _chatHistory = MutableStateFlow<List<Frame>>(emptyList())
-    val chatHistory: StateFlow<List<Frame>> = _chatHistory
+    val chatHistory = _chatHistory.asStateFlow()
 
     //Single event flows
     private val _connectionErrorFlow = MutableStateFlow<SingleEvent<String>?>(null)
-    val connectionErrorFlow: StateFlow<SingleEvent<String>?> = _connectionErrorFlow
+    val connectionErrorFlow = _connectionErrorFlow.asStateFlow()
 
     private val _illegalUrlErrorFlow = MutableStateFlow<SingleEvent<String>?>(null)
-    val illegalUrlError: StateFlow<SingleEvent<String>?> = _illegalUrlErrorFlow
+    val illegalUrlError = _illegalUrlErrorFlow.asStateFlow()
 
     private val _undefinedErrorFlow = MutableStateFlow<SingleEvent<String>?>(null)
-    val undefinedErrorFlow: StateFlow<SingleEvent<String>?> = _undefinedErrorFlow
+    val undefinedErrorFlow = _undefinedErrorFlow.asStateFlow()
 
     private val _missScopeErrorFlow = MutableStateFlow<SingleEvent<String>?>(null)
-    val missScopeErrorFlow: StateFlow<SingleEvent<String>?> = _missScopeErrorFlow
+    val missScopeErrorFlow = _missScopeErrorFlow.asStateFlow()
 
     private val _closeReason = MutableStateFlow<SingleEvent<CloseReason>?>(null)
-    val closeReason: StateFlow<SingleEvent<CloseReason>?> = _closeReason
+    val closeReason = _closeReason.asStateFlow()
 
 
     lateinit var scope: Scope
@@ -80,13 +79,13 @@ constructor(
         if (message.isNotBlank()) {
             clientMessage(message)
 
-            _messageField.value = ""
+            messageField.value = ""
         }
     }
 
     fun onTemplateSelect(uid: String) {
         templateStore.getTemplateOnce(scope.uid, uid) { template ->
-            _messageField.value = template.message
+            messageField.value = template.message
         }
     }
 
@@ -235,7 +234,7 @@ constructor(
 
         frameList.add(message)
 
-        _chatHistory.value = frameList
+        _chatHistory.value = frameList.toList()
     }
 
     private fun clientMessage(message: String) {

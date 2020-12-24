@@ -26,8 +26,6 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ChatFragment : Fragment() {
-    companion object;
-
     private val viewModel: ChatViewModel by viewModels()
 
     private val args by navArgs<ChatFragmentArgs>()
@@ -64,6 +62,7 @@ class ChatFragment : Fragment() {
             }
 
             etMessage.doAfterTextChanged { text ->
+                viewModel.messageField.value = text.toString()
                 text?.isNotEmpty()?.let { isNotEmpty ->
                     sendVisibleState(isNotEmpty)
                 }
@@ -95,7 +94,8 @@ class ChatFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.messageField
                 .collect {
-                    binding.etMessage.setText(it)
+                    if (it != binding.etMessage.text.toString())
+                        binding.etMessage.setText(it)
                 }
         }
 
