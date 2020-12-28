@@ -16,6 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.vastausf.wesolient.R
 import com.vastausf.wesolient.databinding.DialogVariableSelectBinding
+import com.vastausf.wesolient.filterHandled
 import com.vastausf.wesolient.presentation.ui.adapter.VariableListAdapterRV
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -91,10 +92,8 @@ class VariableSelectDialog : BottomSheetDialogFragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.messageFlow.filterNotNull()
-                .map {
-                    it.getValueIfNotHandled()
-                }.filterNotNull()
+            viewModel.messageFlow
+                .filterHandled()
                 .collect {
                     Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
                 }

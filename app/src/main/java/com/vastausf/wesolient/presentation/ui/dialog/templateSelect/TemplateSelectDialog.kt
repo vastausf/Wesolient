@@ -17,6 +17,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.vastausf.wesolient.R
 import com.vastausf.wesolient.data.common.Template
 import com.vastausf.wesolient.databinding.DialogTemplatesSelectBinding
+import com.vastausf.wesolient.filterHandled
 import com.vastausf.wesolient.presentation.ui.NavigationCode
 import com.vastausf.wesolient.presentation.ui.adapter.TemplateListAdapterRV
 import com.vastausf.wesolient.sendDialogResult
@@ -97,10 +98,8 @@ class TemplateSelectDialog : BottomSheetDialogFragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.messageFlow.filterNotNull()
-                .map {
-                    it.getValueIfNotHandled()
-                }.filterNotNull()
+            viewModel.messageFlow
+                .filterHandled()
                 .collect {
                     Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
                 }

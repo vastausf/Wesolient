@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.vastausf.wesolient.databinding.DialogCreateTemplateBinding
+import com.vastausf.wesolient.filterHandled
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterNotNull
@@ -40,10 +41,8 @@ class CreateTemplateDialog : BottomSheetDialogFragment() {
         viewModel.onStart(args.scopeUid)
 
         lifecycleScope.launch {
-            viewModel.messageFlow.filterNotNull()
-                .map {
-                    it.getValueIfNotHandled()
-                }.filterNotNull()
+            viewModel.messageFlow
+                .filterHandled()
                 .collect {
                     Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
                 }

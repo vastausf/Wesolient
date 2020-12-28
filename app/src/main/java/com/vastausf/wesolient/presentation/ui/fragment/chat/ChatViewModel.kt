@@ -4,19 +4,17 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import com.tinder.scarlet.Message
 import com.tinder.scarlet.WebSocket
-import com.vastausf.wesolient.SingleEvent
+import com.vastausf.wesolient.*
 import com.vastausf.wesolient.data.client.CloseReason
 import com.vastausf.wesolient.data.client.Frame
 import com.vastausf.wesolient.data.common.Scope
 import com.vastausf.wesolient.data.common.Settings
 import com.vastausf.wesolient.exception.IllegalUrlException
-import com.vastausf.wesolient.getLocalSystemTimestamp
 import com.vastausf.wesolient.model.ServiceCreator
 import com.vastausf.wesolient.model.store.ScopeStore
 import com.vastausf.wesolient.model.store.SettingsStore
 import com.vastausf.wesolient.model.store.TemplateStore
 import com.vastausf.wesolient.model.store.VariableStore
-import com.vastausf.wesolient.replaceVariables
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -140,7 +138,9 @@ constructor(
         try {
             onConnectionChange()
 
-            serviceHolder.disconnect(code, reason)
+            if (connectionState.value == true) {
+                serviceHolder.disconnect(code, reason)
+            }
         } catch (exception: Exception) {
             onConnectionException(exception)
 
@@ -255,7 +255,7 @@ constructor(
         connectionDisposable.add(this)
     }
 
-    fun onDestroy() {
+    override fun onCleared() {
         onDisconnect()
     }
 }

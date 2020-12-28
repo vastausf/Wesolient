@@ -19,7 +19,6 @@
 
         <activity
             android:name="com.vastausf.wesolient.presentation.ui.activity.splash.SplashActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,7 +32,6 @@
             android:launchMode="standard" />
 
         <activity
-            android:name=".presentation.ui.activity.main.MainActivity"
-            android:screenOrientation="portrait" />
+            android:name=".presentation.ui.activity.main.MainActivity"/>
     </application>
 </manifest>

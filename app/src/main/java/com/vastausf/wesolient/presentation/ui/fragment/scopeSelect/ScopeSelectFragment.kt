@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.vastausf.wesolient.R
 import com.vastausf.wesolient.databinding.FragmentSelectScopeBinding
+import com.vastausf.wesolient.filterHandled
 import com.vastausf.wesolient.presentation.ui.adapter.ScopeListAdapterRV
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -26,6 +27,12 @@ class ScopeSelectFragment : Fragment() {
     private val viewModel: ScopeSelectViewModel by viewModels()
 
     private lateinit var binding: FragmentSelectScopeBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        viewModel.onCreate()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,40 +81,34 @@ class ScopeSelectFragment : Fragment() {
             }
         }
 
-        return binding.root
-    }
+        lifecycleScope.apply {
+            launch {
+                viewModel.scopeList
+                    .collect { scopeList ->
+                        binding.apply {
+                            (rvScopeList.adapter as ScopeListAdapterRV).submitList(scopeList)
 
-    override fun onStart() {
-        super.onStart()
-
-        viewModel.onStart()
-
-        lifecycleScope.launch {
-            viewModel.scopeList
-                .collect { scopeList ->
-                    binding.apply {
-                        (rvScopeList.adapter as ScopeListAdapterRV).submitList(scopeList)
-
-                        if (scopeList.isNotEmpty()) {
-                            rvScopeList.visibility = View.VISIBLE
-                            tvScopeListPlaceholder.visibility = View.GONE
-                        } else {
-                            rvScopeList.visibility = View.INVISIBLE
-                            tvScopeListPlaceholder.visibility = View.VISIBLE
+                            if (scopeList.isNotEmpty()) {
+                                rvScopeList.visibility = View.VISIBLE
+                                tvScopeListPlaceholder.visibility = View.GONE
+                            } else {
+                                rvScopeList.visibility = View.INVISIBLE
+                                tvScopeListPlaceholder.visibility = View.VISIBLE
+                            }
                         }
                     }
-                }
+            }
+
+            launch {
+                viewModel.createDialogState
+                    .filterHandled()
+                    .collect {
+                        showCreateDialog()
+                    }
+            }
         }
 
-        lifecycleScope.launch {
-            viewModel.createDialogState
-                .map {
-                    it?.getValueIfNotHandled()
-                }.filterNotNull()
-                .collect {
-                    showCreateDialog()
-                }
-        }
+        return binding.root
     }
 
     private fun showDeleteSnackbar(onClick: () -> Unit) {
@@ -120,7 +121,7 @@ class ScopeSelectFragment : Fragment() {
             }
     }
 
-    fun showCreateDialog() {
+    private fun showCreateDialog() {
         findNavController().navigate(
             ScopeSelectFragmentDirections.actionScopeSelectFragmentToCreateScopeDialog()
         )

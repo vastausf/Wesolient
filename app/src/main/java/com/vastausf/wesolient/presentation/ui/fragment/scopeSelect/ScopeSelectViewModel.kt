@@ -19,7 +19,7 @@ constructor(
     private val _createDialogState = MutableStateFlow<SingleEvent<Boolean>?>(null)
     val createDialogState: StateFlow<SingleEvent<Boolean>?> = _createDialogState
 
-    fun onStart() {
+    fun onCreate() {
         scopeStore.onScopeListUpdate(
             onUpdate = { scopeList ->
                 _scopeList.value = scopeList

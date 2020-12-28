@@ -1,6 +1,7 @@
 package com.vastausf.wesolient.presentation.ui.fragment.chat
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.vastausf.wesolient.R
 import com.vastausf.wesolient.data.client.CloseReason
 import com.vastausf.wesolient.databinding.FragmentChatBinding
+import com.vastausf.wesolient.filterHandled
 import com.vastausf.wesolient.listenResult
 import com.vastausf.wesolient.presentation.ui.NavigationCode
 import com.vastausf.wesolient.presentation.ui.adapter.ChatAdapterRV
@@ -86,117 +88,114 @@ class ChatFragment : Fragment() {
         return binding.root
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        viewModel.onStart(args.uid)
+    }
+
     override fun onStart() {
         super.onStart()
 
-        viewModel.onStart(args.uid)
+        lifecycleScope.apply {
+            launch {
+                viewModel.messageField
+                    .collect {
+                        if (it != binding.etMessage.text.toString())
+                            binding.etMessage.setText(it)
+                    }
+            }
 
-        lifecycleScope.launch {
-            viewModel.messageField
-                .collect {
-                    if (it != binding.etMessage.text.toString())
-                        binding.etMessage.setText(it)
-                }
-        }
+            launch {
+                viewModel.connectionErrorFlow
+                    .filterHandled()
+                    .collect { url ->
+                        Toast.makeText(
+                            context,
+                            getString(R.string.chat_connection_error, url),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }
 
-        lifecycleScope.launch {
-            viewModel.connectionErrorFlow.filterNotNull()
-                .map {
-                    it.getValueIfNotHandled()
-                }.filterNotNull()
-                .collect { url ->
-                    Toast.makeText(
-                        context,
-                        getString(R.string.chat_connection_error, url),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-        }
+            launch {
+                viewModel.illegalUrlError
+                    .filterHandled()
+                    .collect {
+                        Toast.makeText(context, R.string.chat_illegal_url, Toast.LENGTH_SHORT).show()
+                    }
+            }
 
-        lifecycleScope.launch {
-            viewModel.illegalUrlError.filterNotNull()
-                .map {
-                    it.getValueIfNotHandled()
-                }.filterNotNull()
-                .collect {
-                    Toast.makeText(context, R.string.chat_illegal_url, Toast.LENGTH_SHORT).show()
-                }
-        }
+            launch {
+                viewModel.undefinedErrorFlow
+                    .filterHandled()
+                    .collect {
+                        Toast.makeText(context, R.string.chat_undefined_error, Toast.LENGTH_SHORT)
+                            .show()
+                    }
+            }
 
-        lifecycleScope.launch {
-            viewModel.undefinedErrorFlow.filterNotNull()
-                .map {
-                    it.getValueIfNotHandled()
-                }.filterNotNull()
-                .collect {
-                    Toast.makeText(context, R.string.chat_undefined_error, Toast.LENGTH_SHORT)
-                        .show()
-                }
-        }
+            launch {
+                viewModel.missScopeErrorFlow
+                    .filterHandled()
+                    .collect {
+                        Toast.makeText(context, R.string.chat_miss_scope, Toast.LENGTH_SHORT).show()
 
-        lifecycleScope.launch {
-            viewModel.missScopeErrorFlow.filterNotNull()
-                .map {
-                    it.getValueIfNotHandled()
-                }.filterNotNull()
-                .collect {
-                    Toast.makeText(context, R.string.chat_miss_scope, Toast.LENGTH_SHORT).show()
+                        findNavController()
+                            .popBackStack()
+                    }
+            }
 
-                    findNavController()
-                        .popBackStack()
-                }
-        }
+            launch {
+                viewModel.chatHistory
+                    .collect {
+                        (binding.rvChat.adapter as ChatAdapterRV).submitList(it.toList())
+                    }
+            }
 
-        lifecycleScope.launch {
-            viewModel.chatHistory
-                .collect {
-                    (binding.rvChat.adapter as ChatAdapterRV).submitList(it.toList())
-                }
-        }
+            launch {
+                viewModel.titleField
+                    .collect {
+                        binding.tvScopeTitle.text = it
+                    }
+            }
 
-        lifecycleScope.launch {
-            viewModel.titleField
-                .collect {
-                    binding.tvScopeTitle.text = it
-                }
-        }
+            launch {
+                viewModel.connectionState
+                    .collect { newState ->
+                        binding.apply {
+                            if (newState != null) {
+                                messageBarVisibleState(newState)
 
-        lifecycleScope.launch {
-            viewModel.connectionState
-                .collect { newState ->
-                    binding.apply {
-                        if (newState != null) {
-                            messageBarVisibleState(newState)
+                                connectionVisibleState(newState)
 
-                            connectionVisibleState(newState)
+                                pbConnection.visibility = View.GONE
+                            } else {
+                                messageBarVisibleState(false)
 
-                            pbConnection.visibility = View.GONE
-                        } else {
-                            messageBarVisibleState(false)
+                                connectionVisibleState(null)
 
-                            connectionVisibleState(null)
-
-                            pbConnection.visibility = View.VISIBLE
+                                pbConnection.visibility = View.VISIBLE
+                            }
                         }
                     }
-                }
-        }
+            }
 
-        lifecycleScope.launch {
-            viewModel.closeReason
-                .map { it?.getValueIfNotHandled() }
-                .filterNotNull()
-                .collect { closeReason ->
-                    Toast.makeText(
-                        context,
-                        getString(
-                            R.string.chat_connection_closed,
-                            closeReason.code,
-                            closeReason.message
-                        ),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+            launch {
+                viewModel.closeReason
+                    .filterHandled()
+                    .collect { closeReason ->
+                        Toast.makeText(
+                            context,
+                            getString(
+                                R.string.chat_connection_closed,
+                                closeReason.code,
+                                closeReason.message
+                            ),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }
         }
     }
 
@@ -267,11 +266,5 @@ class ChatFragment : Fragment() {
                 bTemplates.visibility = View.VISIBLE
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        viewModel.onDestroy()
     }
 }

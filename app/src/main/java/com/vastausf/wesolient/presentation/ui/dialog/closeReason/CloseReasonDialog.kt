@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.vastausf.wesolient.data.client.CloseReason
 import com.vastausf.wesolient.databinding.DialogCloseReasonBinding
+import com.vastausf.wesolient.filterHandled
 import com.vastausf.wesolient.presentation.ui.NavigationCode
 import com.vastausf.wesolient.sendDialogResult
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,10 +41,8 @@ class CloseReasonDialog : BottomSheetDialogFragment() {
         super.onStart()
 
         lifecycleScope.launch {
-            viewModel.messageFlow.filterNotNull()
-                .map {
-                    it.getValueIfNotHandled()
-                }.filterNotNull()
+            viewModel.messageFlow
+                .filterHandled()
                 .collect {
                     Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
                 }
