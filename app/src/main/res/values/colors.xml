@@ -7,8 +7,8 @@
     <color name="colorSecondary">#DDDDDD</color>
 
     <color name="colorBackground">#FFFFFF</color>
-    <color name="colorServerMessageBackground">#4DFFFFFF</color>
-    <color name="colorClientMessageBackground">#80FFFFFF</color>
+    <color name="colorServerMessageBackground">#26000000</color>
+    <color name="colorClientMessageBackground">#4DFF5252</color>
 
     <color name="colorText">#202020</color>
     <color name="colorTextSecondary">@color/colorSecondary</color>

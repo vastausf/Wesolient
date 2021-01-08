@@ -11,7 +11,7 @@
     <color name="colorClientMessageBackground">#4DFFFFFF</color>
 
     <color name="colorText">#E1E1E1</color>
-    <color name="colorTextSecondary">@color/colorSecondary</color>
+    <color name="colorTextSecondary">#6A6A6A</color>
 
     <color name="colorPrimaryDisabled">@color/colorSecondary</color>
 </resources>
