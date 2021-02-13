@@ -6,29 +6,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vastausf.wesolient.R
 import com.vastausf.wesolient.data.client.CloseReason
-import com.vastausf.wesolient.data.client.Frame
-import com.vastausf.wesolient.data.common.Scope
 import com.vastausf.wesolient.databinding.FragmentChatBinding
+import com.vastausf.wesolient.filterHandled
 import com.vastausf.wesolient.listenResult
 import com.vastausf.wesolient.presentation.ui.NavigationCode
 import com.vastausf.wesolient.presentation.ui.adapter.ChatAdapterRV
 import dagger.hilt.android.AndroidEntryPoint
-import moxy.MvpAppCompatFragment
-import moxy.ktx.moxyPresenter
-import javax.inject.Inject
-import javax.inject.Provider
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class ChatFragment : MvpAppCompatFragment(), ChatView {
-    @Inject
-    lateinit var presenterProvider: Provider<ChatPresenter>
-
-    private val presenter by moxyPresenter { presenterProvider.get() }
+class ChatFragment : Fragment() {
+    private val viewModel: ChatViewModel by viewModels()
 
     private val args by navArgs<ChatFragmentArgs>()
 
@@ -50,7 +47,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
             }
 
             bSend.setOnClickListener {
-                presenter.sendMessage(etMessage.text.toString())
+                viewModel.sendMessage(etMessage.text.toString())
             }
 
             bTemplates.setOnClickListener {
@@ -64,17 +61,18 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
             }
 
             etMessage.doAfterTextChanged { text ->
+                viewModel.messageField.value = text.toString()
                 text?.isNotEmpty()?.let { isNotEmpty ->
                     sendVisibleState(isNotEmpty)
                 }
             }
 
             bConnect.setOnClickListener {
-                presenter.onConnect()
+                viewModel.onConnect()
             }
 
             bDisconnect.setOnClickListener {
-                presenter.onDisconnect()
+                viewModel.onDisconnect()
             }
 
             bDisconnect.setOnLongClickListener {
@@ -87,10 +85,116 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
         return binding.root
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        viewModel.onStart(args.uid)
+    }
+
     override fun onStart() {
         super.onStart()
 
-        presenter.onStart(args.uid)
+        lifecycleScope.launchWhenStarted {
+            launch {
+                viewModel.messageField
+                    .collect {
+                        if (it != binding.etMessage.text.toString())
+                            binding.etMessage.setText(it)
+                    }
+            }
+
+            launch {
+                viewModel.connectionErrorFlow
+                    .filterHandled()
+                    .collect { url ->
+                        Toast.makeText(
+                            context,
+                            getString(R.string.chat_connection_error, url),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }
+
+            launch {
+                viewModel.illegalUrlError
+                    .filterHandled()
+                    .collect {
+                        Toast.makeText(context, R.string.chat_illegal_url, Toast.LENGTH_SHORT)
+                            .show()
+                    }
+            }
+
+            launch {
+                viewModel.undefinedErrorFlow
+                    .filterHandled()
+                    .collect {
+                        Toast.makeText(context, R.string.chat_undefined_error, Toast.LENGTH_SHORT)
+                            .show()
+                    }
+            }
+
+            launch {
+                viewModel.missScopeErrorFlow
+                    .filterHandled()
+                    .collect {
+                        Toast.makeText(context, R.string.chat_miss_scope, Toast.LENGTH_SHORT).show()
+
+                        findNavController()
+                            .popBackStack()
+                    }
+            }
+
+            launch {
+                viewModel.chatHistory
+                    .collect {
+                        (binding.rvChat.adapter as ChatAdapterRV).submitList(it.toList())
+                    }
+            }
+
+            launch {
+                viewModel.titleField
+                    .collect {
+                        binding.tvScopeTitle.text = it
+                    }
+            }
+
+            launch {
+                viewModel.connectionState
+                    .collect { newState ->
+                        binding.apply {
+                            if (newState != null) {
+                                messageBarVisibleState(newState)
+
+                                connectionVisibleState(newState)
+
+                                pbConnection.visibility = View.GONE
+                            } else {
+                                messageBarVisibleState(false)
+
+                                connectionVisibleState(null)
+
+                                pbConnection.visibility = View.VISIBLE
+                            }
+                        }
+                    }
+            }
+
+            launch {
+                viewModel.closeReason
+                    .filterHandled()
+                    .collect { closeReason ->
+                        Toast.makeText(
+                            context,
+                            getString(
+                                R.string.chat_connection_closed,
+                                closeReason.code,
+                                closeReason.message
+                            ),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }
+        }
     }
 
     private fun launchCloseReasonDialog() {
@@ -98,24 +202,24 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
             navigate(ChatFragmentDirections.actionChatFragmentToCloseReasonDialog())
 
             listenResult<CloseReason>(NavigationCode.CLOSE_REASON, viewLifecycleOwner) {
-                presenter.onDisconnect(it.code, it.message)
+                viewModel.onDisconnect(it.code, it.message)
             }
         }
     }
 
     private fun launchTemplateDialog() {
         findNavController().apply {
-            navigate(ChatFragmentDirections.actionChatFragmentToTemplateSelectDialog(presenter.scope.uid))
+            navigate(ChatFragmentDirections.actionChatFragmentToTemplateSelectDialog(viewModel.scope.uid))
 
             listenResult<String>(NavigationCode.TEMPLATE_CODE, viewLifecycleOwner) {
-                presenter.onTemplateSelect(it)
+                viewModel.onTemplateSelect(it)
             }
         }
     }
 
     private fun launchVariableDialog() {
         findNavController()
-            .navigate(ChatFragmentDirections.actionChatFragmentToVariableSelectDialog(presenter.scope.uid))
+            .navigate(ChatFragmentDirections.actionChatFragmentToVariableSelectDialog(viewModel.scope.uid))
     }
 
     private fun messageBarVisibleState(isVisible: Boolean) {
@@ -160,74 +264,5 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
                 bTemplates.visibility = View.VISIBLE
             }
         }
-    }
-
-    override fun bindData(scope: Scope) {
-        binding.apply {
-            tvScopeTitle.text = scope.title
-        }
-    }
-
-    override fun updateChatHistory(chatHistory: List<Frame>) {
-        binding.apply {
-            (rvChat.adapter as ChatAdapterRV).submitList(chatHistory.toList())
-
-            if (!rvChat.canScrollVertically(1)) {
-                rvChat.smoothScrollToPosition(chatHistory.size)
-            }
-        }
-    }
-
-    override fun onMissScope() {
-        Toast.makeText(context, R.string.chat_miss_scope, Toast.LENGTH_SHORT).show()
-
-        findNavController()
-            .popBackStack()
-    }
-
-    override fun bindMessageTemplate(template: String) {
-        binding.apply {
-            etMessage.setText(template)
-        }
-    }
-
-    override fun onSend() {
-        binding.apply {
-            etMessage.text.clear()
-        }
-    }
-
-    override fun changeConnectionState(newState: Boolean?) {
-        binding.apply {
-            if (newState != null) {
-                messageBarVisibleState(newState)
-
-                connectionVisibleState(newState)
-
-                pbConnection.visibility = View.GONE
-            } else {
-                messageBarVisibleState(false)
-
-                connectionVisibleState(null)
-
-                pbConnection.visibility = View.VISIBLE
-            }
-        }
-    }
-
-    override fun onConnectionError() {
-        Toast.makeText(context, R.string.chat_connection_error, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onIllegalUrl() {
-        Toast.makeText(context, R.string.chat_illegal_url, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onDisconnectWithReason(code: Int, reason: String) {
-        Toast.makeText(
-            context,
-            getString(R.string.chat_connection_closed, code, reason),
-            Toast.LENGTH_SHORT
-        ).show()
     }
 }

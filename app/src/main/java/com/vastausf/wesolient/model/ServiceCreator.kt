@@ -9,10 +9,16 @@ import com.tinder.scarlet.streamadapter.rxjava2.RxJava2StreamAdapterFactory
 import com.tinder.scarlet.websocket.okhttp.newWebSocketFactory
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class ServiceCreator {
+class ServiceCreator
+@Inject
+constructor(
+
+) {
     fun create(
-        url: String
+        url: String,
+        reconnectCount: Int
     ): ServiceHolder {
         val lifecycleRegistry = LifecycleRegistry()
 
@@ -34,13 +40,15 @@ class ServiceCreator {
 
         return ServiceHolder(
             service,
-            lifecycleRegistry
+            lifecycleRegistry,
+            reconnectCount
         )
     }
 
     data class ServiceHolder(
         val service: SocketService,
-        private val lifecycleRegistry: LifecycleRegistry
+        private val lifecycleRegistry: LifecycleRegistry,
+        var reconnectCount: Int
     ) {
         fun connect() {
             lifecycleRegistry.onNext(Lifecycle.State.Started)

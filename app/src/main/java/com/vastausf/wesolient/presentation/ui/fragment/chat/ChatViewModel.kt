@@ -1,25 +1,34 @@
 package com.vastausf.wesolient.presentation.ui.fragment.chat
 
+import androidx.lifecycle.ViewModel
 import com.tinder.scarlet.Message
 import com.tinder.scarlet.WebSocket
+import com.vastausf.wesolient.SingleEvent
+import com.vastausf.wesolient.data.client.CloseReason
 import com.vastausf.wesolient.data.client.Frame
 import com.vastausf.wesolient.data.common.Scope
+import com.vastausf.wesolient.data.common.Settings
+import com.vastausf.wesolient.exception.IllegalUrlException
 import com.vastausf.wesolient.getLocalSystemTimestamp
 import com.vastausf.wesolient.model.ServiceCreator
-import com.vastausf.wesolient.model.store.*
+import com.vastausf.wesolient.model.store.ScopeStore
+import com.vastausf.wesolient.model.store.SettingsStore
+import com.vastausf.wesolient.model.store.TemplateStore
+import com.vastausf.wesolient.model.store.VariableStore
 import com.vastausf.wesolient.replaceVariables
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import moxy.InjectViewState
-import moxy.MvpPresenter
-import java.net.SocketException
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import java.net.ConnectException
 import java.util.*
 import javax.inject.Inject
 
-@InjectViewState
-class ChatPresenter
+@HiltViewModel
+class ChatViewModel
 @Inject
 constructor(
     private val scopeStore: ScopeStore,
@@ -27,8 +36,37 @@ constructor(
     private val variableStore: VariableStore,
     private val settingsStore: SettingsStore,
     private val serviceCreator: ServiceCreator
-) : MvpPresenter<ChatView>() {
+) : ViewModel() {
+    val messageField = MutableStateFlow("")
+
+    private val _titleField = MutableStateFlow("")
+    val titleField = _titleField.asStateFlow()
+
+    private val _connectionState = MutableStateFlow<Boolean?>(false)
+    val connectionState = _connectionState.asStateFlow()
+
+    private val _chatHistory = MutableStateFlow<List<Frame>>(emptyList())
+    val chatHistory = _chatHistory.asStateFlow()
+
+    //Single event flows
+    private val _connectionErrorFlow = MutableStateFlow<SingleEvent<String>?>(null)
+    val connectionErrorFlow = _connectionErrorFlow.asStateFlow()
+
+    private val _illegalUrlErrorFlow = MutableStateFlow<SingleEvent<String>?>(null)
+    val illegalUrlError = _illegalUrlErrorFlow.asStateFlow()
+
+    private val _undefinedErrorFlow = MutableStateFlow<SingleEvent<String>?>(null)
+    val undefinedErrorFlow = _undefinedErrorFlow.asStateFlow()
+
+    private val _missScopeErrorFlow = MutableStateFlow<SingleEvent<String>?>(null)
+    val missScopeErrorFlow = _missScopeErrorFlow.asStateFlow()
+
+    private val _closeReason = MutableStateFlow<SingleEvent<CloseReason>?>(null)
+    val closeReason = _closeReason.asStateFlow()
+
+
     lateinit var scope: Scope
+    lateinit var settings: Settings
 
     private lateinit var serviceHolder: ServiceCreator.ServiceHolder
 
@@ -43,16 +81,14 @@ constructor(
         if (message.isNotBlank()) {
             clientMessage(message)
 
-            viewState.onSend()
+            messageField.value = ""
         }
     }
 
     fun onTemplateSelect(uid: String) {
-        templateStore.getTemplateOnce(scope.uid, uid,
-            onSuccess = { value ->
-                viewState.bindMessageTemplate(value.message)
-            }
-        )
+        templateStore.getTemplateOnce(scope.uid, uid) { template ->
+            messageField.value = template.message
+        }
     }
 
     fun onStart(uid: String) {
@@ -60,19 +96,21 @@ constructor(
             onSuccess = { value ->
                 scope = value
 
-                viewState.bindData(value)
+                _titleField.value = value.title
 
                 settingsStore.getSettingsOnce { settings ->
+                    this.settings = settings
+
                     if (settings.autoConnect) {
                         onConnect()
                     }
                 }
             },
             onNotFound = {
-                viewState.onMissScope()
+                _missScopeErrorFlow.value = SingleEvent("")
             },
             onFailure = {
-                viewState.onMissScope()
+                _missScopeErrorFlow.value = SingleEvent("")
             }
         )
     }
@@ -80,13 +118,12 @@ constructor(
     fun onConnect() {
         try {
             scope.apply {
-                viewState.changeConnectionState(null)
+                onConnectionChange()
 
                 if (!(url.startsWith(wsPrefix, true) || url.startsWith(wssPrefix, true)))
-                    throw IllegalArgumentException()
+                    throw IllegalUrlException()
 
-
-                serviceHolder = serviceCreator.create(url)
+                serviceHolder = serviceCreator.create(url, settings.reconnectCount)
 
                 connectionDisposable = CompositeDisposable()
 
@@ -97,19 +134,21 @@ constructor(
         } catch (exception: Exception) {
             onConnectionException(exception)
 
-            viewState.changeConnectionState(false)
+            onConnectionClosed()
         }
     }
 
     fun onDisconnect(code: Int? = null, reason: String? = null) {
         try {
-            viewState.changeConnectionState(null)
+            onConnectionChange()
 
-            serviceHolder.disconnect(code, reason)
+            if (connectionState.value == true) {
+                serviceHolder.disconnect(code, reason)
+            }
         } catch (exception: Exception) {
             onConnectionException(exception)
 
-            viewState.changeConnectionState(true)
+            onConnectionOpened()
         }
     }
 
@@ -130,21 +169,27 @@ constructor(
                                 serverMessage(message.value)
                             }
                             is Message.Bytes -> {
-
+                                serverMessage(message.value.toString())
                             }
                         }
                     }
                     is WebSocket.Event.OnConnectionFailed -> {
                         onConnectionException(it.throwable)
                         onConnectionClosed()
+
+                        if (serviceHolder.reconnectCount-- == 0) {
+                            serviceHolder.disconnect()
+                        }
                     }
                     is WebSocket.Event.OnConnectionClosing -> {
 
                     }
                     is WebSocket.Event.OnConnectionClosed -> {
-                        viewState.onDisconnectWithReason(
-                            it.shutdownReason.code,
-                            it.shutdownReason.reason
+                        _closeReason.value = SingleEvent(
+                            CloseReason(
+                                it.shutdownReason.code,
+                                it.shutdownReason.reason
+                            )
                         )
                         onConnectionClosed()
 
@@ -159,24 +204,28 @@ constructor(
         exception.printStackTrace()
 
         when (exception) {
-            is SocketException -> {
-                viewState.onConnectionError()
+            is ConnectException -> {
+                _connectionErrorFlow.value = SingleEvent(scope.url)
             }
-            is IllegalArgumentException -> {
-                viewState.onIllegalUrl()
+            is IllegalUrlException -> {
+                _illegalUrlErrorFlow.value = SingleEvent("")
             }
             else -> {
-                viewState.onConnectionError()
+                _undefinedErrorFlow.value = SingleEvent("")
             }
         }
     }
 
     private fun onConnectionOpened() {
-        viewState.changeConnectionState(true)
+        _connectionState.value = true
+    }
+
+    private fun onConnectionChange() {
+        _connectionState.value = null
     }
 
     private fun onConnectionClosed() {
-        viewState.changeConnectionState(false)
+        _connectionState.value = false
     }
 
     private fun addNewMessage(content: String, source: Frame.Source) {
@@ -189,7 +238,7 @@ constructor(
 
         frameList.add(message)
 
-        viewState.updateChatHistory(frameList)
+        _chatHistory.value = frameList.toList()
     }
 
     private fun clientMessage(message: String) {
@@ -210,7 +259,7 @@ constructor(
         connectionDisposable.add(this)
     }
 
-    override fun onDestroy() {
+    override fun onCleared() {
         onDisconnect()
     }
 }

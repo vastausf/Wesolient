@@ -6,20 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
-import com.vastausf.wesolient.R
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.vastausf.wesolient.databinding.DialogCreateScopeBinding
+import com.vastausf.wesolient.filterHandled
 import dagger.hilt.android.AndroidEntryPoint
-import moxy.MvpBottomSheetDialogFragment
-import moxy.ktx.moxyPresenter
-import javax.inject.Inject
-import javax.inject.Provider
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class CreateScopeDialog : MvpBottomSheetDialogFragment(), CreateScopeView {
-    @Inject
-    lateinit var presenterProvider: Provider<CreateScopePresenter>
-
-    private val presenter by moxyPresenter { presenterProvider.get() }
+class CreateScopeDialog : BottomSheetDialogFragment() {
+    private val viewModel: CreateScopeViewModel by viewModels()
 
     private lateinit var binding: DialogCreateScopeBinding
 
@@ -33,26 +31,38 @@ class CreateScopeDialog : MvpBottomSheetDialogFragment(), CreateScopeView {
         return binding.root
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        lifecycleScope.launch {
+            viewModel.messageFlow
+                .filterHandled()
+                .collect {
+                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                }
+        }
+
+        lifecycleScope.launch {
+            viewModel.dialogState
+                .collect {
+                    if (!it)
+                        dialog?.dismiss()
+                }
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.apply {
             bCreateScope.setOnClickListener {
                 val title = etScopeTitle.text.toString().trim()
                 val url = etScopeUrl.text.toString().trim()
 
-                presenter.onNewScopeCreate(title, url)
+                viewModel.onNewScopeCreate(title, url)
             }
 
             etScopeTitle.doAfterTextChanged {
                 bCreateScope.isEnabled = it.toString().isNotBlank()
             }
         }
-    }
-
-    override fun dismissDialog() {
-        dialog?.dismiss()
-    }
-
-    override fun showErrorMessage() {
-        Toast.makeText(context, R.string.create_scope_failure, Toast.LENGTH_SHORT).show()
     }
 }

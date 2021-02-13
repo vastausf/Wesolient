@@ -7,28 +7,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.vastausf.wesolient.R
 import com.vastausf.wesolient.data.common.Template
 import com.vastausf.wesolient.databinding.DialogTemplatesSelectBinding
+import com.vastausf.wesolient.filterHandled
 import com.vastausf.wesolient.presentation.ui.NavigationCode
 import com.vastausf.wesolient.presentation.ui.adapter.TemplateListAdapterRV
 import com.vastausf.wesolient.sendDialogResult
 import dagger.hilt.android.AndroidEntryPoint
-import moxy.MvpBottomSheetDialogFragment
-import moxy.ktx.moxyPresenter
-import javax.inject.Inject
-import javax.inject.Provider
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class TemplateSelectDialog : MvpBottomSheetDialogFragment(), TemplateSelectView {
-    @Inject
-    lateinit var presenterProvider: Provider<TemplateSelectPresenter>
-
-    private val presenter by moxyPresenter { presenterProvider.get() }
+class TemplateSelectDialog : BottomSheetDialogFragment() {
+    private val viewModel: TemplateSelectViewModel by viewModels()
 
     private val args by navArgs<TemplateSelectDialogArgs>()
 
@@ -51,8 +50,8 @@ class TemplateSelectDialog : MvpBottomSheetDialogFragment(), TemplateSelectView 
                     onClick = { item, _ ->
                         onTemplateSelect(item)
                     },
-                    onLongClick = { item, _ ->
-                        PopupMenu(context, view).apply {
+                    onLongClick = { item, itemView ->
+                        PopupMenu(context, itemView).apply {
                             inflate(R.menu.template_menu)
                             gravity = Gravity.END
                             setOnMenuItemClickListener {
@@ -64,7 +63,7 @@ class TemplateSelectDialog : MvpBottomSheetDialogFragment(), TemplateSelectView 
                                     }
                                     R.id.deleteMI -> {
                                         showDeleteSnackbar {
-                                            presenter.onDelete(item.uid)
+                                            viewModel.delete(item.uid)
                                         }
 
                                         return@setOnMenuItemClickListener true
@@ -87,28 +86,36 @@ class TemplateSelectDialog : MvpBottomSheetDialogFragment(), TemplateSelectView 
     override fun onStart() {
         super.onStart()
 
-        presenter.onStart(args.scopeUid)
-    }
+        viewModel.onStart(args.scopeUid)
 
-    override fun bindTemplateList(templateList: List<Template>) {
-        view?.apply {
-            (binding.rvTemplateList.adapter as TemplateListAdapterRV).submitList(templateList)
+        lifecycleScope.launch {
+            viewModel.dialogState
+                .collect {
+                    if (!it) dialog?.dismiss()
+                }
         }
-    }
 
-    override fun onDeleteSuccess() {
-        Toast.makeText(context, R.string.delete_template_success, Toast.LENGTH_SHORT).show()
-    }
+        lifecycleScope.launch {
+            viewModel.messageFlow
+                .filterHandled()
+                .collect {
+                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                }
+        }
 
-    override fun onDeleteFailure() {
-        Toast.makeText(context, R.string.delete_template_failure, Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch {
+            viewModel.templateList
+                .collect {
+                    (binding.rvTemplateList.adapter as TemplateListAdapterRV).submitList(it)
+                }
+        }
     }
 
     private fun launchScopeEdit(templateUid: String) {
         findNavController()
             .navigate(
                 TemplateSelectDialogDirections.actionTemplateSelectDialogToEditTemplateDialog(
-                    presenter.scope.uid,
+                    viewModel.scope.uid,
                     templateUid
                 )
             )
@@ -117,14 +124,18 @@ class TemplateSelectDialog : MvpBottomSheetDialogFragment(), TemplateSelectView 
     private fun showCreateDialog() {
         findNavController().navigate(
             TemplateSelectDialogDirections
-                .actionTemplateSelectDialogToCreateTemplateDialog(presenter.scope.uid)
+                .actionTemplateSelectDialogToCreateTemplateDialog(viewModel.scope.uid)
         )
     }
 
     private fun showDeleteSnackbar(onClick: () -> Unit) {
-        Snackbar.make(requireView(), R.string.delete_template_confirmation, Snackbar.LENGTH_LONG)
+        Snackbar.make(
+            requireView(),
+            R.string.select_template_delete_confirmation,
+            Snackbar.LENGTH_LONG
+        )
             .apply {
-                setAction(R.string.delete_template_positive) {
+                setAction(R.string.select_template_delete_positive) {
                     onClick()
                 }
                 show()

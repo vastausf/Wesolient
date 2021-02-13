@@ -1,19 +1,29 @@
 package com.vastausf.wesolient.presentation.ui.dialog.createTemplate
 
+import androidx.lifecycle.ViewModel
+import com.vastausf.wesolient.R
+import com.vastausf.wesolient.SingleEvent
 import com.vastausf.wesolient.data.common.Scope
 import com.vastausf.wesolient.model.store.ScopeStore
 import com.vastausf.wesolient.model.store.TemplateStore
-import moxy.InjectViewState
-import moxy.MvpPresenter
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
-@InjectViewState
-class CreateTemplatePresenter
+@HiltViewModel
+class CreateTemplateViewModel
 @Inject
 constructor(
     private val scopeStore: ScopeStore,
     private val templateStore: TemplateStore
-) : MvpPresenter<CreateTemplateView>() {
+) : ViewModel() {
+    private val _messageFlow = MutableStateFlow<SingleEvent<Int>?>(null)
+    val messageFlow: StateFlow<SingleEvent<Int>?> = _messageFlow
+
+    private val _dialogState = MutableStateFlow(true)
+    val dialogState: StateFlow<Boolean> = _dialogState
+
     private lateinit var scope: Scope
 
     fun onStart(scopeUid: String) {
@@ -29,10 +39,10 @@ constructor(
     ) {
         templateStore.createTemplate(scope.uid, title, message,
             onSuccess = {
-                viewState.dismissDialog()
+                _dialogState.value = false
             },
             onFailure = {
-                viewState.showErrorMessage()
+                _messageFlow.value = SingleEvent(R.string.create_template_failure)
             }
         )
     }

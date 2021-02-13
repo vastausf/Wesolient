@@ -6,22 +6,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
-import androidx.navigation.fragment.findNavController
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
-import com.vastausf.wesolient.R
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.vastausf.wesolient.databinding.DialogEditTemplateBinding
+import com.vastausf.wesolient.filterHandled
 import dagger.hilt.android.AndroidEntryPoint
-import moxy.MvpBottomSheetDialogFragment
-import moxy.ktx.moxyPresenter
-import javax.inject.Inject
-import javax.inject.Provider
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class EditTemplateDialog : MvpBottomSheetDialogFragment(), EditTemplateView {
-    @Inject
-    lateinit var presenterProvider: Provider<EditTemplatePresenter>
-
-    private val presenter by moxyPresenter { presenterProvider.get() }
+class EditTemplateDialog : BottomSheetDialogFragment() {
+    private val viewModel: EditTemplateViewModel by viewModels()
 
     private val args by navArgs<EditTemplateDialogArgs>()
 
@@ -43,7 +42,7 @@ class EditTemplateDialog : MvpBottomSheetDialogFragment(), EditTemplateView {
                 val newTitle = etTemplateTitle.text.toString().trim()
                 val newUrl = etTemplateMessage.text.toString().trim()
 
-                presenter.onApply(
+                viewModel.apply(
                     newTitle,
                     newUrl
                 )
@@ -58,21 +57,35 @@ class EditTemplateDialog : MvpBottomSheetDialogFragment(), EditTemplateView {
     override fun onStart() {
         super.onStart()
 
-        presenter.onStart(args.scopeUid, args.templateUid)
-    }
+        viewModel.onStart(args.scopeUid, args.templateUid)
 
-    override fun bindField(title: String, message: String) {
-        binding.apply {
-            etTemplateTitle.setText(title)
-            etTemplateMessage.setText(message)
+        lifecycleScope.launch {
+            viewModel.dialogState
+                .collect {
+                    if (!it) dialog?.dismiss()
+                }
         }
-    }
 
-    override fun onApplySuccess() {
-        findNavController().popBackStack()
-    }
+        lifecycleScope.launch {
+            viewModel.messageFlow
+                .filterHandled()
+                .collect {
+                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                }
+        }
 
-    override fun onApplyFailure() {
-        Toast.makeText(context, R.string.edit_template_failure, Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch {
+            viewModel.titleField
+                .collect {
+                    binding.etTemplateTitle.setText(it)
+                }
+        }
+
+        lifecycleScope.launch {
+            viewModel.messageField
+                .collect {
+                    binding.etTemplateMessage.setText(it)
+                }
+        }
     }
 }

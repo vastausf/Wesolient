@@ -1,20 +1,36 @@
 package com.vastausf.wesolient.presentation.ui.dialog.editVariable
 
+import androidx.lifecycle.ViewModel
+import com.vastausf.wesolient.R
+import com.vastausf.wesolient.SingleEvent
 import com.vastausf.wesolient.data.common.Scope
 import com.vastausf.wesolient.data.common.Variable
 import com.vastausf.wesolient.model.store.ScopeStore
 import com.vastausf.wesolient.model.store.VariableStore
-import moxy.InjectViewState
-import moxy.MvpPresenter
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
-@InjectViewState
-class EditVariablePresenter
+@HiltViewModel
+class EditVariableViewModel
 @Inject
 constructor(
     private val scopeStore: ScopeStore,
     private val variableStore: VariableStore
-) : MvpPresenter<EditVariableView>() {
+) : ViewModel() {
+    private val _messageFlow = MutableStateFlow<SingleEvent<Int>?>(null)
+    val messageFlow: StateFlow<SingleEvent<Int>?> = _messageFlow
+
+    private val _dialogState = MutableStateFlow(true)
+    val dialogState: StateFlow<Boolean> = _dialogState
+
+    private val _titleField = MutableStateFlow("")
+    val titleField: StateFlow<String> = _titleField
+
+    private val _valueField = MutableStateFlow("")
+    val valueField: StateFlow<String> = _valueField
+
     private lateinit var scope: Scope
     private lateinit var variable: Variable
 
@@ -33,25 +49,24 @@ constructor(
             onSuccess = { value ->
                 variable = value
 
-                viewState.bindField(value.title, value.value)
+                _titleField.value = value.title
+                _valueField.value = value.value
             }
         )
     }
 
-    fun onApply(newTitle: String, newValue: String) {
+    fun apply(newTitle: String, newValue: String) {
         variableStore.editVariable(
             scope.uid,
             variable.uid,
             newTitle,
             newValue,
             onSuccess = {
-                viewState.onApplySuccess()
+                _dialogState.value = false
             },
             onFailure = {
-                viewState.onApplyFailure()
+                _messageFlow.value = SingleEvent(R.string.edit_variable_failure)
             }
         )
-
-        viewState.onApplySuccess()
     }
 }

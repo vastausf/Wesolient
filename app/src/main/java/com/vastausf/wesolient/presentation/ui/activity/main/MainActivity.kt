@@ -1,16 +1,22 @@
 package com.vastausf.wesolient.presentation.ui.activity.main
 
-import com.vastausf.wesolient.R
+import android.os.Bundle
+import android.view.LayoutInflater
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import com.vastausf.wesolient.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
-import moxy.MvpAppCompatActivity
-import moxy.ktx.moxyPresenter
-import javax.inject.Inject
-import javax.inject.Provider
 
 @AndroidEntryPoint
-class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
-    @Inject
-    lateinit var presenterProvider: Provider<MainPresenter>
+class MainActivity : AppCompatActivity() {
+    private val viewModel: MainActivityViewModel by viewModels()
+    lateinit var binding: ActivityMainBinding
 
-    private val presenter by moxyPresenter { presenterProvider.get() }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
+
+        setContentView(binding.root)
+    }
 }

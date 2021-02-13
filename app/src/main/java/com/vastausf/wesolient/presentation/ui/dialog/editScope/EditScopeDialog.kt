@@ -4,22 +4,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
-import androidx.navigation.fragment.findNavController
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.vastausf.wesolient.databinding.DialogEditScopeBinding
+import com.vastausf.wesolient.filterHandled
 import dagger.hilt.android.AndroidEntryPoint
-import moxy.MvpBottomSheetDialogFragment
-import moxy.ktx.moxyPresenter
-import javax.inject.Inject
-import javax.inject.Provider
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class EditScopeDialog : MvpBottomSheetDialogFragment(), EditScopeView {
-    @Inject
-    lateinit var presenterProvider: Provider<EditScopePresenter>
-
-    private val presenter by moxyPresenter { presenterProvider.get() }
+class EditScopeDialog : BottomSheetDialogFragment() {
+    private val viewModel: EditScopeViewModel by viewModels()
 
     private val args by navArgs<EditScopeDialogArgs>()
 
@@ -41,7 +42,7 @@ class EditScopeDialog : MvpBottomSheetDialogFragment(), EditScopeView {
                 val newTitle = etScopeTitle.text.toString().trim()
                 val newUrl = etScopeUrl.text.toString().trim()
 
-                presenter.onApply(
+                viewModel.apply(
                     newTitle,
                     newUrl
                 )
@@ -56,17 +57,35 @@ class EditScopeDialog : MvpBottomSheetDialogFragment(), EditScopeView {
     override fun onStart() {
         super.onStart()
 
-        presenter.onStart(args.uid)
-    }
+        viewModel.onStart(args.uid)
 
-    override fun bindField(title: String, url: String) {
-        binding.apply {
-            etScopeTitle.setText(title)
-            etScopeUrl.setText(url)
+        lifecycleScope.launch {
+            viewModel.dialogState
+                .collect {
+                    if (!it) dialog?.dismiss()
+                }
         }
-    }
 
-    override fun onApplySuccess() {
-        findNavController().popBackStack()
+        lifecycleScope.launch {
+            viewModel.messageFlow
+                .filterHandled()
+                .collect {
+                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                }
+        }
+
+        lifecycleScope.launch {
+            viewModel.titleField
+                .collect {
+                    binding.etScopeTitle.setText(it)
+                }
+        }
+
+        lifecycleScope.launch {
+            viewModel.urlField
+                .collect {
+                    binding.etScopeUrl.setText(it)
+                }
+        }
     }
 }
