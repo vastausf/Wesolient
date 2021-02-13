@@ -1,7 +1,6 @@
 package com.vastausf.wesolient.presentation.ui.fragment.chat
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,8 +21,6 @@ import com.vastausf.wesolient.presentation.ui.NavigationCode
 import com.vastausf.wesolient.presentation.ui.adapter.ChatAdapterRV
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -97,7 +94,7 @@ class ChatFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        lifecycleScope.apply {
+        lifecycleScope.launchWhenStarted {
             launch {
                 viewModel.messageField
                     .collect {
@@ -122,7 +119,8 @@ class ChatFragment : Fragment() {
                 viewModel.illegalUrlError
                     .filterHandled()
                     .collect {
-                        Toast.makeText(context, R.string.chat_illegal_url, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, R.string.chat_illegal_url, Toast.LENGTH_SHORT)
+                            .show()
                     }
             }
 

@@ -1,17 +1,19 @@
 package com.vastausf.wesolient.presentation.ui.dialog.createTemplate
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import com.vastausf.wesolient.R
 import com.vastausf.wesolient.SingleEvent
 import com.vastausf.wesolient.data.common.Scope
 import com.vastausf.wesolient.model.store.ScopeStore
 import com.vastausf.wesolient.model.store.TemplateStore
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
 
+@HiltViewModel
 class CreateTemplateViewModel
-@ViewModelInject
+@Inject
 constructor(
     private val scopeStore: ScopeStore,
     private val templateStore: TemplateStore

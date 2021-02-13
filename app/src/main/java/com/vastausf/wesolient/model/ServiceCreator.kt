@@ -9,8 +9,13 @@ import com.tinder.scarlet.streamadapter.rxjava2.RxJava2StreamAdapterFactory
 import com.tinder.scarlet.websocket.okhttp.newWebSocketFactory
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class ServiceCreator {
+class ServiceCreator
+@Inject
+constructor(
+
+) {
     fun create(
         url: String,
         reconnectCount: Int

@@ -11,15 +11,18 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.vastausf.wesolient.model.ServiceCreator
 import com.vastausf.wesolient.model.store.ScopeStore
+import com.vastausf.wesolient.model.store.SettingsStore
+import com.vastausf.wesolient.model.store.TemplateStore
+import com.vastausf.wesolient.model.store.VariableStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 
 @Module
-@InstallIn(ActivityComponent::class)
-object ActivityModule {
+@InstallIn(ViewModelComponent::class)
+object ViewModelModule {
     @Provides
     fun providesFirebaseUser(
         firebaseAuth: FirebaseAuth
@@ -57,16 +60,43 @@ object ActivityModule {
     }
 
     @Provides
+    fun providesServiceCreator(): ServiceCreator {
+        return ServiceCreator()
+    }
+
+    @Provides
     fun providesScopeStore(
-        firebaseDatabaseScopes: DatabaseReference
+        firebaseDatabaseUserRoot: DatabaseReference
     ): ScopeStore {
         return ScopeStore(
-            firebaseDatabaseScopes
+            firebaseDatabaseUserRoot
         )
     }
 
     @Provides
-    fun providesServiceCreator(): ServiceCreator {
-        return ServiceCreator()
+    fun providesSettingsStore(
+        firebaseDatabaseUserRoot: DatabaseReference
+    ): SettingsStore {
+        return SettingsStore(
+            firebaseDatabaseUserRoot
+        )
+    }
+
+    @Provides
+    fun providesTemplateStore(
+        firebaseDatabaseUserRoot: DatabaseReference
+    ): TemplateStore {
+        return TemplateStore(
+            firebaseDatabaseUserRoot
+        )
+    }
+
+    @Provides
+    fun providesVariableStore(
+        firebaseDatabaseUserRoot: DatabaseReference
+    ): VariableStore {
+        return VariableStore(
+            firebaseDatabaseUserRoot
+        )
     }
 }

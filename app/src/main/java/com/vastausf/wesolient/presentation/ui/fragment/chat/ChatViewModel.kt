@@ -1,20 +1,22 @@
 package com.vastausf.wesolient.presentation.ui.fragment.chat
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import com.tinder.scarlet.Message
 import com.tinder.scarlet.WebSocket
-import com.vastausf.wesolient.*
+import com.vastausf.wesolient.SingleEvent
 import com.vastausf.wesolient.data.client.CloseReason
 import com.vastausf.wesolient.data.client.Frame
 import com.vastausf.wesolient.data.common.Scope
 import com.vastausf.wesolient.data.common.Settings
 import com.vastausf.wesolient.exception.IllegalUrlException
+import com.vastausf.wesolient.getLocalSystemTimestamp
 import com.vastausf.wesolient.model.ServiceCreator
 import com.vastausf.wesolient.model.store.ScopeStore
 import com.vastausf.wesolient.model.store.SettingsStore
 import com.vastausf.wesolient.model.store.TemplateStore
 import com.vastausf.wesolient.model.store.VariableStore
+import com.vastausf.wesolient.replaceVariables
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -23,9 +25,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.net.ConnectException
 import java.util.*
+import javax.inject.Inject
 
+@HiltViewModel
 class ChatViewModel
-@ViewModelInject
+@Inject
 constructor(
     private val scopeStore: ScopeStore,
     private val templateStore: TemplateStore,

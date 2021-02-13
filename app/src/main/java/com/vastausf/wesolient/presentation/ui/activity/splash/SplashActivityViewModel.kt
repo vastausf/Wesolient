@@ -1,10 +1,12 @@
 package com.vastausf.wesolient.presentation.ui.activity.splash
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
+@HiltViewModel
 class SplashActivityViewModel
-@ViewModelInject
+@Inject
 constructor(
 
 ) : ViewModel()

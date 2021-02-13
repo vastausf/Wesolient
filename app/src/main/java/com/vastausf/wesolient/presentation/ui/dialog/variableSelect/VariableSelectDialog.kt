@@ -20,8 +20,6 @@ import com.vastausf.wesolient.filterHandled
 import com.vastausf.wesolient.presentation.ui.adapter.VariableListAdapterRV
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -46,8 +44,8 @@ class VariableSelectDialog : BottomSheetDialogFragment() {
         view.apply {
             binding.rvVariableList.apply {
                 adapter = VariableListAdapterRV(
-                    onLongClick = { item, _ ->
-                        PopupMenu(context, view).apply {
+                    onLongClick = { item, itemView ->
+                        PopupMenu(context, itemView).apply {
                             inflate(R.menu.variable_menu)
                             gravity = Gravity.END
                             setOnMenuItemClickListener {

@@ -1,15 +1,17 @@
 package com.vastausf.wesolient.presentation.ui.fragment.settings
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.vastausf.wesolient.data.common.Settings
 import com.vastausf.wesolient.model.store.SettingsStore
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
 
+@HiltViewModel
 class SettingsViewModel
-@ViewModelInject
+@Inject
 constructor(
     private val settingsStore: SettingsStore,
     private val firebaseAuth: FirebaseAuth

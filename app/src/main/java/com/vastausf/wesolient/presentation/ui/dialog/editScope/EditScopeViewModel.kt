@@ -1,15 +1,17 @@
 package com.vastausf.wesolient.presentation.ui.dialog.editScope
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import com.vastausf.wesolient.SingleEvent
 import com.vastausf.wesolient.data.common.Scope
 import com.vastausf.wesolient.model.store.ScopeStore
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
 
+@HiltViewModel
 class EditScopeViewModel
-@ViewModelInject
+@Inject
 constructor(
     private val scopeStore: ScopeStore
 ) : ViewModel() {
