@@ -6,21 +6,69 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.vastausf.wesolient.R
 import com.vastausf.wesolient.databinding.FragmentSelectScopeBinding
 import com.vastausf.wesolient.filterHandled
+import com.vastausf.wesolient.presentation.design.WesolientTheme
 import com.vastausf.wesolient.presentation.ui.adapter.ScopeListAdapterRV
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+
+@Composable
+fun ScopeList(viewModel: ScopeSelectViewModel = viewModel()) {
+    val scopeList = viewModel.scopeList.collectAsState()
+
+    ApplicationHeader()
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ApplicationHeader() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            modifier = Modifier
+                .size(32.dp, 32.dp),
+            painter = painterResource(id = R.drawable.ic_app),
+            tint = Color.Unspecified,
+            contentDescription = null
+        )
+        Spacer(
+            modifier = Modifier
+                .width(8.dp)
+        )
+        Text(
+            text = stringResource(id = R.string.app_head_name),
+            style = MaterialTheme.typography.h4,
+            color = MaterialTheme.colors.primary
+        )
+    }
+}
 
 @AndroidEntryPoint
 class ScopeSelectFragment : Fragment() {
