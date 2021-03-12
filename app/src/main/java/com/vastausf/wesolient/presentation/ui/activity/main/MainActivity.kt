@@ -1,22 +1,43 @@
 package com.vastausf.wesolient.presentation.ui.activity.main
 
 import android.os.Bundle
-import android.view.LayoutInflater
+import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.vastausf.wesolient.databinding.ActivityMainBinding
+import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.vastausf.wesolient.presentation.design.WesolientTheme
+import com.vastausf.wesolient.presentation.ui.fragment.scopeSelect.ScopeList
+import com.vastausf.wesolient.presentation.ui.fragment.scopeSelect.ScopeSelectViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val viewModel: MainActivityViewModel by viewModels()
-    lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
+        setContent {
+            WesolientTheme {
+                AppNavigation()
+            }
+        }
+    }
 
-        setContentView(binding.root)
+    @Composable
+    fun AppNavigation() {
+        val navController = rememberNavController()
+
+        NavHost(navController, startDestination = "scopeList") {
+            composable("scopeList") {
+                val scopeSelectViewModel: ScopeSelectViewModel = hiltNavGraphViewModel()
+
+                ScopeList(scopeSelectViewModel)
+            }
+        }
     }
 }
