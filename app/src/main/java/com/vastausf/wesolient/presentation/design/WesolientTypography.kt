@@ -29,7 +29,7 @@ internal val WesolientTypography = Typography(
         letterSpacing = 0.25.sp
     ),
     h5 = TextStyle(
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.Bold,
         fontSize = 24.sp,
         letterSpacing = 0.sp
     ),

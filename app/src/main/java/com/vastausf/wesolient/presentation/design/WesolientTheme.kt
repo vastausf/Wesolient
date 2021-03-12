@@ -1,5 +1,6 @@
 package com.vastausf.wesolient.presentation.design
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 
@@ -8,7 +9,7 @@ fun WesolientTheme(
     content: @Composable () -> Unit
 ) {
     MaterialTheme(
-        colors = WesolientLightColors,
+        colors = if (isSystemInDarkTheme()) WesolientDarkColors else WesolientLightColors,
         typography = WesolientTypography,
         shapes = WesolientShapes,
         content = content

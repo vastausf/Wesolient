@@ -15,8 +15,14 @@
         <entry key="../../../../layout/compose-model-1615557175111.xml" value="0.5" />
         <entry key="../../../../layout/compose-model-1615558170213.xml" value="0.44814814814814813" />
         <entry key="../../../../layout/compose-model-1615560482811.xml" value="0.4444444444444444" />
+        <entry key="../../../../layout/compose-model-1615562134156.xml" value="0.44074074074074077" />
+        <entry key="../../../../layout/compose-model-1615562610026.xml" value="1.0" />
+        <entry key="../../../../layout/compose-model-1615571204223.xml" value="0.5" />
+        <entry key="app/src/main/res/drawable/ic_add.xml" value="0.2140625" />
         <entry key="app/src/main/res/drawable/ic_app.xml" value="0.371875" />
-        <entry key="app/src/main/res/layout/fragment_select_scope.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/dialog_create_scope.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/fragment_select_scope.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/item_scope_list.xml" value="0.33" />
       </map>
     </option>
   </component>
