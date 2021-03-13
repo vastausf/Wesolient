@@ -37,16 +37,31 @@ constructor(
         _newScopeUrl.value = value
     }
 
-    private val _createScopeDialog = MutableStateFlow(false)
-    var createScopeDialog = _createScopeDialog.asStateFlow()
-    fun onChangeCreateScopeDialogState(value: Boolean) {
-        _createScopeDialog.value = value
+    fun onScopeCreate(
+        title: String,
+        url: String
+    ) {
+        scopeStore.createScope(
+            title,
+            url,
+            onSuccess = {
+
+            },
+            onFailure = {
+
+            }
+        )
     }
 
-    fun onNewScopeCreate() {
-        scopeStore.createScope(
-            newScopeTitle.value,
-            newScopeUrl.value,
+    fun onScopeEdit(
+        uid: String,
+        title: String,
+        url: String
+    ) {
+        scopeStore.editScope(
+            uid,
+            title,
+            url,
             onSuccess = {
 
             },

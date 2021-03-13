@@ -22,6 +22,7 @@
         <entry key="app/src/main/res/drawable/ic_app.xml" value="0.371875" />
         <entry key="app/src/main/res/layout/dialog_create_scope.xml" value="0.5" />
         <entry key="app/src/main/res/layout/fragment_select_scope.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.35572916666666665" />
         <entry key="app/src/main/res/layout/item_scope_list.xml" value="0.33" />
       </map>
     </option>

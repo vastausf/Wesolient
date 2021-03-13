@@ -14,11 +14,11 @@ fun EditDeleteDropdownMenu(
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
+    //@TODO: DropdownMenu alignment Start -> End
     DropdownMenu(
         expanded = dropdownMenuExpanded.value,
         onDismissRequest = { dropdownMenuExpanded.value = false },
-
-        ) {
+    ) {
         DropdownMenuItem(onClick = {
             onEdit()
             dropdownMenuExpanded.value = false

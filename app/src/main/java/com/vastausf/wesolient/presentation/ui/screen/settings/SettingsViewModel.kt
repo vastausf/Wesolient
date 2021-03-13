@@ -1,4 +1,4 @@
-package com.vastausf.wesolient.presentation.ui.fragment.settings
+package com.vastausf.wesolient.presentation.ui.screen.settings
 
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth

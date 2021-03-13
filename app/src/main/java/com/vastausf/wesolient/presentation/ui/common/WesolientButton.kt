@@ -13,7 +13,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun FilledButton(
-    text: String,
+    title: String,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     Row(
@@ -24,12 +25,13 @@ fun FilledButton(
         Button(
             modifier = Modifier
                 .padding(8.dp),
+            enabled = enabled,
             onClick = onClick
         ) {
             Text(
                 modifier = Modifier
                     .padding(8.dp),
-                text = text,
+                text = title,
                 style = MaterialTheme.typography.button
             )
         }
