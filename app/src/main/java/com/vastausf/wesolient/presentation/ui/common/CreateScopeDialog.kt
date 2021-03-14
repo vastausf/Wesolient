@@ -1,6 +1,8 @@
 package com.vastausf.wesolient.presentation.ui.common
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -12,31 +14,29 @@ import androidx.compose.ui.window.Dialog
 import com.vastausf.wesolient.R
 
 
-enum class ScopeDialogType {
-    CREATE,
-    EDIT
-}
-
 @Composable
-fun ScopeDialog(
-    type: ScopeDialogType,
+fun ScopeDialogCompose(
     titleValue: String = "",
     urlValue: String = "",
-    onDismiss: () -> Unit,
-    onAction: (title: String, url: String) -> Unit
+    state: MutableState<Boolean>,
+    actionTitle: String,
+    onAction: (String, String) -> Unit
 ) {
     Dialog(
-        onDismissRequest = onDismiss
+        onDismissRequest = {
+            state.value = false
+        }
     ) {
-        var title by remember { mutableStateOf(titleValue) }
-        var url by remember { mutableStateOf(urlValue) }
-
         Surface(
-            modifier = Modifier
-                .padding(8.dp),
             shape = MaterialTheme.shapes.medium
         ) {
-            Column {
+            var title by remember { mutableStateOf(titleValue) }
+            var url by remember { mutableStateOf(urlValue) }
+
+            Column(
+                modifier = Modifier
+                    .padding(8.dp)
+            ) {
                 TransparentTextField(
                     value = title,
                     placeholder = stringResource(R.string.create_scope_title_hint),
@@ -51,21 +51,17 @@ fun ScopeDialog(
                         url = it
                     }
                 )
-                //@TODO: Animate enable state changes
-                FilledButton(
-                    title = when (type) {
-                        ScopeDialogType.CREATE -> {
-                            stringResource(R.string.create_scope_create)
+                Row {
+                    Spacer(Modifier.weight(1f))
+
+                    FilledButton(
+                        title = actionTitle,
+                        enabled = title.isNotEmpty() && url.isNotEmpty(),
+                        onClick = {
+                            onAction(title, url)
                         }
-                        ScopeDialogType.EDIT -> {
-                            stringResource(R.string.edit_scope_apply)
-                        }
-                    },
-                    enabled = titleValue.isNotEmpty() && urlValue.isNotEmpty(),
-                    onClick = {
-                        onAction(title, url)
-                    }
-                )
+                    )
+                }
             }
         }
     }

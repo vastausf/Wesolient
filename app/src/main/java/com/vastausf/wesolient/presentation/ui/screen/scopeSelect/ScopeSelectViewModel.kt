@@ -25,49 +25,33 @@ constructor(
     private val _scopeList = MutableStateFlow(emptyList<Scope>())
     val scopeList = _scopeList.asStateFlow()
 
-    private val _newScopeTitle = MutableStateFlow("")
-    var newScopeTitle = _newScopeTitle.asStateFlow()
-    fun onNewScopeTitleChange(value: String) {
-        _newScopeTitle.value = value
-    }
-
-    private val _newScopeUrl = MutableStateFlow("")
-    var newScopeUrl = _newScopeUrl.asStateFlow()
-    fun onNewScopeUrlChange(value: String) {
-        _newScopeUrl.value = value
-    }
-
     fun onScopeCreate(
         title: String,
-        url: String
+        url: String,
+        onSuccess: () -> Unit,
+        onFailure: () -> Unit,
     ) {
         scopeStore.createScope(
-            title,
-            url,
-            onSuccess = {
-
-            },
-            onFailure = {
-
-            }
+            title = title,
+            url = url,
+            onSuccess = onSuccess,
+            onFailure = onFailure
         )
     }
 
     fun onScopeEdit(
         uid: String,
         title: String,
-        url: String
+        url: String,
+        onSuccess: () -> Unit,
+        onFailure: () -> Unit
     ) {
         scopeStore.editScope(
-            uid,
-            title,
-            url,
-            onSuccess = {
-
-            },
-            onFailure = {
-
-            }
+            uid = uid,
+            newTitle = title,
+            newUrl = url,
+            onSuccess = onSuccess,
+            onFailure = onFailure
         )
     }
 

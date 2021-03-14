@@ -3,7 +3,6 @@ package com.vastausf.wesolient.presentation.ui.activity.main
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -15,10 +14,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.vastausf.wesolient.presentation.design.WesolientTheme
 import com.vastausf.wesolient.presentation.ui.fragment.chat.ChatViewModel
-import com.vastausf.wesolient.presentation.ui.screen.settings.SettingsViewModel
 import com.vastausf.wesolient.presentation.ui.screen.scopeSelect.ScopeSelectScreen
 import com.vastausf.wesolient.presentation.ui.screen.scopeSelect.ScopeSelectViewModel
 import com.vastausf.wesolient.presentation.ui.screen.settings.SettingsScreen
+import com.vastausf.wesolient.presentation.ui.screen.settings.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
