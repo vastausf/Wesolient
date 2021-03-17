@@ -9,15 +9,18 @@ import androidx.compose.ui.graphics.Color
 
 @Composable
 fun TransparentTextField(
+    modifier: Modifier = Modifier,
     value: String,
     placeholder: String,
+    enabled: Boolean = true,
     onValueChange: (String) -> Unit
 ) {
     TextField(
-        modifier = Modifier,
+        modifier = modifier,
         value = value,
         onValueChange = onValueChange,
         singleLine = true,
+        enabled = enabled,
         colors = TextFieldDefaults.outlinedTextFieldColors(
             disabledBorderColor = Color.Unspecified,
             errorBorderColor = Color.Unspecified,

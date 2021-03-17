@@ -7,7 +7,8 @@ data class Frame(
     var dateTime: Long
 ) {
     enum class Source {
-        SERVER_SOURCE,
-        CLIENT_SOURCE
+        SERVER,
+        CLIENT,
+        SYSTEM
     }
 }

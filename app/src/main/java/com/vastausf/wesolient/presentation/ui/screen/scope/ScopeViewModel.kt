@@ -1,4 +1,4 @@
-package com.vastausf.wesolient.presentation.ui.fragment.chat
+package com.vastausf.wesolient.presentation.ui.screen.scope
 
 import androidx.lifecycle.ViewModel
 import com.tinder.scarlet.Message
@@ -28,7 +28,7 @@ import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
-class ChatViewModel
+class ScopeViewModel
 @Inject
 constructor(
     private val scopeStore: ScopeStore,
@@ -37,6 +37,12 @@ constructor(
     private val settingsStore: SettingsStore,
     private val serviceCreator: ServiceCreator
 ) : ViewModel() {
+    lateinit var scope: Scope
+    lateinit var settings: Settings
+
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading = _isLoading.asStateFlow()
+
     val messageField = MutableStateFlow("")
 
     private val _titleField = MutableStateFlow("")
@@ -48,25 +54,8 @@ constructor(
     private val _chatHistory = MutableStateFlow<List<Frame>>(emptyList())
     val chatHistory = _chatHistory.asStateFlow()
 
-    //Single event flows
-    private val _connectionErrorFlow = MutableStateFlow<SingleEvent<String>?>(null)
-    val connectionErrorFlow = _connectionErrorFlow.asStateFlow()
-
-    private val _illegalUrlErrorFlow = MutableStateFlow<SingleEvent<String>?>(null)
-    val illegalUrlError = _illegalUrlErrorFlow.asStateFlow()
-
-    private val _undefinedErrorFlow = MutableStateFlow<SingleEvent<String>?>(null)
-    val undefinedErrorFlow = _undefinedErrorFlow.asStateFlow()
-
-    private val _missScopeErrorFlow = MutableStateFlow<SingleEvent<String>?>(null)
-    val missScopeErrorFlow = _missScopeErrorFlow.asStateFlow()
-
     private val _closeReason = MutableStateFlow<SingleEvent<CloseReason>?>(null)
     val closeReason = _closeReason.asStateFlow()
-
-
-    lateinit var scope: Scope
-    lateinit var settings: Settings
 
     private lateinit var serviceHolder: ServiceCreator.ServiceHolder
 
@@ -77,21 +66,9 @@ constructor(
     private val wsPrefix: String = "ws://"
     private val wssPrefix: String = "wss://"
 
-    fun sendMessage(message: String) {
-        if (message.isNotBlank()) {
-            clientMessage(message)
+    fun loadScopeData(uid: String) {
+        _isLoading.value = true
 
-            messageField.value = ""
-        }
-    }
-
-    fun onTemplateSelect(uid: String) {
-        templateStore.getTemplateOnce(scope.uid, uid) { template ->
-            messageField.value = template.message
-        }
-    }
-
-    fun onStart(uid: String) {
         scopeStore.getScopeOnce(uid,
             onSuccess = { value ->
                 scope = value
@@ -105,14 +82,30 @@ constructor(
                         onConnect()
                     }
                 }
+
+                _isLoading.value = false
             },
             onNotFound = {
-                _missScopeErrorFlow.value = SingleEvent("")
+                _isLoading.value = false
             },
             onFailure = {
-                _missScopeErrorFlow.value = SingleEvent("")
+                _isLoading.value = false
             }
         )
+    }
+
+    fun sendMessage(message: String) {
+        if (message.isNotBlank()) {
+            clientMessage(message)
+
+            messageField.value = ""
+        }
+    }
+
+    fun onTemplateSelect(uid: String) {
+        templateStore.getTemplateOnce(scope.uid, uid) { template ->
+            messageField.value = template.message
+        }
     }
 
     fun onConnect() {
@@ -205,13 +198,10 @@ constructor(
 
         when (exception) {
             is ConnectException -> {
-                _connectionErrorFlow.value = SingleEvent(scope.url)
             }
             is IllegalUrlException -> {
-                _illegalUrlErrorFlow.value = SingleEvent("")
             }
             else -> {
-                _undefinedErrorFlow.value = SingleEvent("")
             }
         }
     }
@@ -247,12 +237,12 @@ constructor(
 
             serviceHolder.service.sendMessage(replacedMessage)
 
-            addNewMessage(replacedMessage, Frame.Source.CLIENT_SOURCE)
+            addNewMessage(replacedMessage, Frame.Source.CLIENT)
         }
     }
 
     private fun serverMessage(message: String) {
-        addNewMessage(message, Frame.Source.SERVER_SOURCE)
+        addNewMessage(message, Frame.Source.SERVER)
     }
 
     private fun Disposable.disposeOnDisconnect() {

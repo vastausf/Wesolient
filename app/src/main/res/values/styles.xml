@@ -5,17 +5,9 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:statusBarColor">@color/colorBackground</item>
         <item name="android:windowLightStatusBar">@bool/lightStatusBar</item>
-
-        <item name="bottomSheetDialogTheme">@style/BottomSheetDialogTheme</item>
-
-        <item name="snackbarStyle">@style/SnackBarStyle</item>
-
+        <item name="android:windowSoftInputMode">adjustResize</item>
+        <item name="android:windowIsFloating">false</item>
         <item name="android:textAllCaps">false</item>
-    </style>
-
-    <style name="SnackBarStyle" parent="Widget.Design.Snackbar">
-        <item name="elevation">100dp</item>
-        <item name="android:layout_margin">16dp</item>
     </style>
 
     <style name="SplashTheme" parent="AppTheme">
@@ -23,15 +15,8 @@
         <item name="android:statusBarColor">@color/colorBackground</item>
     </style>
 
-    <style name="BottomSheetDialogTheme" parent="Theme.Design.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/BottomSheetDialogStyle</item>
-        <item name="android:windowIsFloating">false</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowSoftInputMode">adjustResize</item>
-    </style>
-
-    <style name="BottomSheetDialogStyle" parent="Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@drawable/dialog_background</item>
+    <style name="FirebaseAuthActionBarStyle" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/colorBackground</item>
     </style>
 
     <style name="LoginTheme" parent="AppTheme">
@@ -39,27 +24,5 @@
         <item name="android:windowActionBarOverlay">true</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="FirebaseAuthActionBarStyle" parent="Widget.AppCompat.ActionBar">
-        <item name="android:background">@color/colorBackground</item>
-    </style>
-
-    <style name="DialogFragment" parent="Theme.AppCompat.Dialog">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:layout_gravity">center</item>
-    </style>
-
-    <style name="EditText" parent="Widget.AppCompat.EditText">
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:padding">16dp</item>
-        <item name="android:textColor">@color/colorText</item>
-        <item name="android:textColorHint">@color/colorTextSecondary</item>
-    </style>
-
-    <style name="LogoText" parent="Widget.AppCompat.TextView">
-        <item name="android:textColor">@color/colorPrimary</item>
-        <item name="android:fontFamily">sans-serif-black</item>
-        <item name="android:textSize">22sp</item>
     </style>
 </resources>
