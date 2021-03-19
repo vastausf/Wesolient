@@ -96,6 +96,7 @@
 
     <!--    SETTINGS FRAGMENT   -->
     <string name="settings_header">Settings</string>
+    <string name="settings_loading_placeholder">Wait a second, we are loading your settings</string>
     <string name="settings_auto_connect">Auto-connect on scope open</string>
     <string name="settings_logout">LogOut</string>
     <string name="settings_reconnect_count">Reconnect count</string>

@@ -1,11 +1,17 @@
 package com.vastausf.wesolient.data.common
 
-import com.google.firebase.database.IgnoreExtraProperties
+import io.realm.RealmObject
+import io.realm.annotations.PrimaryKey
+import io.realm.annotations.Required
 import java.util.*
 
-@IgnoreExtraProperties
-data class Template(
-    var uid: String = UUID.randomUUID().toString(),
-    var title: String = "",
+open class Template : RealmObject() {
+    @PrimaryKey
+    var uid: String = UUID.randomUUID().toString()
+
+    @Required
+    var title: String = ""
+
+    @Required
     var message: String = ""
-)
+}

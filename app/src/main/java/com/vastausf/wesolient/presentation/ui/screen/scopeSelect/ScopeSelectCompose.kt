@@ -1,10 +1,11 @@
 package com.vastausf.wesolient.presentation.ui.screen.scopeSelect
 
-import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -39,7 +40,6 @@ fun ScopeSelectScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
 
-    val scopeList = viewModel.scopeList.collectAsState()
     val scaffoldState = rememberScaffoldState()
     val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
 
@@ -52,6 +52,7 @@ fun ScopeSelectScreen(
     ModalBottomSheetLayout(
         sheetState = bottomSheetState,
         sheetShape = MaterialTheme.shapes.large,
+        scrimColor = Color(0xBFFFFFFF),
         sheetContent = {
             BottomSheet(
                 bottomSheetState,
@@ -76,7 +77,7 @@ fun ScopeSelectScreen(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                Content(navController, scopeList.value)
+                Content(navController, viewModel.scopeList.value)
             }
         }
     }
@@ -109,7 +110,7 @@ private fun Header(
             )
             Text(
                 text = stringResource(R.string.app_head_name),
-                style = MaterialTheme.typography.h5,
+                style = MaterialTheme.typography.h4,
                 color = MaterialTheme.colors.primary
             )
         }
@@ -119,37 +120,45 @@ private fun Header(
 @Composable
 private fun Content(
     navController: NavController,
-    scopeList: List<Scope>
+    scopeList: List<Scope>?
 ) {
-    Column {
-        if (scopeList.isNotEmpty()) {
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f),
-                verticalArrangement = Arrangement.Center
-            ) {
-                items(scopeList) { scope ->
-                    ListItem(
-                        title = scope.title,
-                        onClick = {
-                            navController.navigate("scope/${scope.uid}")
-                        }
+    if (scopeList != null) {
+        Column {
+            if (scopeList.isNotEmpty()) {
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(1f),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    items(scopeList) { scope ->
+                        ListItem(
+                            title = scope.title,
+                            onClick = {
+                                navController.navigate("scope/${scope.uid}")
+                            }
+                        )
+                    }
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        textAlign = TextAlign.Center,
+                        text = stringResource(id = R.string.select_scope_list_placeholder),
+                        style = MaterialTheme.typography.subtitle1
                     )
                 }
             }
-        } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    textAlign = TextAlign.Center,
-                    text = stringResource(id = R.string.select_scope_list_placeholder),
-                    style = MaterialTheme.typography.subtitle1
-                )
-            }
+        }
+    } else {
+        Box(
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
         }
     }
 }
@@ -170,7 +179,7 @@ private fun ListItem(
             modifier = Modifier
                 .padding(24.dp, 16.dp),
             text = title,
-            style = MaterialTheme.typography.subtitle1
+            style = MaterialTheme.typography.h6
         )
     }
 }
@@ -183,13 +192,8 @@ private fun BottomSheet(
 ) {
     val coroutineScope = rememberCoroutineScope()
 
-    val context = LocalContext.current
-
-    val failureString = stringResource(R.string.create_scope_failure)
-
     var title by remember { mutableStateOf("") }
     var url by remember { mutableStateOf("") }
-    val lockFields = remember { mutableStateOf(false) }
 
     Surface(
         modifier = Modifier
@@ -198,8 +202,11 @@ private fun BottomSheet(
     ) {
         Column {
             TransparentTextField(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                textModifier = Modifier
+                    .padding(0.dp, 12.dp),
                 value = title,
-                enabled = !lockFields.value,
                 placeholder = stringResource(R.string.create_scope_title_hint),
                 onValueChange = {
                     title = it
@@ -207,8 +214,11 @@ private fun BottomSheet(
             )
 
             TransparentTextField(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                textModifier = Modifier
+                    .padding(0.dp, 16.dp),
                 value = url,
-                enabled = !lockFields.value,
                 placeholder = stringResource(R.string.create_scope_url_hint),
                 onValueChange = {
                     url = it
@@ -222,28 +232,19 @@ private fun BottomSheet(
             ) {
                 FilledButton(
                     title = stringResource(R.string.create_scope_create),
-                    enabled = title.isNotEmpty() && url.isNotEmpty() && !lockFields.value,
+                    enabled = title.isNotEmpty() && url.isNotEmpty(),
                     onClick = {
-                        lockFields.value = true
-
                         viewModel.onScopeCreate(
                             title = title,
-                            url = url,
-                            onSuccess = {
-                                coroutineScope.launch {
-                                    state.hide()
-                                }
-
-                                title = ""
-                                url = ""
-                                lockFields.value = false
-                            },
-                            onFailure = {
-                                Toast.makeText(context, failureString, Toast.LENGTH_SHORT).show()
-
-                                lockFields.value = false
-                            }
+                            url = url
                         )
+
+                        title = ""
+                        url = ""
+
+                        coroutineScope.launch {
+                            state.hide()
+                        }
                     }
                 )
             }

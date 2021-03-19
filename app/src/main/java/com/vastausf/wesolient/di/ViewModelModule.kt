@@ -1,102 +1,68 @@
 package com.vastausf.wesolient.di
 
-import android.content.Context
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import com.vastausf.wesolient.model.ServiceCreator
-import com.vastausf.wesolient.model.store.ScopeStore
-import com.vastausf.wesolient.model.store.SettingsStore
-import com.vastausf.wesolient.model.store.TemplateStore
-import com.vastausf.wesolient.model.store.VariableStore
+import com.vastausf.wesolient.model.store.scope.ScopeStore
+import com.vastausf.wesolient.model.store.scope.ScopeStoreRealm
+import com.vastausf.wesolient.model.store.settings.SettingsStore
+import com.vastausf.wesolient.model.store.settings.SettingsStoreRealm
+import com.vastausf.wesolient.model.store.template.TemplateStore
+import com.vastausf.wesolient.model.store.template.TemplateStoreRealm
+import com.vastausf.wesolient.model.store.vatiable.VariableStore
+import com.vastausf.wesolient.model.store.vatiable.VariableStoreRealm
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.qualifiers.ApplicationContext
+import io.realm.Realm
+import io.realm.RealmConfiguration
 
 @Module
 @InstallIn(ViewModelComponent::class)
 object ViewModelModule {
-    @Provides
-    fun providesFirebaseUser(
-        firebaseAuth: FirebaseAuth
-    ): FirebaseUser {
-        return firebaseAuth.currentUser!!
-    }
-
-    @Provides
-    fun providesFirebaseDatabase(): FirebaseDatabase {
-        return Firebase
-            .database
-    }
-
-    @Provides
-    fun providesFirebaseAuth(): FirebaseAuth {
-        return Firebase.auth
-    }
-
-    @Provides
-    fun providesFirebaseDatabaseUserRoot(
-        firebaseDatabase: FirebaseDatabase,
-        firebaseUser: FirebaseUser
-    ): DatabaseReference {
-        return firebaseDatabase
-            .reference
-            .child("USERS")
-            .child(firebaseUser.uid)
-    }
-
-    @Provides
-    fun providesFirebaseAnalytics(
-        @ApplicationContext context: Context
-    ): FirebaseAnalytics {
-        return FirebaseAnalytics.getInstance(context)
-    }
-
     @Provides
     fun providesServiceCreator(): ServiceCreator {
         return ServiceCreator()
     }
 
     @Provides
+    fun providesRealmConfiguration(): RealmConfiguration {
+        return RealmConfiguration
+            .Builder()
+            .build()
+    }
+
+    @Provides
+    fun providesRealm(
+        realmConfiguration: RealmConfiguration
+    ): Realm {
+        return Realm.getInstance(realmConfiguration)
+    }
+
+    @Provides
     fun providesScopeStore(
-        firebaseDatabaseUserRoot: DatabaseReference
+        realm: Realm
     ): ScopeStore {
-        return ScopeStore(
-            firebaseDatabaseUserRoot
-        )
+        return ScopeStoreRealm(realm)
     }
 
     @Provides
     fun providesSettingsStore(
-        firebaseDatabaseUserRoot: DatabaseReference
+        realm: Realm
     ): SettingsStore {
-        return SettingsStore(
-            firebaseDatabaseUserRoot
-        )
+        return SettingsStoreRealm(realm)
     }
 
     @Provides
     fun providesTemplateStore(
-        firebaseDatabaseUserRoot: DatabaseReference
+        realm: Realm
     ): TemplateStore {
-        return TemplateStore(
-            firebaseDatabaseUserRoot
-        )
+        return TemplateStoreRealm(realm)
     }
 
     @Provides
     fun providesVariableStore(
-        firebaseDatabaseUserRoot: DatabaseReference
+        realm: Realm
     ): VariableStore {
-        return VariableStore(
-            firebaseDatabaseUserRoot
-        )
+        return VariableStoreRealm(realm)
     }
 }

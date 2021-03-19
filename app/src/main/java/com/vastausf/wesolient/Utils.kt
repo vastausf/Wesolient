@@ -1,16 +1,13 @@
 package com.vastausf.wesolient
 
-import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.vastausf.wesolient.data.common.Template
 import com.vastausf.wesolient.data.common.Variable
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.*
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.ZoneOffset
-import org.threeten.bp.format.DateTimeFormatter
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 fun getLocalSystemTimestamp(): Long {
     return LocalDateTime.now().atOffset(ZoneOffset.UTC).toEpochSecond()
@@ -79,3 +76,5 @@ class SingleEvent<out T>(val value: T) {
             value
         }
 }
+
+

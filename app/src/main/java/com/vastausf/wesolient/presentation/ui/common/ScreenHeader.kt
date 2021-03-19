@@ -25,7 +25,7 @@ fun ScreenHeader(
     ) {
         Row(
             modifier = Modifier
-                .padding(8.dp),
+                .padding(8.dp, 0.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (leftActionIcon != null)

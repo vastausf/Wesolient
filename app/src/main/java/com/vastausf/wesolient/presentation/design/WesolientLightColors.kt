@@ -8,13 +8,13 @@ internal val WesolientLightColors = Colors(
     primaryVariant = Color(0xFFF44336),
     secondary = Color(0xFFF44336),
     secondaryVariant = Color(0xFFF44336),
-    background = Color(0xFFD7D7D7),
+    background = Color(0xFFFFFFFF),
     surface = Color(0xFFFFFFFF),
     error = Color(0xFFF44336),
     onPrimary = Color(0xFFFFFFFF),
     onSecondary = Color(0xFFFFFFFF),
-    onBackground = Color(0xFF2B2B2B),
-    onSurface = Color(0xFF2B2B2B),
+    onBackground = Color(0xFF242424),
+    onSurface = Color(0xFF242424),
     onError = Color(0xFFFFFFFF),
     isLight = true
 )

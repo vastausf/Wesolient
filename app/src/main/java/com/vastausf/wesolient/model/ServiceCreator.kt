@@ -5,17 +5,12 @@ import com.tinder.scarlet.Scarlet
 import com.tinder.scarlet.ShutdownReason
 import com.tinder.scarlet.lifecycle.LifecycleRegistry
 import com.tinder.scarlet.messageadapter.gson.GsonMessageAdapter
-import com.tinder.scarlet.streamadapter.rxjava2.RxJava2StreamAdapterFactory
 import com.tinder.scarlet.websocket.okhttp.newWebSocketFactory
+import com.tinder.streamadapter.coroutines.CoroutinesStreamAdapterFactory
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
-class ServiceCreator
-@Inject
-constructor(
-
-) {
+class ServiceCreator {
     fun create(
         url: String,
         reconnectCount: Int
@@ -31,7 +26,7 @@ constructor(
 
         val service = Scarlet
             .Builder()
-            .addStreamAdapterFactory(RxJava2StreamAdapterFactory())
+            .addStreamAdapterFactory(CoroutinesStreamAdapterFactory())
             .webSocketFactory(okHttpClient)
             .addMessageAdapterFactory(GsonMessageAdapter.Factory())
             .lifecycle(lifecycleRegistry)

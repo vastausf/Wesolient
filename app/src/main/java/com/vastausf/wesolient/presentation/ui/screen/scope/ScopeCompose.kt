@@ -1,6 +1,5 @@
 package com.vastausf.wesolient.presentation.ui.screen.scope
 
-import android.util.Log
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -10,20 +9,17 @@ import androidx.navigation.compose.navigate
 import com.vastausf.wesolient.R
 import com.vastausf.wesolient.presentation.ui.common.ScreenHeader
 
-
 @Composable
 fun ScopeScreen(
     viewModel: ScopeViewModel,
     navController: NavController,
     scopeUid: String
 ) {
-    viewModel.loadScopeData(scopeUid)
-
-    val isLoading = viewModel.isLoading
+    viewModel.loadScope(scopeUid)
 
     Scaffold(
         topBar = {
-            Header(navController, isLoading.value, scopeUid)
+            Header(navController, scopeUid)
         },
         content = {
             Text("Scope $scopeUid")
@@ -34,7 +30,6 @@ fun ScopeScreen(
 @Composable
 private fun Header(
     navController: NavController,
-    isLoading: Boolean,
     scopeUid: String
 ) {
     ScreenHeader(
@@ -47,7 +42,6 @@ private fun Header(
         },
         rightActionIcon = painterResource(R.drawable.ic_settings),
         onRightActionClick = {
-            Log.d("scopeUid", scopeUid)
             navController.navigate("scopeSettings/$scopeUid")
         }
     )

@@ -1,6 +1,9 @@
 package com.vastausf.wesolient.data.common
 
-data class Settings(
-    var autoConnect: Boolean = false,
+import io.realm.RealmObject
+
+open class Settings : RealmObject() {
+    var autoConnect: Boolean = false
+
     var reconnectCount: Int = 3
-)
+}

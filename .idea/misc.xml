@@ -23,9 +23,25 @@
         <entry key="../../../../layout/compose-model-1615979993249.xml" value="1.7433962264150944" />
         <entry key="../../../../layout/compose-model-1615980273781.xml" value="1.5" />
         <entry key="../../../../layout/compose-model-1615986884303.xml" value="0.5" />
+        <entry key="../../../../layout/compose-model-1616412944794.xml" value="1.3818770226537216" />
+        <entry key="../../../../layout/compose-model-1616413161877.xml" value="1.3818770226537216" />
+        <entry key="../../../../layout/compose-model-1616414362842.xml" value="1.3818770226537216" />
+        <entry key="../../../../layout/compose-model-1616418541731.xml" value="4.0" />
+        <entry key="../../../../layout/compose-model-1616419733220.xml" value="0.5" />
+        <entry key="../../../../layout/compose-model-1616422524595.xml" value="0.75" />
+        <entry key="app/src/main/res/drawable/accent_button_background.xml" value="0.2140625" />
+        <entry key="app/src/main/res/drawable/dialog_background.xml" value="0.2140625" />
         <entry key="app/src/main/res/drawable/ic_add.xml" value="0.2140625" />
         <entry key="app/src/main/res/drawable/ic_app.xml" value="0.371875" />
         <entry key="app/src/main/res/drawable/ic_back.xml" value="0.371875" />
+        <entry key="app/src/main/res/drawable/ic_check.xml" value="0.371875" />
+        <entry key="app/src/main/res/drawable/ic_connection.xml" value="0.2140625" />
+        <entry key="app/src/main/res/drawable/ic_delete.xml" value="0.2140625" />
+        <entry key="app/src/main/res/drawable/ic_send.xml" value="0.2140625" />
+        <entry key="app/src/main/res/drawable/ic_settings.xml" value="0.2140625" />
+        <entry key="app/src/main/res/drawable/ic_templates.xml" value="0.2140625" />
+        <entry key="app/src/main/res/drawable/secondary_button_background.xml" value="0.2140625" />
+        <entry key="app/src/main/res/drawable/splash.xml" value="0.2140625" />
         <entry key="app/src/main/res/layout/dialog_create_scope.xml" value="0.5" />
         <entry key="app/src/main/res/layout/fragment_select_scope.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.35572916666666665" />

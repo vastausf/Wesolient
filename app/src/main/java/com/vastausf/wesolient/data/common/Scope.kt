@@ -1,13 +1,22 @@
 package com.vastausf.wesolient.data.common
 
-import com.google.firebase.database.IgnoreExtraProperties
+import io.realm.RealmList
+import io.realm.RealmObject
+import io.realm.annotations.PrimaryKey
+import io.realm.annotations.Required
 import java.util.*
 
-@IgnoreExtraProperties
-data class Scope(
-    var uid: String = UUID.randomUUID().toString(),
-    var title: String = "",
-    var url: String = "",
-    var templates: HashMap<String, Template> = hashMapOf(),
-    var variables: HashMap<String, Variable> = hashMapOf()
-)
+open class Scope : RealmObject() {
+    @PrimaryKey
+    var uid: String = UUID.randomUUID().toString()
+
+    @Required
+    var title: String = ""
+
+    @Required
+    var url: String = ""
+
+    var templates: RealmList<Template> = RealmList()
+
+    var variables: RealmList<Variable> = RealmList()
+}
