@@ -8,4 +8,5 @@ E.g. enter "Hello @{server}" and Wesolient will replace it with "Hello MyServer"
 Architectore - MVVM  
 Navigation - Jetpack Compose Navigation  
 WebSocket Client - Scarlet  
+Store - Realm
 UI - Jetpack Compose
