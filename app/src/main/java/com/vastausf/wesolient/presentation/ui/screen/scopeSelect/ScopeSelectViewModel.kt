@@ -1,10 +1,8 @@
 package com.vastausf.wesolient.presentation.ui.screen.scopeSelect
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.vastausf.wesolient.model.store.scope.ScopeStore
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel

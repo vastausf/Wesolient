@@ -2,6 +2,7 @@ package com.vastausf.wesolient.model.store.scope
 
 import com.vastausf.wesolient.data.common.Scope
 import com.vastausf.wesolient.model.getAndSubscribe
+import com.vastausf.wesolient.model.getListAndSubscribe
 import io.realm.Realm
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
@@ -40,7 +41,6 @@ constructor(
                 .equalTo(Scope::uid.name, uid)
                 .findFirst()
                 ?.deleteFromRealm()
-
         }
     }
 
@@ -48,13 +48,12 @@ constructor(
         return realm.getAndSubscribe {
             where(Scope::class.java)
                 .equalTo(Scope::title.name, uid)
-                .findFirst()
         }
     }
 
     override fun getScopeList(): StateFlow<List<Scope>?> {
-        return realm.getAndSubscribe {
-            where(Scope::class.java).findAll()
+        return realm.getListAndSubscribe {
+            where(Scope::class.java)
         }
     }
 }

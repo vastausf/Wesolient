@@ -1,5 +1,6 @@
 package com.vastausf.wesolient.presentation.ui.screen.settings
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
@@ -77,7 +78,9 @@ private fun SettingsContent(
                     value = settingsState.value.reconnectCount,
                     placeholder = "0"
                 ) {
-
+                    viewModel.updateSettings {
+                        reconnectCount = it
+                    }
                 }
             }
         }

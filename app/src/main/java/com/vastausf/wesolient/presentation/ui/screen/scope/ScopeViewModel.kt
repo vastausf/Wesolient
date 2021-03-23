@@ -3,7 +3,6 @@ package com.vastausf.wesolient.presentation.ui.screen.scope
 import androidx.lifecycle.ViewModel
 import com.vastausf.wesolient.data.common.Scope
 import com.vastausf.wesolient.data.common.Settings
-import com.vastausf.wesolient.model.ServiceCreator
 import com.vastausf.wesolient.model.store.scope.ScopeStore
 import com.vastausf.wesolient.model.store.settings.SettingsStore
 import com.vastausf.wesolient.model.store.template.TemplateStore
