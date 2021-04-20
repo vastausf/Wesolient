@@ -1,19 +1,26 @@
 package com.vastausf.wesolient.presentation.ui.screen.settings
 
-import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusModifier
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.vastausf.wesolient.R
+import com.vastausf.wesolient.data.common.Settings
 import com.vastausf.wesolient.presentation.ui.common.ScreenHeader
 import com.vastausf.wesolient.presentation.ui.common.TransparentNumberTextField
 
@@ -25,7 +32,6 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             Header(
-                viewModel,
                 navController
             )
         },
@@ -39,7 +45,6 @@ fun SettingsScreen(
 
 @Composable
 private fun Header(
-    viewModel: SettingsViewModel,
     navController: NavController
 ) {
     ScreenHeader(
@@ -58,30 +63,54 @@ private fun SettingsContent(
 ) {
     val settingsState = viewModel.settingsState.collectAsState()
 
-    Column {
-        Surface {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.settings_reconnect_count)
-                )
-
-                Spacer(Modifier.weight(1f))
-
-                TransparentNumberTextField(
-                    modifier = Modifier
-                        .widthIn(min = 32.dp),
-                    value = settingsState.value.reconnectCount,
-                    placeholder = "0"
-                ) {
-                    viewModel.updateSettings {
-                        reconnectCount = it
-                    }
+    Box(
+        contentAlignment = Alignment.Center
+    ) {
+        settingsState.value.let { settings ->
+            if (settings == null) {
+                CircularProgressIndicator()
+            } else {
+                Column {
+                    ReconnectCount(viewModel, settings)
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ReconnectCount(
+    viewModel: SettingsViewModel,
+    settings: Settings
+) {
+    val focusModifier = FocusRequester()
+
+    Row(
+        modifier = Modifier
+            .clickable {
+                focusModifier.requestFocus()
+            }
+            .padding(16.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = stringResource(R.string.settings_reconnect_count)
+        )
+
+        Spacer(Modifier.weight(1f))
+
+        TransparentNumberTextField(
+            modifier = Modifier
+                .focusModifier()
+                .width(64.dp)
+                .focusRequester(focusModifier)
+                .padding(4.dp, 8.dp),
+            value = settings.reconnectCount,
+            placeholder = "0"
+        ) {
+            viewModel.updateSettings {
+                reconnectCount = it
             }
         }
     }

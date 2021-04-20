@@ -1,6 +1,7 @@
 package com.vastausf.wesolient.presentation.ui.screen.settings
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.vastausf.wesolient.data.common.Settings
 import com.vastausf.wesolient.model.store.settings.SettingsStore
 import dagger.hilt.android.lifecycle.HiltViewModel

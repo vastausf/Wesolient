@@ -76,5 +76,3 @@ class SingleEvent<out T>(val value: T) {
             value
         }
 }
-
-

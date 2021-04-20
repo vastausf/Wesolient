@@ -8,9 +8,7 @@ import com.vastausf.wesolient.model.store.settings.SettingsStore
 import com.vastausf.wesolient.model.store.template.TemplateStore
 import com.vastausf.wesolient.model.store.vatiable.VariableStore
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,9 +23,6 @@ constructor(
     lateinit var settings: Settings
 
     lateinit var scope: StateFlow<Scope?>
-
-    private val _isLoading = MutableStateFlow(true)
-    val isLoading = _isLoading.asStateFlow()
 
     fun loadScope(uid: String) {
         scope = scopeStore.getScope(uid)

@@ -6,6 +6,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
@@ -20,10 +21,12 @@ private fun BasicTransparentTextField(
     enabled: Boolean = true,
     singleLine: Boolean = false,
     textStyle: TextStyle,
+    contentAlignment: Alignment,
     keyboardOptions: KeyboardOptions = KeyboardOptions(),
     onValueChange: (String) -> Unit
 ) {
     BasicTextField(
+        modifier = modifier,
         value = value,
         singleLine = singleLine,
         enabled = enabled,
@@ -33,10 +36,8 @@ private fun BasicTransparentTextField(
         cursorBrush = SolidColor(MaterialTheme.colors.primary),
         decorationBox = { innerTextField ->
             Box(
-                modifier = modifier
+                contentAlignment = contentAlignment
             ) {
-                innerTextField()
-
                 if (value.isEmpty()) {
                     Text(
                         text = placeholder,
@@ -47,6 +48,8 @@ private fun BasicTransparentTextField(
                         )
                     )
                 }
+
+                innerTextField()
             }
         }
     )
@@ -69,6 +72,7 @@ fun TransparentTextField(
         singleLine = true,
         enabled = enabled,
         textStyle = textStyle,
+        contentAlignment = Alignment.CenterStart,
         keyboardOptions = keyboardOptions,
         placeholder = placeholder
     )
@@ -85,17 +89,20 @@ fun TransparentNumberTextField(
 ) {
     BasicTransparentTextField(
         modifier = modifier,
-        value = value.toString(),
+        value = if (value != 0) value.toString() else "",
         placeholder = placeholder,
         textStyle = textStyle.copy(
             textAlign = TextAlign.Center
         ),
+        contentAlignment = Alignment.Center,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Number
         ),
         enabled = enabled,
         onValueChange = {
-            onValueChange(if (it.isNotBlank()) it.filter { char -> char.isDigit() }.take(2) .toInt() else 0)
+            onValueChange(
+                if (it.isNotBlank()) it.filter { char -> char.isDigit() }.take(2).toInt() else 0
+            )
         }
     )
 }

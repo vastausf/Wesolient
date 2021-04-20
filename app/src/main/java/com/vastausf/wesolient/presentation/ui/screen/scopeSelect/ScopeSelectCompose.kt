@@ -43,7 +43,7 @@ fun ScopeSelectScreen(
     //TODO: Do something with this ugly crutch
     //https://issuetracker.google.com/issues/182966477
     if (!bottomSheetState.isVisible) {
-        LocalSoftwareKeyboardController.current?.hideSoftwareKeyboard()
+        LocalSoftwareKeyboardController.current?.hide()
     }
 
     ModalBottomSheetLayout(
@@ -74,7 +74,7 @@ fun ScopeSelectScreen(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                Content(navController, viewModel.scopeList.value)
+                Content(navController, viewModel)
             }
         }
     }
@@ -117,14 +117,19 @@ private fun Header(
 @Composable
 private fun Content(
     navController: NavController,
-    scopeList: List<Scope>?
+    viewModel: ScopeSelectViewModel
 ) {
-    if (scopeList != null) {
-        Column {
-            if (scopeList.isNotEmpty()) {
+    val scopeList = viewModel.scopeList.value
+
+    Box(
+        contentAlignment = Alignment.Center
+    ) {
+        when {
+            scopeList == null -> {
+                CircularProgressIndicator()
+            }
+            scopeList.isNotEmpty() -> {
                 LazyColumn(
-                    modifier = Modifier
-                        .weight(1f),
                     verticalArrangement = Arrangement.Center
                 ) {
                     items(scopeList) { scope ->
@@ -136,26 +141,14 @@ private fun Content(
                         )
                     }
                 }
-            } else {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        text = stringResource(id = R.string.select_scope_list_placeholder),
-                        style = MaterialTheme.typography.subtitle1
-                    )
-                }
             }
-        }
-    } else {
-        Box(
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
+            else -> {
+                Text(
+                    textAlign = TextAlign.Center,
+                    text = stringResource(id = R.string.select_scope_list_placeholder),
+                    style = MaterialTheme.typography.subtitle1
+                )
+            }
         }
     }
 }

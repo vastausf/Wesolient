@@ -1,30 +1,28 @@
 package com.vastausf.wesolient.model
 
+import android.util.Log
 import io.realm.Realm
 import io.realm.RealmChangeListener
 import io.realm.RealmObject
 import io.realm.RealmQuery
 import io.realm.kotlin.createObject
 import io.realm.kotlin.where
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.onCompletion
 
 inline fun <reified T : RealmObject> Realm.getAndSubscribe(
-    maxDepth: Int = 1,
     crossinline block: Realm.() -> RealmQuery<T>
 ): MutableStateFlow<T?> {
-    val currentValue = block().findFirst()
+    val mutableStateFlow = MutableStateFlow<T?>(null)
 
-    val mutableStateFlow = MutableStateFlow(
-        if (currentValue != null)
-            copyFromRealm(currentValue, maxDepth)
-        else
-            null
-    )
+    block().findFirst()?.let {
+        mutableStateFlow.value = copyFromRealm(it)
+    }
 
     val listener = RealmChangeListener<Realm> {
         val value = it.block().findFirst()
-        mutableStateFlow.value = if (value != null) it.copyFromRealm(value, maxDepth) else null
+        mutableStateFlow.value = if (value != null) it.copyFromRealm(value) else null
     }
 
     addChangeListener(listener)
@@ -37,21 +35,29 @@ inline fun <reified T : RealmObject> Realm.getAndSubscribe(
 }
 
 inline fun <reified T : RealmObject> Realm.getOrCreateAndSubscribe(
-    maxDepth: Int = 1,
     crossinline block: Realm.() -> RealmQuery<T>
-): MutableStateFlow<T> {
-    val currentValue = block().findFirst() ?: createObject()
+): MutableStateFlow<T?> {
+    val mutableStateFlow = MutableStateFlow<T?>(null)
 
-    val mutableStateFlow = MutableStateFlow(copyFromRealm(currentValue, maxDepth))
+    val initValue = block().findFirst()
 
-    val listener = RealmChangeListener<Realm> {
-        val value = it.block().findFirst()
-        mutableStateFlow.value = it.copyFromRealm(value, maxDepth)
+    if (initValue == null) {
+        executeTransactionAsync {
+            it.createObject<T>()
+        }
+    } else {
+        mutableStateFlow.value = initValue
+    }
+
+    val listener = RealmChangeListener<Realm> { listenerRealm ->
+        mutableStateFlow.value = listenerRealm
+            .copyFromRealm(listenerRealm.block().findFirst())
     }
 
     addChangeListener(listener)
 
     mutableStateFlow.onCompletion {
+        Log.d("ss", "ss")
         removeChangeListener(listener)
     }
 
@@ -59,16 +65,17 @@ inline fun <reified T : RealmObject> Realm.getOrCreateAndSubscribe(
 }
 
 inline fun <reified T : RealmObject> Realm.getListAndSubscribe(
-    maxDepth: Int = 1,
     crossinline block: Realm.() -> RealmQuery<T>
 ): MutableStateFlow<List<T>?> {
-    val currentValue = block().findAll()
+    val mutableStateFlow = MutableStateFlow<List<T>?>(null)
 
-    val mutableStateFlow = MutableStateFlow(copyFromRealm(currentValue, maxDepth))
+    block().findAll()?.let {
+        mutableStateFlow.value = copyFromRealm(it)
+    }
 
-    val listener = RealmChangeListener<Realm> {
-        val value = it.block().findAll()
-        mutableStateFlow.value = it.copyFromRealm(value, maxDepth)
+    val listener = RealmChangeListener<Realm> { realm ->
+        val value = realm.block().findAll()
+        mutableStateFlow.value = realm.copyFromRealm(value)
     }
 
     addChangeListener(listener)

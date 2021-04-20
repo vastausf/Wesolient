@@ -4,6 +4,7 @@ import com.vastausf.wesolient.data.common.Scope
 import com.vastausf.wesolient.model.getAndSubscribe
 import com.vastausf.wesolient.model.getListAndSubscribe
 import io.realm.Realm
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
@@ -44,7 +45,9 @@ constructor(
         }
     }
 
-    override fun getScope(uid: String): StateFlow<Scope?> {
+    override fun getScope(
+        uid: String
+    ): StateFlow<Scope?> {
         return realm.getAndSubscribe {
             where(Scope::class.java)
                 .equalTo(Scope::title.name, uid)
