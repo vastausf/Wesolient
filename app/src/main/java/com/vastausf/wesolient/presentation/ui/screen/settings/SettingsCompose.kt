@@ -3,12 +3,14 @@ package com.vastausf.wesolient.presentation.ui.screen.settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -83,14 +85,9 @@ private fun ReconnectCount(
     viewModel: SettingsViewModel,
     settings: Settings
 ) {
-    val focusModifier = FocusRequester()
-
     Row(
         modifier = Modifier
-            .clickable {
-                focusModifier.requestFocus()
-            }
-            .padding(16.dp)
+            .padding(16.dp, 8.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -102,9 +99,7 @@ private fun ReconnectCount(
 
         TransparentNumberTextField(
             modifier = Modifier
-                .focusModifier()
                 .width(64.dp)
-                .focusRequester(focusModifier)
                 .padding(4.dp, 8.dp),
             value = settings.reconnectCount,
             placeholder = "0"

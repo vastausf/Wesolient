@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import com.vastausf.wesolient.R
-import com.vastausf.wesolient.data.common.Scope
 import com.vastausf.wesolient.presentation.ui.common.AddFloatingActionButton
 import com.vastausf.wesolient.presentation.ui.common.FilledButton
 import com.vastausf.wesolient.presentation.ui.common.ScreenHeader
@@ -88,7 +87,8 @@ private fun Header(
         rightActionIcon = painterResource(R.drawable.ic_settings),
         onRightActionClick = {
             navController.navigate("settings")
-        }
+        },
+        haveShadow = false
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -193,8 +193,8 @@ private fun BottomSheet(
         Column {
             TransparentTextField(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(0.dp, 12.dp),
+                    .padding(12.dp)
+                    .fillMaxWidth(),
                 value = title,
                 placeholder = stringResource(R.string.create_scope_title_hint),
                 onValueChange = {
@@ -204,8 +204,8 @@ private fun BottomSheet(
 
             TransparentTextField(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(0.dp, 12.dp),
+                    .padding(12.dp)
+                    .fillMaxWidth(),
                 value = url,
                 placeholder = stringResource(R.string.create_scope_url_hint),
                 onValueChange = {
