@@ -48,7 +48,7 @@ fun ScopeSelectScreen(
     ModalBottomSheetLayout(
         sheetState = bottomSheetState,
         sheetShape = MaterialTheme.shapes.large,
-        scrimColor = Color(0xBFFFFFFF),
+        scrimColor = MaterialTheme.colors.background.copy(alpha = .5f),
         sheetContent = {
             BottomSheet(
                 bottomSheetState,

@@ -8,6 +8,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -17,8 +18,11 @@ import com.vastausf.wesolient.RunOnce
 import com.vastausf.wesolient.data.client.*
 import com.vastausf.wesolient.getText
 import com.vastausf.wesolient.presentation.ui.common.ScreenHeader
+import com.vastausf.wesolient.presentation.ui.common.SwipableCompose
 import com.vastausf.wesolient.presentation.ui.common.TransparentTextField
+import kotlinx.coroutines.launch
 
+@ExperimentalMaterialApi
 @Composable
 fun ScopeScreen(
     viewModel: ScopeViewModel,
@@ -28,16 +32,29 @@ fun ScopeScreen(
     RunOnce {
         viewModel.loadScope(scopeUid)
     }
+    val bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
 
-    Scaffold(
-        topBar = {
-            Header(
-                viewModel,
-                navController
+    ModalBottomSheetLayout(
+        sheetState = bottomSheetScaffoldState,
+        content = {
+            Scaffold(
+                topBar = {
+                    Header(
+                        viewModel,
+                        navController
+                    )
+                },
+                content = {
+                    Content(
+                        viewModel,
+                        bottomSheetScaffoldState
+                    )
+                }
             )
         },
-        content = {
-            Content(viewModel)
+        scrimColor = MaterialTheme.colors.background.copy(alpha = .5f),
+        sheetContent = {
+            Text("Sheet content")
         }
     )
 }
@@ -66,19 +83,31 @@ private fun Header(
     )
 }
 
+@ExperimentalMaterialApi
 @Composable
 private fun Content(
-    viewModel: ScopeViewModel
+    viewModel: ScopeViewModel,
+    modalBottomSheetState: ModalBottomSheetState
 ) {
-    Column {
-        Box(
-            modifier = Modifier
-                .weight(1f)
-        ) {
-            MessageList(viewModel)
+    SwipableCompose(
+        primaryCompose = {
+            Surface {
+                Column {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                    ) {
+                        MessageList(viewModel)
+                    }
+
+                    BottomPanel(viewModel, modalBottomSheetState)
+                }
+            }
+        },
+        rightCompose = {
+            Text(text = "Right compose")
         }
-        BottomPanel(viewModel)
-    }
+    )
 }
 
 @Composable
@@ -100,9 +129,11 @@ private fun MessageList(
     }
 }
 
+@ExperimentalMaterialApi
 @Composable
 private fun BottomPanel(
-    viewModel: ScopeViewModel
+    viewModel: ScopeViewModel,
+    modalBottomSheetState: ModalBottomSheetState
 ) {
     var messageText by remember { mutableStateOf("") }
 
@@ -150,9 +181,13 @@ private fun BottomPanel(
                         )
                     }
                 } else {
+                    val coroutineScope = rememberCoroutineScope()
+
                     IconButton(
                         onClick = {
-
+                            coroutineScope.launch {
+                                modalBottomSheetState.show()
+                            }
                         }
                     ) {
                         Icon(
@@ -218,7 +253,7 @@ private fun SystemMessageItem(
             modifier = Modifier
                 .padding(8.dp),
             text = stringResource(message.getText()),
-            color = MaterialTheme.colors.onBackground.copy(alpha = 0.25f)
+            color = MaterialTheme.colors.onBackground.copy(alpha = .25f)
         )
     }
 }
@@ -236,7 +271,7 @@ private fun ClientMessageItem(
         Surface(
             modifier = Modifier,
             shape = MaterialTheme.shapes.small,
-            color = MaterialTheme.colors.primary.copy(alpha = .075f)
+            color = MaterialTheme.colors.onBackground.copy(alpha = .075f)
         ) {
             Text(
                 modifier = Modifier

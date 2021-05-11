@@ -81,4 +81,8 @@ constructor(
             templateUid = null
         ))
     }
+
+    override fun onCleared() {
+        serviceHolder.disconnect()
+    }
 }
