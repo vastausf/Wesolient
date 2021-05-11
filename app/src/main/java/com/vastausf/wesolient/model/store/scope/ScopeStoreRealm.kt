@@ -50,7 +50,7 @@ constructor(
     ): StateFlow<Scope?> {
         return realm.getAndSubscribe {
             where(Scope::class.java)
-                .equalTo(Scope::title.name, uid)
+                .equalTo(Scope::uid.name, uid)
         }
     }
 

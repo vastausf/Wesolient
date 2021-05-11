@@ -5,5 +5,5 @@ import io.realm.RealmObject
 open class Settings : RealmObject() {
     var autoConnect: Boolean = false
 
-    var reconnectCount: Int = 3
+    var retryOnConnectionFailure: Boolean = true
 }

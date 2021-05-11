@@ -22,6 +22,7 @@ inline fun <reified T : RealmObject> Realm.getAndSubscribe(
 
     val listener = RealmChangeListener<Realm> {
         val value = it.block().findFirst()
+
         mutableStateFlow.value = if (value != null) it.copyFromRealm(value) else null
     }
 

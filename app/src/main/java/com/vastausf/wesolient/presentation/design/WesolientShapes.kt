@@ -5,7 +5,7 @@ import androidx.compose.material.*
 import androidx.compose.ui.unit.dp
 
 internal val WesolientShapes = Shapes(
-    small = RoundedCornerShape(8.dp),
+    small = RoundedCornerShape(4.dp),
     medium = RoundedCornerShape(8.dp),
     large = RoundedCornerShape(
         topStart = 8.dp,

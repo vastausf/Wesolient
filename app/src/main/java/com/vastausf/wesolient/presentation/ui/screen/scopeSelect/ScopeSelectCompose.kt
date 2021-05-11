@@ -88,7 +88,7 @@ private fun Header(
         onRightActionClick = {
             navController.navigate("settings")
         },
-        haveShadow = false
+        withDivider = false
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -192,7 +192,7 @@ private fun BottomSheet(
     ) {
         Column {
             TransparentTextField(
-                modifier = Modifier
+                boxModifier = Modifier
                     .padding(12.dp)
                     .fillMaxWidth(),
                 value = title,
@@ -203,7 +203,7 @@ private fun BottomSheet(
             )
 
             TransparentTextField(
-                modifier = Modifier
+                boxModifier = Modifier
                     .padding(12.dp)
                     .fillMaxWidth(),
                 value = url,

@@ -1,22 +1,14 @@
 package com.vastausf.wesolient.presentation.ui.screen.settings
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Checkbox
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusModifier
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -24,7 +16,6 @@ import androidx.navigation.NavController
 import com.vastausf.wesolient.R
 import com.vastausf.wesolient.data.common.Settings
 import com.vastausf.wesolient.presentation.ui.common.ScreenHeader
-import com.vastausf.wesolient.presentation.ui.common.TransparentNumberTextField
 
 @Composable
 fun SettingsScreen(
@@ -73,7 +64,7 @@ private fun SettingsContent(
                 CircularProgressIndicator()
             } else {
                 Column {
-                    ReconnectCount(viewModel, settings)
+                    RetryOnConnectionFailure(viewModel, settings)
                 }
             }
         }
@@ -81,7 +72,7 @@ private fun SettingsContent(
 }
 
 @Composable
-private fun ReconnectCount(
+private fun RetryOnConnectionFailure(
     viewModel: SettingsViewModel,
     settings: Settings
 ) {
@@ -92,21 +83,18 @@ private fun ReconnectCount(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = stringResource(R.string.settings_reconnect_count)
+            text = stringResource(R.string.settings_retry_on_connection_failure)
         )
 
         Spacer(Modifier.weight(1f))
 
-        TransparentNumberTextField(
-            modifier = Modifier
-                .width(64.dp)
-                .padding(4.dp, 8.dp),
-            value = settings.reconnectCount,
-            placeholder = "0"
-        ) {
-            viewModel.updateSettings {
-                reconnectCount = it
+        Checkbox(
+            checked = settings.retryOnConnectionFailure,
+            onCheckedChange = { checked ->
+                viewModel.updateSettings {
+                    retryOnConnectionFailure = checked
+                }
             }
-        }
+        )
     }
 }

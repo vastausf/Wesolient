@@ -1,7 +1,10 @@
 package com.vastausf.wesolient
 
+import androidx.compose.runtime.*
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
+import com.vastausf.wesolient.data.client.SystemCode
+import com.vastausf.wesolient.data.client.SystemMessage
 import com.vastausf.wesolient.data.common.Template
 import com.vastausf.wesolient.data.common.Variable
 import kotlinx.coroutines.flow.*
@@ -75,4 +78,31 @@ class SingleEvent<out T>(val value: T) {
             hasBeenHandled = true
             value
         }
+}
+
+inline fun <reified T> MutableStateFlow<List<T>>.add(t: T): MutableStateFlow<List<T>> {
+    value = value
+        .toMutableList()
+        .apply { add(t) }
+    return this
+}
+
+@Composable
+fun RunOnce(block: () -> Unit) {
+    var canRun by remember { mutableStateOf(true) }
+
+    if (canRun) {
+        canRun = false
+        block()
+    }
+}
+
+fun SystemMessage.getText(): Int {
+    return when (code) {
+        SystemCode.CONNECTION_OPENING -> R.string.chat_connection_opening
+        SystemCode.CONNECTION_OPENED -> R.string.chat_connection_opened
+        SystemCode.CONNECTION_CLOSING -> R.string.chat_connection_closing
+        SystemCode.CONNECTION_CLOSED -> R.string.chat_connection_closed
+        SystemCode.CONNECTION_FAILED -> R.string.chat_connection_failed
+    }
 }
