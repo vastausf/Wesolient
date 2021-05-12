@@ -3,7 +3,10 @@ package com.vastausf.wesolient.presentation.ui.screen.scope
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vastausf.wesolient.add
-import com.vastausf.wesolient.data.client.*
+import com.vastausf.wesolient.data.client.ClientMessage
+import com.vastausf.wesolient.data.client.ConnectionState
+import com.vastausf.wesolient.data.client.Message
+import com.vastausf.wesolient.data.client.SystemMessage
 import com.vastausf.wesolient.data.common.Scope
 import com.vastausf.wesolient.model.ServiceCreator
 import com.vastausf.wesolient.model.store.scope.ScopeStore
@@ -73,13 +76,21 @@ constructor(
 
     fun sendTextMessage(string: String) {
         serviceHolder.service.sendMessage(string)
-        _messages.add(ClientMessage(
-            content = string,
-            templateUid = null
-        ))
+        _messages.add(
+            ClientMessage(
+                content = string,
+                templateUid = null
+            )
+        )
     }
 
     override fun onCleared() {
-        serviceHolder.disconnect()
+        viewModelScope.cancel()
+
+        try {
+            serviceHolder.disconnect()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }

@@ -115,7 +115,7 @@ private fun Header(
                 viewModel.connect()
             }
         },
-        isLeftEnabled = connectionState == ConnectionState.CLOSED
+        isRightEnabled = connectionState == ConnectionState.CLOSED
                 || connectionState == ConnectionState.OPENED
     )
 }
@@ -199,7 +199,7 @@ private fun BottomPanel(
                             .padding(16.dp, 8.dp),
                         value = messageText,
                         textStyle = MaterialTheme.typography.h5,
-                        placeholder = stringResource(R.string.chat_message_hint)
+                        placeholder = stringResource(R.string.message_input_hint)
                     ) {
                         messageText = it
                     }

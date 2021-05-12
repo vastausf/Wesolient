@@ -86,7 +86,7 @@ private fun RetryOnConnectionFailure(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = stringResource(R.string.settings_retry_on_connection_failure)
+            text = stringResource(R.string.retry_on_connection_failure)
         )
 
         Spacer(Modifier.weight(1f))

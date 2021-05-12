@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             composable("scope/{uid}") { backStackEntry ->
-                val scopeNotFound = stringResource(R.string.chat_miss_scope)
+                val scopeNotFound = stringResource(R.string.miss_scope)
 
                 //@TODO: Think about better solution.
                 //How get non-nullable value and show message on null?
@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             composable("scopeSettings/{uid}") { backStackEntry ->
-                val scopeNotFound = stringResource(R.string.chat_miss_scope)
+                val scopeNotFound = stringResource(R.string.miss_scope)
 
                 //@TODO: Think about better solution.
                 //How get non-nullable value and show message on null?

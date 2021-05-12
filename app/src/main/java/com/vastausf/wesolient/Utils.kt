@@ -99,10 +99,10 @@ fun RunOnce(block: () -> Unit) {
 
 fun SystemMessage.getText(): Int {
     return when (code) {
-        ConnectionState.OPENING -> R.string.chat_connection_opening
-        ConnectionState.OPENED -> R.string.chat_connection_opened
-        ConnectionState.CLOSING -> R.string.chat_connection_closing
-        ConnectionState.CLOSED -> R.string.chat_connection_closed
-        ConnectionState.FAILED -> R.string.chat_connection_failed
+        ConnectionState.OPENING -> R.string.connection_opening
+        ConnectionState.OPENED -> R.string.connection_opened
+        ConnectionState.CLOSING -> R.string.connection_closing
+        ConnectionState.CLOSED -> R.string.connection_closed
+        ConnectionState.FAILED -> R.string.connection_failed
     }
 }

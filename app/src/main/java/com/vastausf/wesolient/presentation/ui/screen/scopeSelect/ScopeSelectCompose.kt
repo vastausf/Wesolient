@@ -152,7 +152,7 @@ private fun Content(
             else -> {
                 Text(
                     textAlign = TextAlign.Center,
-                    text = stringResource(id = R.string.select_scope_list_placeholder),
+                    text = stringResource(id = R.string.scope_list_placeholder),
                     style = MaterialTheme.typography.subtitle1
                 )
             }
@@ -203,7 +203,7 @@ private fun BottomSheet(
                     .padding(12.dp)
                     .fillMaxWidth(),
                 value = title,
-                placeholder = stringResource(R.string.create_scope_title_hint),
+                placeholder = stringResource(R.string.scope_title_hint),
                 onValueChange = {
                     title = it
                 }
@@ -214,7 +214,7 @@ private fun BottomSheet(
                     .padding(12.dp)
                     .fillMaxWidth(),
                 value = url,
-                placeholder = stringResource(R.string.create_scope_url_hint),
+                placeholder = stringResource(R.string.scope_url_hint),
                 onValueChange = {
                     url = it
                 }
@@ -226,7 +226,7 @@ private fun BottomSheet(
                 horizontalArrangement = Arrangement.End
             ) {
                 FilledButton(
-                    title = stringResource(R.string.create_scope_create),
+                    title = stringResource(R.string.create),
                     enabled = title.isNotEmpty() && url.isNotEmpty(),
                     onClick = {
                         viewModel.onScopeCreate(
