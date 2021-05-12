@@ -9,7 +9,7 @@
     <string name="chat_connection_opening">Opening</string>
     <string name="chat_connection_opened">Connected</string>
     <string name="chat_connection_closing">Closing</string>
-    <string name="chat_connection_closed">Connection closed\n%1$d: %2$s</string>
+    <string name="chat_connection_closed">Connection closed</string>
     <string name="chat_connection_failed">Connection to %1$s failed</string>
     <string name="chat_illegal_url">Illegal websocket url</string>
     <string name="chat_connect">Connect</string>

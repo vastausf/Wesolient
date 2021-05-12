@@ -22,13 +22,13 @@ class ClientMessage(
 ) : Message()
 
 class SystemMessage(
-    val code: SystemCode
+    val code: ConnectionState
 ) : Message()
 
-enum class SystemCode {
-    CONNECTION_OPENING,
-    CONNECTION_OPENED,
-    CONNECTION_FAILED,
-    CONNECTION_CLOSING,
-    CONNECTION_CLOSED
+enum class ConnectionState {
+    OPENING,
+    OPENED,
+    FAILED,
+    CLOSING,
+    CLOSED
 }

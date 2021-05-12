@@ -5,11 +5,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -64,10 +64,16 @@ private fun Header(
     viewModel: ScopeViewModel,
     navController: NavController
 ) {
-    val scope = viewModel.scope.value
+    val scope = viewModel.scope.collectAsState().value
+    val connectionState = viewModel.connectionState.collectAsState().value
 
     ScreenHeader(
-        leftActionIcon = painterResource(R.drawable.ic_back),
+        leftActionIcon = {
+            Icon(
+                imageVector = Icons.Rounded.ChevronLeft,
+                contentDescription = null
+            )
+        },
         onLeftActionClick = {
             navController.popBackStack()
         },
@@ -76,10 +82,41 @@ private fun Header(
                 Text(scope.title)
             }
         },
-        rightActionIcon = painterResource(R.drawable.ic_down),
+        rightActionIcon = {
+            when (connectionState) {
+                ConnectionState.OPENING -> CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(24.dp),
+                    strokeWidth = 2.dp
+                )
+                ConnectionState.OPENED -> Icon(
+                    imageVector = Icons.Rounded.Link,
+                    contentDescription = null
+                )
+                ConnectionState.CLOSING -> CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(24.dp),
+                    strokeWidth = 2.dp
+                )
+                ConnectionState.CLOSED -> Icon(
+                    imageVector = Icons.Rounded.LinkOff,
+                    contentDescription = null
+                )
+                ConnectionState.FAILED -> Icon(
+                    imageVector = Icons.Rounded.Warning,
+                    contentDescription = null
+                )
+            }
+        },
         onRightActionClick = {
-
-        }
+            if (connectionState == ConnectionState.OPENED) {
+                viewModel.disconnect()
+            } else if (connectionState == ConnectionState.CLOSED) {
+                viewModel.connect()
+            }
+        },
+        isLeftEnabled = connectionState == ConnectionState.CLOSED
+                || connectionState == ConnectionState.OPENED
     )
 }
 
@@ -137,64 +174,68 @@ private fun BottomPanel(
 ) {
     var messageText by remember { mutableStateOf("") }
 
-    Surface(
-        modifier = Modifier
-    ) {
-        Column {
-            Spacer(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(MaterialTheme.colors.onBackground.copy(alpha = .05f))
-            )
+    val connectionState = viewModel.connectionState.collectAsState()
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                TransparentTextField(
-                    modifier = Modifier
-                        .height(48.dp)
-                        .weight(1f),
-                    boxModifier = Modifier
-                        .padding(16.dp, 8.dp),
-                    value = messageText,
-                    textStyle = MaterialTheme.typography.h5,
-                    placeholder = stringResource(R.string.chat_message_hint)
+    if (connectionState.value == ConnectionState.OPENED) {
+        Surface(
+            modifier = Modifier
+        ) {
+            Column {
+                Spacer(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(MaterialTheme.colors.onBackground.copy(alpha = .05f))
+                )
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    messageText = it
-                }
-
-                if (messageText.isNotEmpty()) {
-                    IconButton(
+                    TransparentTextField(
                         modifier = Modifier
-                            .size(48.dp),
-                        onClick = {
-                            viewModel.sendTextMessage(messageText)
-
-                            messageText = ""
-                        }
+                            .height(48.dp)
+                            .weight(1f),
+                        boxModifier = Modifier
+                            .padding(16.dp, 8.dp),
+                        value = messageText,
+                        textStyle = MaterialTheme.typography.h5,
+                        placeholder = stringResource(R.string.chat_message_hint)
                     ) {
-                        Icon(
-                            painterResource(R.drawable.ic_send),
-                            null,
-                            tint = MaterialTheme.colors.primary
-                        )
+                        messageText = it
                     }
-                } else {
-                    val coroutineScope = rememberCoroutineScope()
 
-                    IconButton(
-                        onClick = {
-                            coroutineScope.launch {
-                                modalBottomSheetState.show()
+                    if (messageText.isNotEmpty()) {
+                        IconButton(
+                            modifier = Modifier
+                                .size(48.dp),
+                            onClick = {
+                                viewModel.sendTextMessage(messageText)
+
+                                messageText = ""
                             }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.Send,
+                                contentDescription = null,
+                                tint = MaterialTheme.colors.primary
+                            )
                         }
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.ic_templates),
-                            null,
-                            tint = MaterialTheme.colors.primary
-                        )
+                    } else {
+                        val coroutineScope = rememberCoroutineScope()
+
+                        IconButton(
+                            onClick = {
+                                coroutineScope.launch {
+                                    modalBottomSheetState.show()
+                                }
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.AlternateEmail,
+                                contentDescription = null,
+                                tint = MaterialTheme.colors.primary
+                            )
+                        }
                     }
                 }
             }

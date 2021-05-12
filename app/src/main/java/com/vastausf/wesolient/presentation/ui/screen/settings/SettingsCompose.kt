@@ -1,15 +1,13 @@
 package com.vastausf.wesolient.presentation.ui.screen.settings
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Checkbox
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ChevronLeft
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -41,7 +39,12 @@ private fun Header(
     navController: NavController
 ) {
     ScreenHeader(
-        leftActionIcon = painterResource(R.drawable.ic_back),
+        leftActionIcon = {
+            Icon(
+                imageVector = Icons.Rounded.ChevronLeft,
+                contentDescription = null
+            )
+        },
         onLeftActionClick = {
             navController.popBackStack()
         }

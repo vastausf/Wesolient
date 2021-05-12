@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -84,7 +86,12 @@ private fun Header(
     navController: NavController
 ) {
     ScreenHeader(
-        rightActionIcon = painterResource(R.drawable.ic_settings),
+        rightActionIcon = {
+            Icon(
+                imageVector = Icons.Rounded.Settings,
+                contentDescription = null
+            )
+        },
         onRightActionClick = {
             navController.navigate("settings")
         },

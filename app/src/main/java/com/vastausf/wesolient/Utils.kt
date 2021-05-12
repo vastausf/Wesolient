@@ -3,7 +3,7 @@ package com.vastausf.wesolient
 import androidx.compose.runtime.*
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
-import com.vastausf.wesolient.data.client.SystemCode
+import com.vastausf.wesolient.data.client.ConnectionState
 import com.vastausf.wesolient.data.client.SystemMessage
 import com.vastausf.wesolient.data.common.Template
 import com.vastausf.wesolient.data.common.Variable
@@ -99,10 +99,10 @@ fun RunOnce(block: () -> Unit) {
 
 fun SystemMessage.getText(): Int {
     return when (code) {
-        SystemCode.CONNECTION_OPENING -> R.string.chat_connection_opening
-        SystemCode.CONNECTION_OPENED -> R.string.chat_connection_opened
-        SystemCode.CONNECTION_CLOSING -> R.string.chat_connection_closing
-        SystemCode.CONNECTION_CLOSED -> R.string.chat_connection_closed
-        SystemCode.CONNECTION_FAILED -> R.string.chat_connection_failed
+        ConnectionState.OPENING -> R.string.chat_connection_opening
+        ConnectionState.OPENED -> R.string.chat_connection_opened
+        ConnectionState.CLOSING -> R.string.chat_connection_closing
+        ConnectionState.CLOSED -> R.string.chat_connection_closed
+        ConnectionState.FAILED -> R.string.chat_connection_failed
     }
 }

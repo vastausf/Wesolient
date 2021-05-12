@@ -4,10 +4,7 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ResistanceConfig
-import androidx.compose.material.rememberSwipeableState
-import androidx.compose.material.swipeable
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -20,12 +17,11 @@ import kotlin.math.roundToInt
 @ExperimentalMaterialApi
 @Composable
 fun SwipableCompose(
+    swipeableState: SwipeableState<Int> = rememberSwipeableState(1),
     primaryCompose: @Composable () -> Unit,
     leftCompose: @Composable (() -> Unit)? = null,
     rightCompose: @Composable (() -> Unit)? = null
 ) {
-    val swipeableState = rememberSwipeableState(1)
-
     val anchors = mutableMapOf(0f to 1).apply {
         val offset = 320f * LocalDensity.current.density
 

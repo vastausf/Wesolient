@@ -9,7 +9,6 @@ import com.tinder.scarlet.messageadapter.gson.GsonMessageAdapter
 import com.tinder.scarlet.websocket.okhttp.newWebSocketFactory
 import com.tinder.streamadapter.coroutines.CoroutinesStreamAdapterFactory
 import com.vastausf.wesolient.data.client.*
-import kotlinx.coroutines.channels.map
 import kotlinx.coroutines.flow.*
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
@@ -54,7 +53,7 @@ class ServiceCreator {
                 when (event) {
                     is WebSocket.Event.OnConnectionOpened<*> -> {
                         SystemMessage(
-                            SystemCode.CONNECTION_OPENED
+                            ConnectionState.OPENED
                         )
                     }
                     is WebSocket.Event.OnMessageReceived -> {
@@ -75,17 +74,17 @@ class ServiceCreator {
                     }
                     is WebSocket.Event.OnConnectionFailed -> {
                         SystemMessage(
-                            SystemCode.CONNECTION_FAILED
+                            ConnectionState.FAILED
                         )
                     }
                     is WebSocket.Event.OnConnectionClosing -> {
                         SystemMessage(
-                            SystemCode.CONNECTION_CLOSING
+                            ConnectionState.CLOSING
                         )
                     }
                     is WebSocket.Event.OnConnectionClosed -> {
                         SystemMessage(
-                            SystemCode.CONNECTION_CLOSED
+                            ConnectionState.CLOSED
                         )
                     }
                 }

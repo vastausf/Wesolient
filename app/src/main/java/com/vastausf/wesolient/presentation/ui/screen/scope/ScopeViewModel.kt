@@ -5,13 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.vastausf.wesolient.add
 import com.vastausf.wesolient.data.client.*
 import com.vastausf.wesolient.data.common.Scope
-import com.vastausf.wesolient.data.common.Settings
 import com.vastausf.wesolient.model.ServiceCreator
 import com.vastausf.wesolient.model.store.scope.ScopeStore
 import com.vastausf.wesolient.model.store.settings.SettingsStore
 import com.vastausf.wesolient.model.store.template.TemplateStore
 import com.vastausf.wesolient.model.store.vatiable.VariableStore
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,7 +32,7 @@ constructor(
 
     lateinit var serviceHolder: ServiceCreator.ServiceHolder
 
-    private var _connectionState = MutableStateFlow(SystemCode.CONNECTION_CLOSED)
+    private var _connectionState = MutableStateFlow(ConnectionState.CLOSED)
     var connectionState = _connectionState.asStateFlow()
 
     private var _messages = MutableStateFlow<List<Message>>(emptyList())
@@ -40,30 +40,20 @@ constructor(
 
     fun loadScope(uid: String) {
         scope = scopeStore.getScope(uid)
-
-        viewModelScope.launch {
-            val scopeNotNull = scope.filterNotNull().first()
-            val settingsNotNull = settings.filterNotNull().first()
-
-            connectToService(
-                scopeNotNull,
-                settingsNotNull
-            )
-        }
     }
 
-    private fun connectToService(
-        scope: Scope,
-        settings: Settings
-    ) {
-        _connectionState.value = SystemCode.CONNECTION_OPENING
-
-        serviceHolder = serviceCreator.create(
-            scope.url,
-            settings.retryOnConnectionFailure
-        )
-
+    fun connect() {
         viewModelScope.launch {
+            val scope = scope.filterNotNull().first()
+            val settings = settings.filterNotNull().first()
+
+            _connectionState.value = ConnectionState.OPENING
+
+            serviceHolder = serviceCreator.create(
+                scope.url,
+                settings.retryOnConnectionFailure
+            )
+
             serviceHolder.connect().collect { message ->
                 _messages.add(message)
 
@@ -72,6 +62,13 @@ constructor(
                 }
             }
         }
+    }
+
+    fun disconnect(
+        code: Int? = null,
+        reason: String? = null
+    ) {
+        serviceHolder.disconnect(code, reason)
     }
 
     fun sendTextMessage(string: String) {
