@@ -36,6 +36,8 @@
 
     <string name="message_input_hint">Type message here…</string>
 
+    <string name="empty_template_or_variable_list_placeholder">To create a new one, expand the list completely by swiping up.</string>
+
     <string name="used_reserved_code_error">Codes 1004..1006, 1012..2999 are reserved and may not be used</string>
 
     <string name="miss_scope">Can\'t find this scope</string>

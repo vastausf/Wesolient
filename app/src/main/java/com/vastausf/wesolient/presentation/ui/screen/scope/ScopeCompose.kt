@@ -1,6 +1,6 @@
 package com.vastausf.wesolient.presentation.ui.screen.scope
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,19 +9,22 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.vastausf.wesolient.R
 import com.vastausf.wesolient.RunOnce
 import com.vastausf.wesolient.data.client.*
+import com.vastausf.wesolient.data.common.Template
+import com.vastausf.wesolient.data.common.Variable
 import com.vastausf.wesolient.getText
-import com.vastausf.wesolient.presentation.ui.common.ScreenHeader
-import com.vastausf.wesolient.presentation.ui.common.SwipableCompose
-import com.vastausf.wesolient.presentation.ui.common.TransparentTextField
-import kotlinx.coroutines.launch
+import com.vastausf.wesolient.presentation.ui.common.*
 
+@ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @Composable
 fun ScopeScreen(
@@ -32,10 +35,17 @@ fun ScopeScreen(
     RunOnce {
         viewModel.loadScope(scopeUid)
     }
-    val bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+
+    val modalBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    val bottomMenuShownState = remember { mutableStateOf(false) }
+
+    //Another ugly crutch with keyboard
+    if (bottomMenuShownState.value) {
+        LocalSoftwareKeyboardController.current?.hide()
+    }
 
     ModalBottomSheetLayout(
-        sheetState = bottomSheetScaffoldState,
+        sheetState = modalBottomSheetState,
         content = {
             Scaffold(
                 topBar = {
@@ -45,16 +55,12 @@ fun ScopeScreen(
                     )
                 },
                 content = {
-                    Content(
-                        viewModel,
-                        bottomSheetScaffoldState
-                    )
+                    Content(viewModel)
                 }
             )
         },
-        scrimColor = MaterialTheme.colors.background.copy(alpha = .5f),
         sheetContent = {
-            Text("Sheet content")
+            Text("BottomSheet")
         }
     )
 }
@@ -123,8 +129,7 @@ private fun Header(
 @ExperimentalMaterialApi
 @Composable
 private fun Content(
-    viewModel: ScopeViewModel,
-    modalBottomSheetState: ModalBottomSheetState
+    viewModel: ScopeViewModel
 ) {
     SwipableCompose(
         primaryCompose = {
@@ -137,12 +142,12 @@ private fun Content(
                         MessageList(viewModel)
                     }
 
-                    BottomPanel(viewModel, modalBottomSheetState)
+                    BottomPanel(viewModel)
                 }
             }
         },
         rightCompose = {
-            Text(text = "Right compose")
+            TemplateAndVariableMenu(viewModel)
         }
     )
 }
@@ -169,73 +174,61 @@ private fun MessageList(
 @ExperimentalMaterialApi
 @Composable
 private fun BottomPanel(
-    viewModel: ScopeViewModel,
-    modalBottomSheetState: ModalBottomSheetState
+    viewModel: ScopeViewModel
 ) {
     var messageText by remember { mutableStateOf("") }
 
-    val connectionState = viewModel.connectionState.collectAsState()
+    Surface(
+        modifier = Modifier
+    ) {
+        Column {
+            ThickHorizontalSpacer()
 
-    if (connectionState.value == ConnectionState.OPENED) {
-        Surface(
-            modifier = Modifier
-        ) {
-            Column {
-                Spacer(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(MaterialTheme.colors.onBackground.copy(alpha = .05f))
-                )
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TransparentTextField(
+                    modifier = Modifier
+                        .height(48.dp)
+                        .weight(1f),
+                    boxModifier = Modifier
+                        .padding(16.dp, 8.dp),
+                    value = messageText,
+                    textStyle = MaterialTheme.typography.h5,
+                    placeholder = stringResource(R.string.message_input_hint)
                 ) {
-                    TransparentTextField(
+                    messageText = it
+                }
+
+                if (messageText.isNotEmpty()) {
+                    IconButton(
                         modifier = Modifier
-                            .height(48.dp)
-                            .weight(1f),
-                        boxModifier = Modifier
-                            .padding(16.dp, 8.dp),
-                        value = messageText,
-                        textStyle = MaterialTheme.typography.h5,
-                        placeholder = stringResource(R.string.message_input_hint)
+                            .size(48.dp),
+                        onClick = {
+                            viewModel.sendTextMessage(messageText)
+
+                            messageText = ""
+                        }
                     ) {
-                        messageText = it
+                        Icon(
+                            imageVector = Icons.Rounded.Send,
+                            contentDescription = null,
+                            tint = MaterialTheme.colors.primary
+                        )
                     }
+                } else {
+                    IconButton(
+                        modifier = Modifier
+                            .size(48.dp),
+                        onClick = {
 
-                    if (messageText.isNotEmpty()) {
-                        IconButton(
-                            modifier = Modifier
-                                .size(48.dp),
-                            onClick = {
-                                viewModel.sendTextMessage(messageText)
-
-                                messageText = ""
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Rounded.Send,
-                                contentDescription = null,
-                                tint = MaterialTheme.colors.primary
-                            )
                         }
-                    } else {
-                        val coroutineScope = rememberCoroutineScope()
-
-                        IconButton(
-                            onClick = {
-                                coroutineScope.launch {
-                                    modalBottomSheetState.show()
-                                }
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Rounded.AlternateEmail,
-                                contentDescription = null,
-                                tint = MaterialTheme.colors.primary
-                            )
-                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.AlternateEmail,
+                            contentDescription = null,
+                            tint = MaterialTheme.colors.primary
+                        )
                     }
                 }
             }
@@ -318,6 +311,179 @@ private fun ClientMessageItem(
                 modifier = Modifier
                     .padding(8.dp),
                 text = message.content
+            )
+        }
+    }
+}
+
+@ExperimentalMaterialApi
+@Composable
+fun TemplateAndVariableMenu(
+    viewModel: ScopeViewModel
+) {
+    val selectedTab = remember { mutableStateOf(0) }
+
+    Scaffold(
+        content = {
+            val selectedTabValue = selectedTab.value
+            val scope = viewModel.scope.value
+
+            Box(
+                contentAlignment = Alignment.Center
+            ) {
+                if (scope != null) {
+                    if (selectedTabValue == 0) {
+                        TemplateList(scope.templates)
+                    } else if (selectedTabValue == 1) {
+                        VariableList(scope.variables)
+                    }
+                } else {
+                    CircularProgressIndicator()
+                }
+            }
+        },
+        bottomBar = {
+            ThickHorizontalSpacer()
+
+            Row {
+                BottomSheetTab(
+                    selectedTab,
+                    0,
+                    stringResource(R.string.templates)
+                )
+                BottomSheetTab(
+                    selectedTab,
+                    1,
+                    stringResource(R.string.variables)
+                )
+            }
+        },
+        floatingActionButton = {
+            AddFloatingActionButton {
+                //TODO: Create new template/variable
+            }
+        }
+    )
+}
+
+@Composable
+fun RowScope.BottomSheetTab(
+    state: MutableState<Int>,
+    index: Int,
+    title: String
+) {
+    Box(
+        modifier = Modifier
+            .weight(1f)
+            .height(48.dp)
+            .clickable {
+                state.value = index
+            },
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = title,
+            color = if (state.value == index)
+                MaterialTheme.colors.primary
+            else
+                MaterialTheme.colors.onBackground.copy(alpha = 0.25f)
+        )
+    }
+}
+
+@Composable
+fun TemplateList(
+    list: List<Template>
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxHeight(),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (list.isEmpty()) {
+            PlaceholderText(stringResource(R.string.empty_template_or_variable_list_placeholder))
+        } else {
+            LazyColumn {
+                items(list) { template ->
+                    TemplateListItem(template)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TemplateListItem(
+    template: Template
+) {
+    Surface(
+        modifier = Modifier
+            .clickable {
+
+            }
+            .height(48.dp)
+    ) {
+        Column {
+            Text(
+                text = template.title,
+                style = MaterialTheme.typography.h5,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = template.message,
+                style = MaterialTheme.typography.subtitle2,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+}
+
+@Composable
+fun VariableList(
+    list: List<Variable>
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxHeight(),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (list.isEmpty()) {
+            PlaceholderText(stringResource(R.string.empty_template_or_variable_list_placeholder))
+        } else {
+            LazyColumn {
+                items(list) { variable ->
+                    VariableListItem(variable)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun VariableListItem(
+    variable: Variable
+) {
+    Surface(
+        modifier = Modifier
+            .clickable {
+
+            }
+            .height(48.dp)
+    ) {
+        Column {
+            Text(
+                text = variable.title,
+                style = MaterialTheme.typography.h5,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = variable.value,
+                style = MaterialTheme.typography.subtitle2,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }

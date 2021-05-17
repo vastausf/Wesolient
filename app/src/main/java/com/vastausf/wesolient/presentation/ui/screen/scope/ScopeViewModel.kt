@@ -71,6 +71,8 @@ constructor(
         code: Int? = null,
         reason: String? = null
     ) {
+        _connectionState.value = ConnectionState.CLOSING
+
         serviceHolder.disconnect(code, reason)
     }
 

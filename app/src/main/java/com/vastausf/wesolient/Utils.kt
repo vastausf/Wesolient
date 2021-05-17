@@ -1,6 +1,8 @@
 package com.vastausf.wesolient
 
 import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.vastausf.wesolient.data.client.ConnectionState

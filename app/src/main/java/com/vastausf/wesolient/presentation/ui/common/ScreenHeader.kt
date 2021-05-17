@@ -74,14 +74,7 @@ fun ScreenHeader(
                 }
             }
 
-            if (withDivider) {
-                Spacer(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(MaterialTheme.colors.onBackground.copy(alpha = .05f))
-                )
-            }
+            if (withDivider) ThickHorizontalSpacer()
         }
     }
 }

@@ -15,15 +15,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import com.vastausf.wesolient.R
-import com.vastausf.wesolient.presentation.ui.common.AddFloatingActionButton
-import com.vastausf.wesolient.presentation.ui.common.FilledButton
-import com.vastausf.wesolient.presentation.ui.common.ScreenHeader
-import com.vastausf.wesolient.presentation.ui.common.TransparentTextField
+import com.vastausf.wesolient.presentation.ui.common.*
 import kotlinx.coroutines.launch
 
 
@@ -150,11 +146,7 @@ private fun Content(
                 }
             }
             else -> {
-                Text(
-                    textAlign = TextAlign.Center,
-                    text = stringResource(id = R.string.scope_list_placeholder),
-                    style = MaterialTheme.typography.subtitle1
-                )
+                PlaceholderText(stringResource(R.string.scope_list_placeholder))
             }
         }
     }
